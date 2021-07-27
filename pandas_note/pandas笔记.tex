@@ -18,7 +18,8 @@
 \section{import}
 \noindent \texttt{import pandas}\\
 \texttt{import pandas}\\
-\texttt{import matplotlib.pyplot as plt}
+\texttt{import matplotlib.pyplot as plt}\\
+\texttt{from sklearn.datasets import fetch\_openml}
 
 % ----------------------------------------------------------------------
 % |                            使用csv数据                              |
@@ -44,7 +45,7 @@
   FIGSIZE: \texttt{figsize=(宽, 高)} 定义每一特征的直方图形状\\
 \texttt{data.iloc[index\_array]}
 
-  对$index_array$每一$index$得到$data$中对应位置的样本信息，输出$pandas.Datafram$\\
+  对$index_array$每一$index$得到$data$中对应位置的样本信息，输出$pandas.Series$\\
 \texttt{data.loc[row\_array]}
 
   类似$iloc$，但根据行标签进行取样，非行$index$号\\
@@ -84,8 +85,34 @@
 
   CMAP: \texttt{cmp=plt.get\_cmap('jet')} 使用plt内定义的jet色谱。通过点颜色表示C中选择的特征值值高低
 
-  FIGSIZE: \texttt{figsize(宽, 高)}
+  FIGSIZE: \texttt{figsize=(宽, 高)}\\
+\texttt{scatter\_matrix(DATA, figsize=(宽, 高))}
+
+  同时显示多组散点图
+
+  DATA: 为$pandas.Datafram$
   
-  
+  \quad \texttt{=data} 对所有\texttt{data}中特征两两画图
+
+  \quad \texttt{=data['特征1', '特征2', ...]} 选择某些特征两两画图
+
+% ----------------------------------------------------------------------
+% |                              数据操作                               |
+% ----------------------------------------------------------------------
+\section{数据操作}
+\noindent \texttt{np.c\_[a, b, ...]}
+
+  创建numpy.ndarray类型，\textbf{和python array不同}
+
+  \texttt{a, b, ...} 类型相同，shape相同\\
+\texttt{pandas.Datafram}可调\texttt{.shape} \texttt{.values}转\texttt{np.ndarray}\\
+\texttt{pandas.Series}可调\texttt{.shape} \texttt{.values}转\texttt{np.ndarray}\\
+\texttt{np.ndarray}可调\texttt{.reshape} \texttt{.shape}
+
+% ----------------------------------------------------------------------
+% |                            MNIST数据集                              |
+% ----------------------------------------------------------------------
+\section{MNIST数据集}
+\noindent \texttt{mnist = fetch\_openml('mnist\_784', version=1)} //得到手写字母的训练集
 
 \end{document}
