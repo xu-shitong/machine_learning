@@ -13,11 +13,79 @@
 \maketitle
 
 % ----------------------------------------------------------------------
-% |                              基础定义                                |
+% |                              import                                |
 % ----------------------------------------------------------------------
-\section{基础定义}
-\noindent \textbf{instance based learning}
+\section{import}
+\noindent \texttt{import pandas}\\
+\texttt{import pandas}\\
+\texttt{import matplotlib.pyplot as plt}
 
+% ----------------------------------------------------------------------
+% |                            使用csv数据                              |
+% ----------------------------------------------------------------------
+\section{使用csv数据}
+\texttt{data = pandas.read\_csv('.csv文件路径')}
+
+  $data$为$pandas.Datafram$类型\\
+\texttt{data.head()} // 显示前5组数据\\
+\texttt{data.info()} // 显示每一特征的信息\ 数据类型\\
+\texttt{data['特征名']} 
+  
+  显示某一特征的所有数据，输出$pandas.Series$\\
+\texttt{data['特征名'].value\_counts()} // 显示此特征所有取值，对每一取值显示对应样本数，输出$pandas.Series$\\
+\texttt{data.describe()} // 显示每一特征统计信息，输出$pandas.Datafram$\\
+\texttt{data.hist(BINS, FIGSIZE)}\\
+\texttt{matplotlib.pyplot.show()}
+
+  将\texttt{data}中每一特征统计结果用直方图表示
+
+  BINS: \texttt{bins=N} 直方图将被分为$N$个值点，有$N-1$个区间
+
+  FIGSIZE: \texttt{figsize=(宽, 高)} 定义每一特征的直方图形状\\
+\texttt{data.iloc[index\_array]}
+
+  对$index_array$每一$index$得到$data$中对应位置的样本信息，输出$pandas.Datafram$\\
+\texttt{data.loc[row\_array]}
+
+  类似$iloc$，但根据行标签进行取样，非行$index$号\\
+\texttt{data\_copy = data.copy()} // 复制数据\\
+\texttt{series.sort\_values(ASCENDING)}
+
+  对一个$pandas.Series$输出排序后的数据，输出$pandas.Series$
+
+  ASCENDING: 取boolean值，是否按递增顺序输出\\
+\texttt{data.corr()} 
+  
+  对所有特征两两求correlation
+
+  输出$pandas.Datafram$，通过\texttt{data.corr()['特征名']}得到一个特征关于其他特征的corr值
+
+% ----------------------------------------------------------------------
+% |                              csv绘图                                |
+% ----------------------------------------------------------------------
+\section{csv绘图}
+\noindent \texttt{data.plot(KIND, X, Y, ALPHA*, S*, C*, CMAP*, FIGSIZE*)}
+
+  调用后使用\texttt{plt.show()}显示图像
+
+  KIND: 定义图表类型
+  
+  \quad \texttt{kind='scatter'} 描点图
+
+  X: \texttt{x='特征名'}，Y: \texttt{y='特征名'}
+
+  \quad 定义横纵坐标采用哪一特征下的值
+
+  ALPHA: \texttt{alpha=0.1} 点填充设为半透明，使点浓度高处颜色深
+
+  S: \texttt{s=data['特征名']} 用点大小表示特征值高低
+  
+  C: \texttt{c='特征名'} 用点颜色表示特征值高低，和CMP同时使用
+
+  CMAP: \texttt{cmp=plt.get\_cmap('jet')} 使用plt内定义的jet色谱。通过点颜色表示C中选择的特征值值高低
+
+  FIGSIZE: \texttt{figsize(宽, 高)}
+  
   
 
 \end{document}
