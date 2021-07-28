@@ -25,7 +25,7 @@
 % |                            使用csv数据                              |
 % ----------------------------------------------------------------------
 \section{使用csv数据}
-\texttt{data = pandas.read\_csv('.csv文件路径')}
+\noindent \texttt{data = pandas.read\_csv('.csv文件路径')}
 
   $data$为$pandas.Datafram$类型\\
 \texttt{data.head()} // 显示前5组数据\\
@@ -113,6 +113,9 @@
 % |                            MNIST数据集                              |
 % ----------------------------------------------------------------------
 \section{MNIST数据集}
-\noindent \texttt{mnist = fetch\_openml('mnist\_784', version=1)} //得到手写字母的训练集
+\noindent \texttt{mnist = fetch\_openml('mnist\_784', version=1)} //得到手写字母的训练集\\
+\texttt{X = mnist['data'], y = mnist['target']} // 得到$pandas.Datafram$特征集，label集\\
+\texttt{plt.imshow(X.iloc[0].values.reshape(28, 28))} // 绘制第一个图像，使用\texttt{plt.show()}显示\\
+
 
 \end{document}
