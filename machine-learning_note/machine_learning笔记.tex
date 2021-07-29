@@ -26,23 +26,19 @@
 \textbf{multioutput多类分类}：多标签分类，每一标签可包含多种信息\\
 \textbf{MSE} = $\frac{1}{m}\sum_{i=1}^{m}(x^{(i)} - y^{(i)})^2$\\
 \textbf{learning schedule}：根据迭代次数更新学习率\\
-\textbf{learning curves}：观察模型是否有over underfit
+\textbf{rigid regression}：回归方法，$J(\theta) = MSE(\theta) + \frac{\alpha}{2}\sum_{i}\theta_i^2$
 
-  x轴为使用的训练集大小，y轴为root MSE。
+  降低所有权重值\\
+\textbf{lasso regression}：回归方法，$J(\theta) = MSE(\theta) + \alpha \sum_i |\theta_i|$
 
-  画出训练集\ 测试集在使用不同训练集大小后的root MSE。
+  降低不重要的权重值\\
+\textbf{elastic net}：回归方法，$J(\theta) = MSE(\theta) + \gamma\alpha \sum_i |\theta_i| + (1-\gamma)\frac{\alpha}{2}\sum_{i}\theta_i^2$\\
+\textbf{early stopping}：提早结束训练
 
-  形状：
+  对于每一epoch，当验证集MSE值增高时，证明开始overfit，停止训练
 
-  \quad 训练集的root MSE从0开始，使用的训练集增多后曲线平缓
-
-  \quad 测试集的root MSE从一高值开始，训练集增多后曲线平缓
-
-  分析：
-
-  \quad 当2曲线平缓值差值较大，测试集平缓值教低，则过拟合
-
-  \quad 当2曲线平缓值较高，则欠拟合
+  即在epoch-error图中泛化误差最低时停止训练\\
+\textbf{在训练中使用正则化代价函数，训练结束后测试中代价函数不使用正则化项}
 
 % ----------------------------------------------------------------------
 % |                              数学计算                               |
@@ -90,10 +86,40 @@
   \textbf{specificity} = $\frac{TN}{TN + FN}$\\
 \textbf{ROC curve}：分析二元/多元分类
 
+  \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+    \centering %图片居中
+    \includegraphics[width=0.3\textwidth]{note_images/ROC_curve.png} %插入图片，[]中设置图片大小，{}中是图片文件名
+  \end{figure}
+
   y轴recall值，x轴false positive rate$FPR = \frac{FN}{FN + TN} = \frac{FN}{1-specificity}$
 
   期望的ROC curve为recall从0快速增长到1。并保持直到$FPR$为1。
   
-  \quad 即期望曲线下方面积接近1
+  \quad 即期望曲线下方面积接近1\\
+\textbf{learning curves}：观察模型是否有over underfit
 
+  \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+    \centering %图片居中
+    \includegraphics[width=0.3\textwidth]{note_images/learning_curve.png} %插入图片，[]中设置图片大小，{}中是图片文件名
+  \end{figure}
+
+  x轴为\textbf{一整次训练(包含多次epoch)使用的训练集大小}，y轴为root MSE。
+
+  画出训练集\ 测试集在使用不同训练集大小后的root MSE。
+
+  分析：
+
+  \quad 期望2曲线平缓值低且相近，
+
+  \quad 当2曲线平缓值差值较大，测试集平缓值较低，则过拟合
+
+  \quad 当2曲线平缓值较高，则欠拟合\\
+\textbf{模型复杂度-error epoch-error}：
+
+  \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+    \centering %图片居中
+    \includegraphics[width=0.3\textwidth]{note_images/epoch-complex-error.png} %插入图片，[]中设置图片大小，{}中是图片文件名
+  \end{figure}
+
+  2种图，形状类似，x轴内容不同
 \end{document}
