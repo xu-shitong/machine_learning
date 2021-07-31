@@ -36,7 +36,7 @@
 % |                              数学计算                               |
 % ----------------------------------------------------------------------
 \section{数学计算}
-\noindent \textbf{MSE} = $\frac{1}{m}\sum_{i=1}^{m}(x^{(i)} - y^{(i)})^2$\\
+\noindent \textbf{MSE} = $\frac{1}{m}\sum_{i=1}^{m}(x^{(i)} - \bar{x} )^2$\\
 \textbf{rigid regression}：回归方法，$J(\theta) = MSE(\theta) + \frac{\alpha}{2}\sum_{i}\theta_i^2$
 
   降低所有权重值\\
@@ -207,6 +207,7 @@
   \quad gini属性$G_i$：数据混杂度，$G_i = 1-\sum_{j=1}^{n}(\frac{v_{ij}}{S_i})^2$
   
   \quad 子节点仅有2个，对应节点条件为true/false的情况\\
+分类方式：数据从根节点开始，根据节点条件传向对应子节点。直到到达叶节点。叶节点中$V$属性中最大项即数据分类\\
 \textbf{CART algorithm创建决策树}：
 
   根节点初始化为叶节点，没有节点条件
@@ -215,7 +216,55 @@
   
   \quad 选取$(k, t_k)$方式：使代价函数$J(k, t_k) = \frac{S_{true}}{S_i}G_{true} + \frac{S_{false}}{S_i}G_{false}$最小
 
-  直到决策树层数达到固定上限，或分组没有降低$G$** 如何计算2子节点的G **
+  直到决策树层数达到固定上限，或对所有分组条件$(k, t_k)$，$J(k, t_k) \geq G_i$\\
+\textbf{使用决策树进行regression}
+
+  \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+    \centering %图片居中
+    \includegraphics[width=0.3\textwidth]{note_images/deci_tree_regression.png} %插入图片，[]中设置图片大小，{}中是图片文件名
+  \end{figure}
+
+  输入样本，分类进不同值域
+
+  更改：
+  
+  \quad 每一节点value值为一常数，为$S_i$样本的平均值。
+  
+  \quad 输出值为叶节点的value，非最大value对应的类别
+
+  \quad $G_i$为$S_i$样本的方差$\frac{1}{S_i}\sum_{j=1}^{S_i}(x_i^{(j)} - \bar{x}_i)^2$
+
+% ----------------------------------------------------------------------
+% |                 ensemble learning random forest                    |
+% ----------------------------------------------------------------------
+\section{ensemble learning & random forest}
+\noindent \textbf{ensemble learning}：使用一组预测机制进行学习，预测机制可为不同算法\\
+\textbf{random forest}：
+
+  训练方法：随机选择$n$个训练子集$s_1, s_2, ..., s_n \in S$，训练$n$个决策树$t_1, ..., t_n$。
+  
+  前向计算：对$n$个树产生的$n$个分类结果，选取投票最多的一分类作为结果
+  
+  训练子集选取：bagging：子集可重复选取一样本，pasting：样本不重复
+  
+  \quad out-off-bag oob 样本：当使用bagging选取时，平均只有$1-e^{-1}$样本被选择，余下样本被称为oob样本
+
+  优化：
+
+  \quad random patches随机贴片：对特征和训练集同时取子集进行训练
+  
+  \quad random subspace随机子空间：对特征取子集，对整个总训练集进行训练
+  
+  \quad extra-trees极度随机森林：'使用随机$t_k$而不使用最小化数据混杂度的$t_k$'
+  
+  \quad $k$feature importance特征重要性：对所有取$k$为判断条件的节点$N_i$，计算加权平均值$\sum_i(S_i$imprity降低百分比$)$
+  
+  \quad (hypothesis) boosting：合并多个预测机制据结果的方法
+  
+  \quad \quad AdaBoost：串联预测机制，对上一预测机制遗漏的样本加更高权重，进行训练
+
+  \quad \quad gradient boosting\\
+\textbf{8}
 % ----------------------------------------------------------------------
 % |                              分析结果                                |
 % ----------------------------------------------------------------------
