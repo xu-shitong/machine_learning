@@ -24,15 +24,7 @@
   $one-versus-one$ OvO：对所有分类两两使用二元分类，每一分类器训练只需一部分数据\\
 \textbf{multilabel多标签分类}：目标检测，对一图像中的物体加label\\
 \textbf{multioutput多类分类}：多标签分类，每一标签可包含多种信息\\
-\textbf{MSE} = $\frac{1}{m}\sum_{i=1}^{m}(x^{(i)} - y^{(i)})^2$\\
 \textbf{learning schedule}：根据迭代次数更新学习率\\
-\textbf{rigid regression}：回归方法，$J(\theta) = MSE(\theta) + \frac{\alpha}{2}\sum_{i}\theta_i^2$
-
-  降低所有权重值\\
-\textbf{lasso regression}：回归方法，$J(\theta) = MSE(\theta) + \alpha \sum_i |\theta_i|$
-
-  降低不重要的权重值\\
-\textbf{elastic net}：回归方法，$J(\theta) = MSE(\theta) + \gamma\alpha \sum_i |\theta_i| + (1-\gamma)\frac{\alpha}{2}\sum_{i}\theta_i^2$\\
 \textbf{early stopping}：提早结束训练
 
   对于每一epoch，当验证集MSE值增高时，证明开始overfit，停止训练
@@ -44,7 +36,22 @@
 % |                              数学计算                               |
 % ----------------------------------------------------------------------
 \section{数学计算}
-\noindent \textbf{pseudo inverse}:
+\noindent \textbf{MSE} = $\frac{1}{m}\sum_{i=1}^{m}(x^{(i)} - y^{(i)})^2$\\
+\textbf{rigid regression}：回归方法，$J(\theta) = MSE(\theta) + \frac{\alpha}{2}\sum_{i}\theta_i^2$
+
+  降低所有权重值\\
+\textbf{lasso regression}：回归方法，$J(\theta) = MSE(\theta) + \alpha \sum_i |\theta_i|$
+
+  降低不重要的权重值\\
+\textbf{elastic net}：回归方法，$J(\theta) = MSE(\theta) + \gamma\alpha \sum_i |\theta_i| + (1-\gamma)\frac{\alpha}{2}\sum_{i}\theta_i^2$\\
+\textbf{Normal Equation}：$\hat{\theta} = (X^TX)^{-1}X^Ty$
+
+  直接得到权重$\hat{\theta}$，适用于仅有一个输出值的模型
+
+  $X$为 (批量大小, 参数个数)输入矩阵，$y$为(批量大小, )向量
+  
+  当$X^TX$无逆矩阵时，用psudo inverse$\hat{\theta} = X^+y$\\
+\textbf{pseudo inverse}:
 
   对矩阵$X=USV^T$，pseudo inverse $X^+=VS^+U^T$。$S^+$求法：
 
@@ -52,8 +59,163 @@
 
   \quad 2.对所有非零元素取倒数
 
-  \quad 3.取矩阵转置，得到$S^+$
+  \quad 3.取矩阵转置，得到$S^+$\\
+\textbf{log loss}：代价函数
 
+  $J(\theta) = -\frac{1}{|B|}\sum_{i=1}^{|B|}[y^{(i)}log(\hat{p}^{(i)}) + (1-y^{(i)})log(1-\hat{p}^{(i)})]$
+
+  标签值$y^{(i)}$为离散1/0值，计算值$\hat{p}^{(i)} \in [0,1]$
+
+  微分：** 推导 **
+  
+  \quad $\frac{d J(\theta)}{d \theta_j} = \frac{1}{|B|}\sum_{i=1}^{|B|}(\hat{p}^{(i)} - y^{(i)}) x_j^{(i)}$\\
+\textbf{Gaussian Radial Basis Function RBF}：一种similarity function
+
+  $\phi_{\gamma}(x, l) = exp(-\gamma||x-l||^2)$
+
+  \quad $l$为landmark，即$\phi_{\gamma}$由一样本$x_i$和一landmark的距离得来\\
+\textbf{Lagrange multipliers method拉格朗日乘数法}
+
+  将\ 有前提的多项式求最值\ 问题转化为\ 无前提多项式最值问题
+
+  定义：
+
+  \quad 对输入向量$X$，$C(X) \geq 0$为constrain。目标为在满足$C(X) \geq 0$的前提下取$f(X)$最值
+
+  \quad Lagrange function $\mathcal{L} (X, \alpha) = f(X) + \alpha(C(X))$
+
+  \quad \quad $\alpha$为变量
+
+  计算：
+  
+  \quad 对每一$X$的元素\ 和\ $\alpha$取偏导，即向量
+  $\begin{bmatrix}
+    \frac{d \mathcal{L}(X, \alpha)}{d x_1}  \\
+    \frac{d \mathcal{L}(X, \alpha)}{d x_n} \\
+    ... \\
+    \frac{d \mathcal{L}(X, \alpha)}{d x_n} \\
+    \frac{d \mathcal{L}(X, \alpha)}{d \alpha}
+  \end{bmatrix}$，计算向量$=\vec{0} $时的$X$, $\alpha$取值
+
+
+
+
+% ----------------------------------------------------------------------
+% |                             分类模型                                |
+% ----------------------------------------------------------------------
+\section{分类模型}
+\noindent \textbf{logistic regression}:
+
+  判断输入符合每一输出类别的可能性，
+
+  前向计算：
+  
+  \quad 1.$\hat{p} = \sigma(\theta^Tx + b)$
+
+  \quad 2.$\hat{y} = 1\space (if \hat{p} \geq 0.5)$
+
+  \quad \quad \quad $= 0\space (if \hat{p} < 0.5)$
+
+  代价函数为log loss\\
+\textbf{SVM}
+
+  找到分界，分离多种数据
+
+  support vector: 最靠近分界线的样本
+
+  hard margin classification硬性分类：限制数据必须被分界隔开，同一类数据不可同时出现在分界2端
+
+  soft margin classification：与硬性分类相反，避免被outlier离群值影响
+
+  前向计算：$\hat{p} = f(x_1, x_2,...)$，其余同logistic regression
+
+  \quad 区别：$f$可为polynomial，非线性函数。可使用kernel trick
+
+  线性分类训练：$\hat{p} = W^Tx + b$
+
+  \quad \textbf{硬性分类}：
+
+  \quad \quad $||W||_2$代表线性函数斜率
+
+  \quad \quad 最小化$\frac{1}{2}W^TW$，使得分界平面的斜率最小，最大化分界线和两种数据的距离
+
+  \quad \quad 前提：对每一样本$i$, $1.y^{(i)}\hat{p}^{(i)} \geq 1$，即标签和计算结果相同
+
+  \quad \quad 求解：使用拉格朗日乘数法，其中$\alpha$改为向量，非常数。$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\alpha^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
+
+  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\alpha^{(i)}\hat{p}^{(i)}x^{(i)}$, $3.\sum_{i=1}^{m}\alpha^{(i)}\hat{p}^{(i)}=0$
+
+  \quad \quad \quad 带入得$\mathcal{L} (W, \alpha) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\alpha^{(i)}\alpha^{(j)}\hat{p}^{(i)}\hat{p}^{(j)}x^{(i)T}x^{(j)} - \sum_{i=1}^{|B|}\alpha^{(i)}$，解$\alpha$
+
+  \quad \quad \quad 解$W$：由$\alpha$带入1.式计算
+
+  \quad \quad \quad 解$b$：由于所有support vector$x^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
+
+  \quad \quad \quad \quad $b = E(\hat{p}^{(i)}-W^Tx^{(i)})$
+  
+  \quad \textbf{软性分类}：
+
+  \quad \quad 最小化$\frac{1}{2}W^TW + C\sum_{i=1}^{|B|}\zeta_i $
+
+  \quad \quad \quad $\zeta_i$定义第$i$样本被忽视为误差样本的可能性，$C$定义忽视率相对斜率的权重
+
+  \quad \quad 前提：对每一样本$i$，$y^{(i)}\hat{p}^{(i)} \geq 1 - \zeta^{(i)}$
+
+  非线性分类方法：
+
+  \textbf{- 使用polynomial做$f$}
+
+  \textbf{- 使用similarity function}：
+  
+  \quad 选择多个landmark$\mathcal{L} = l_1, l_2, ..., l_n$，对每一样本$x_i$计算其和每一$l_j$的$\phi_{\gamma}$值$\phi_{\gamma}(x_i, l_j)$
+
+  \quad 每个样本用新的向量$x_i' = \begin{bmatrix}
+    \phi_{\gamma}(x_i, l_1) \\
+    \phi_{\gamma}(x_i, l_2) \\
+    ... \\
+    \phi_{\gamma}(x_i, l_n)
+  \end{bmatrix}$表示。新的向量组成训练集，进行SVM训练
+
+  \textbf{kernel}：
+
+  \quad 定义：能够从输入向量$a$,$b$，不通过计算$\phi(a), \phi(b)$直接得到点乘结果$\langle \phi (a), \phi (b)\rangle $的函数
+
+  \quad 例：** 是否通过取linear 为phi得到kernel 函数 **
+
+  \quad \quad linear: $f(a, b) = a^Tb$
+
+  \quad \quad polynomial: $f(a, b) = (\gamma a^Tb+r)^d$
+
+  \quad \quad Gaussian RBF: $f(a, b) = exp(-\gamma ||a-b||^2)$
+
+  \quad \quad Sigmoid: $f(a, b) = tanh(\gamma a^Tb + r)$
+
+% ----------------------------------------------------------------------
+% |                              决策树                                 |
+% ----------------------------------------------------------------------
+\section{决策树}
+\noindent 定义：
+
+  节点$N_i$：
+
+  \quad 节点条件：判断样本进入哪一子节点，叶节点没有节点条件
+  
+  \quad sample属性$S_i$：有多少样本\textbf{进入$N_i$节点}，非满足$N_i$节点条件的样本个数
+
+  \quad value属性$V_i = v_{i1}, ..., v_{in}$：$S_i$进入节点的样本中$v_i$个属于第$i$分类
+
+  \quad gini属性$G_i$：数据混杂度，$G_i = 1-\sum_{j=1}^{n}(\frac{v_{ij}}{S_i})^2$
+  
+  \quad 子节点仅有2个，对应节点条件为true/false的情况\\
+\textbf{CART algorithm创建决策树}：
+
+  根节点初始化为叶节点，没有节点条件
+  
+  对每一叶节点$S_i$选取一特征$k$，一特征门槛$t_k$，将样本集分为2组$S_{true}, S_{false}$。
+  
+  \quad 选取$(k, t_k)$方式：使代价函数$J(k, t_k) = \frac{S_{true}}{S_i}G_{true} + \frac{S_{false}}{S_i}G_{false}$最小
+
+  直到决策树层数达到固定上限，或分组没有降低$G$** 如何计算2子节点的G **
 % ----------------------------------------------------------------------
 % |                              分析结果                                |
 % ----------------------------------------------------------------------
@@ -121,5 +283,6 @@
     \includegraphics[width=0.3\textwidth]{note_images/epoch-complex-error.png} %插入图片，[]中设置图片大小，{}中是图片文件名
   \end{figure}
 
-  2种图，形状类似，x轴内容不同
+  2种图，形状类似，x轴内容不同\\
+
 \end{document}
