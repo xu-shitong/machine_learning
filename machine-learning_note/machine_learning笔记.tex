@@ -237,9 +237,9 @@
 % ----------------------------------------------------------------------
 % |                 ensemble learning random forest                    |
 % ----------------------------------------------------------------------
-\section{ensemble learning \& random forest}
+\section{ensemble learning \& 随机森林}
 \noindent \textbf{ensemble learning}：使用一组预测机制进行学习，预测机制可为不同算法\\
-\textbf{random forest}：
+\textbf{random forest随机森林}：
 
   训练方法：随机选择$n$个训练子集$s_1, s_2, ..., s_n \in S$，训练$n$个决策树$t_1, ..., t_n$。
   
@@ -263,46 +263,113 @@
   
   \quad \quad AdaBoost：串联预测机制，对上一预测机制遗漏的样本加更高权重，进行训练
 
-  \quad \quad gradient boosting\\
-\textbf{dimentionality reduction}
+  \quad \quad gradient boosting
 
-  根据manifold assumption，输入训练集纬度较高时在高维空间中训练集参数点稀疏。则将数据压缩到低维
-
-  \textbf{principle component analysis PCA}：
-
-  \quad 对训练集参数矩阵取SVD$USV^T$
-
-  \quad 取$V$中前$d$个向量$V' = [v_1, ..., v_d]$，新训练集$A_{compressed} = A_{origin}V'$
-  
-  \quad 从\ 新训练集\ 延展回\ 原训练集纬度：$A_{expand} = A_{compressed}V'^T$
-  
-  \textbf{Incremental PCA}：无需整个训练集存在内存中即可进行SVD
-  
-  \textbf{kernel PCA}：**
-  
-  \textbf{local linear Embedding LLE}：
-  
-  \quad 对每一样本$x^{(i)}$寻找$k$个相邻样本\ 相邻样本index的集合称$C_{x^{(i)}}$
-  
-  \quad 构建$(|S|, |S|)$矩阵$W$：
-  
-  \quad \quad 每一行向量$[W_{i1}, ..., W_{i|S|}]$满足$x^{(i)} - \sum_{j \in C_{x^{(i)}}} W_{ij}x^{(j)}$
-  
-  \quad \quad 每一行向量$W_i$求和为1：$\sum_{i=1}^{|S|}W_i = 1$
-
-  \quad 由$W$创建新训练集：
-
-  \quad \quad 令$z^{(i)}$为$x^{(i)}$在低维的投影
-
-  \quad \quad 使所有$z^{(i)}$满足最小化$(z^{(i)} - \sum_{j=1}^{|B|}w_{ij}z^{(j)})^2$
 
 % ----------------------------------------------------------------------
-% |                              无监督学习                                |
+% |                     dimentionality reduction                       |
+% ----------------------------------------------------------------------
+\section{维度下降}
+\noindent 根据manifold assumption，高维空间中训练集参数点稀疏。则将数据压缩到低维\\
+\textbf{principle component analysis PCA}：
+
+  对训练集参数矩阵取SVD$USV^T$
+
+  取$V$中前$d$个向量$V' = [v_1, ..., v_d]$，新训练集$A_{compressed} = A_{origin}V'$
+  
+  从\ 新训练集\ 延展回\ 原训练集纬度：$A_{expand} = A_{compressed}V'^T$\\
+\textbf{Incremental PCA}：无需整个训练集存在内存中即可进行SVD\\
+\textbf{kernel PCA}：**\\
+\textbf{local linear Embedding LLE}：
+  
+  对每一样本$x^{(i)}$寻找$k$个相邻样本\ 相邻样本index的集合称$C_{x^{(i)}}$
+  
+  构建$(|S|, |S|)$矩阵$W$：
+  
+  \quad 每一行向量$[W_{i1}, ..., W_{i|S|}]$满足$x^{(i)} - \sum_{j \in C_{x^{(i)}}} W_{ij}x^{(j)}$
+  
+  \quad 每一行向量$W_i$求和为1：$\sum_{i=1}^{|S|}W_i = 1$
+
+  由$W$创建新训练集：
+
+  \quad 令$z^{(i)}$为$x^{(i)}$在低维的投影
+
+  \quad 使所有$z^{(i)}$满足最小化$(z^{(i)} - \sum_{j=1}^{|B|}w_{ij}z^{(j)})^2$
+
+% ----------------------------------------------------------------------
+% |                             无监督学习                               |
 % ----------------------------------------------------------------------
 \section{无监督学习}
-\noindent \textbf{clustering}
+\noindent \textbf{clustering}\\
+\textbf{K-mean}：
+
+  将数据分为k个cluster，每个cluster有中心点称centroid
+  
+  算法：
+  
+  \quad 1.初始化随机选择k个样本位置做centroid
+
+  \quad 2.分配样本：每个样本分入距离最近的centroid的cluster
+
+  \quad 3.更新centroid：新centroid为cluster中样本坐标平均值。
+  
+  \quad 重复第2.3.步，直至centroid不再移动
+
+  优化：
+  
+  \quad 多次随机初始化centroid，选择其中inertia最小的centroid取法进行训练
+
+  \quad \quad interia = $\frac{1}{|S|}\sum_x (C_x - x)^2$。
+
+  \quad \quad \quad $C_x$为样本x距离最近的centroid
+
+  \quad k-mean++初始化centroid：
+
+  \quad \quad 1.随机选择1个样本做centroid
+
+  \quad \quad 2.剩余每一样本$x^{(i)}$有$\frac{D(x^{(i)})}{\sum_{j=1}^{|S|} D(x^{(j)})}$几率被选做新centroid
+
+  \quad \quad \quad $D(x^{(i)})$为样本$x^{(i)}$距离最近的centroid的距离
+
+  \quad \quad 3.重复2.步直至得到k个centroid
+
+  \quad （在尝试多种cluster训练后）选择cluster数量k：
+
+  \quad \quad sihouette score：所有样本的sihouette coefficient的均值
+
+  \quad \quad \quad 一样本$x^{(i)}$的sihouette coefficient：$\frac{b-a}{max(a, b)}$
+
+  \quad \quad \quad \quad $a$为$x^{(i)}$到同一cluster内所有样本的平均距离
+  
+  \quad \quad \quad \quad $b = min(E_{x^{(j)} \in other \space cluster}(D(x^{(i)} - x^{(j)})))$
+
+  \quad \quad \quad sihouette score$\in [-1, 1]$，偏向取score高的cluster数
+
+  使用k-mean进行数据预处理：
+
+  \quad 将数据首先进行k-mean分类，将每一样本替换为\ 样本到最近的centroid距离，传入另一模型进行学习
+
+  \quad 用于半无监督学习：将数据进行k-mean分类，从每一cluster选取离centroid最近的样本，产生大小为k的训练集。则只需得到k个样本的标签即可进行训练\\
+\textbf{DBSCAN}
+
+  适用于一cluster内样本密度较高的训练集
+
+  算法：
+
+  \quad 1.对每一样本$x_i$计算集合$S_{i\varepsilon}$，称$\varepsilon -neighbourhood$，包含所有距离在$\varepsilon $内的其他样本
+
+  \quad \quad $|S_{i\varepsilon}| > $超参数$s_{min}$\ 的样本称core instance
+
+  \quad 2.所有属于同一$S_{i\varepsilon }$的样本判为属于同一cluster，当一样本$x_i$同时存在样本$x_i, x_j$的$\varepsilon -neighbourhood$中时，合并$S_{i\varepsilon }, S_{j\varepsilon }$。
+
+  \quad 3.没有被分配进任何$S_{i\varepsilon }$的样本判为异常值\\
+\textbf{Gaussian Mixtures}
+
+  \textbf{GM Model}：假设所有样本都由多个正态分部产生
 
   
+
+
 
 
 % ----------------------------------------------------------------------
