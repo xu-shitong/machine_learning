@@ -264,7 +264,47 @@
   \quad \quad AdaBoost：串联预测机制，对上一预测机制遗漏的样本加更高权重，进行训练
 
   \quad \quad gradient boosting\\
-\textbf{8}
+\textbf{dimentionality reduction}
+
+  根据manifold assumption，输入训练集纬度较高时在高维空间中训练集参数点稀疏。则将数据压缩到低维
+
+  \textbf{principle component analysis PCA}：
+
+  \quad 对训练集参数矩阵取SVD$USV^T$
+
+  \quad 取$V$中前$d$个向量$V' = [v_1, ..., v_d]$，新训练集$A_{compressed} = A_{origin}V'$
+  
+  \quad 从\ 新训练集\ 延展回\ 原训练集纬度：$A_{expand} = A_{compressed}V'^T$
+  
+  \textbf{Incremental PCA}：无需整个训练集存在内存中即可进行SVD
+  
+  \textbf{kernel PCA}：**
+  
+  \textbf{local linear Embedding LLE}：
+  
+  \quad 对每一样本$x^{(i)}$寻找$k$个相邻样本\ 相邻样本index的集合称$C_{x^{(i)}}$
+  
+  \quad 构建$(|S|, |S|)$矩阵$W$：
+  
+  \quad \quad 每一行向量$[W_{i1}, ..., W_{i|S|}]$满足$x^{(i)} - \sum_{j \in C_{x^{(i)}}} W_{ij}x^{(j)}$
+  
+  \quad \quad 每一行向量$W_i$求和为1：$\sum_{i=1}^{|S|}W_i = 1$
+
+  \quad 由$W$创建新训练集：
+
+  \quad \quad 令$z^{(i)}$为$x^{(i)}$在低维的投影
+
+  \quad \quad 使所有$z^{(i)}$满足最小化$(z^{(i)} - \sum_{j=1}^{|B|}w_{ij}z^{(j)})^2$
+
+% ----------------------------------------------------------------------
+% |                              无监督学习                                |
+% ----------------------------------------------------------------------
+\section{无监督学习}
+\noindent \textbf{clustering}
+
+  
+
+
 % ----------------------------------------------------------------------
 % |                              分析结果                                |
 % ----------------------------------------------------------------------
