@@ -1,0 +1,52 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx} %插入图片的宏包
+\usepackage{float} %设置图片浮动位置的宏包
+\geometry{a4paper,scale=0.8}
+\sectionfont{\bfseries\Large\raggedright}
+
+\title{torch笔记}
+\author{徐世桐}
+\date{}
+\begin{document}
+\maketitle
+
+% ----------------------------------------------------------------------
+% |                              import                                |
+% ----------------------------------------------------------------------
+\section{import}
+
+
+
+% ----------------------------------------------------------------------
+% |                           tensor数据类型                             |
+% ----------------------------------------------------------------------
+\section{tensor数据类型}
+\noindent \texttt{torch.arange}
+
+  \texttt{torch.arange(a)} 得到Tensor$[0, 1, ..., \lfloor a \rfloor]$
+
+  \texttt{torch.arange(a, b)} 得到Tensor$[a, a+1, ..., a+n]$，n为整数且$a+n < b$
+
+  \texttt{torch.arange(a, b, c)} 得到Tensor$[a, a+c, ..., a+nc]$，n为整数且$a+nc < b$\\
+\texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
+\texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
+\texttt{+-*/} 同NDArray使用广播机制\\
+\texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
+\texttt{torch.random(MEAN, STD, SIZE*)}
+
+  \texttt{size=($x_1, x_2, ...$)} 限定输出张量形状
+
+  \texttt{mean=Tensor}, \texttt{std=Tensor/const} 当没有限定size时\texttt{mean}必为float Tensor，形状和输出形状相同。
+
+  \texttt{mean=Tensor/const}, \texttt{std=Tensor/const} 当限定size后\texttt{mean, std}可为const或单个值的Tensor\\
+\texttt{torch.rand(SIZE*)}
+
+  得到SIZE形状的随机数张量，每一元素$\in [0,1)$。SIZE无定义则得到const随机数
+
+  代替torch.uniform功能\\
+\textbf{}
+
+
+\end{document}
