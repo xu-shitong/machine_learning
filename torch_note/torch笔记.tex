@@ -1,0 +1,83 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx} %插入图片的宏包
+\usepackage{float} %设置图片浮动位置的宏包
+\usepackage{setspace}
+\geometry{a4paper,scale=0.8}
+\sectionfont{\bfseries\Large\raggedright}
+
+\title{torch笔记}
+\author{徐世桐}
+\date{}
+\begin{document}
+\maketitle
+
+% ----------------------------------------------------------------------
+% |                              import                                |
+% ----------------------------------------------------------------------
+\section{import}
+\noindent \texttt{from torch import nn}\\
+\texttt{import torch.nn.functional as F}\\
+\texttt{import torch.optim as optim}
+
+
+% ----------------------------------------------------------------------
+% |                           tensor数据类型                             |
+% ----------------------------------------------------------------------
+\section{tensor数据类型}
+\noindent \texttt{torch.arange}
+
+  \texttt{torch.arange(a)} 得到Tensor$[0, 1, ..., \lfloor a \rfloor]$
+
+  \texttt{torch.arange(a, b)} 得到Tensor$[a, a+1, ..., a+n]$，n为整数且$a+n < b$
+
+  \texttt{torch.arange(a, b, c)} 得到Tensor$[a, a+c, ..., a+nc]$，n为整数且$a+nc < b$\\
+\texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
+\texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
+\texttt{+-*/} 同NDArray使用广播机制\\
+\texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
+\texttt{torch.random(MEAN, STD, SIZE*)}
+
+  \texttt{size=($x_1, x_2, ...$)} 限定输出张量形状
+
+  \texttt{mean=Tensor}, \texttt{std=Tensor/const} 当没有限定size时\texttt{mean}必为float Tensor，形状和输出形状相同。
+
+  \texttt{mean=Tensor/const}, \texttt{std=Tensor/const} 当限定size后\texttt{mean, std}可为const或单个值的Tensor\\
+\texttt{torch.rand(SIZE*)}
+
+  得到SIZE形状的随机数张量，每一元素$\in [0,1)$。SIZE无定义则得到const随机数
+
+  代替torch.uniform功能\\
+\texttt{dataset = torch.utils.data.TensorDataset(样本Tensor, 标签Tensor)}\\
+\texttt{dataiter = torch.utils.data.DataLoader(dataset, batch\_size=批量大小, shuffle=True)}
+
+  使用torch进行批量迭代\\
+
+
+% ----------------------------------------------------------------------
+% |                           torch神经网络                              |
+% ----------------------------------------------------------------------
+\section{torch神经网络}
+\noindent \texttt{net = nn.Sequential()}\\
+神经网络定义：\texttt{net.add\_module('层名', 层)}\\
+层定义：
+
+  \texttt{nn.Linear(输入节点数，输出节点数)} 定义全连接层
+
+  \texttt{}\\
+\textbf{可使用层直接进行前向计算，训练函数中使用[layer.weight, net.bias]传入参数}\\
+\texttt{net.weight/bias.data.fill\_(值)} 对层中所有权重/偏差赋值\\
+\texttt{nn.init.xavier\_uniform(net.weight/.bias)} 对层中所有权重/偏差使用xavier初始化\\
+\texttt{loss = nn.MSELoss()} 平方代价函数\\
+\texttt{trainer = optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数
+
+  trainer.step() 进行迭代\\
+\texttt{net.parameters()} 得到权重
+
+  
+
+  
+
+
+\end{document}
