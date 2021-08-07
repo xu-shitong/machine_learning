@@ -21,6 +21,23 @@
 \texttt{import torch.nn.functional as F}\\
 \texttt{import torch.optim as optim}
 
+% ----------------------------------------------------------------------
+% |                           tensor使用GPU                             |
+% ----------------------------------------------------------------------
+\section{tensor使用GPU}
+\noindent \texttt{}
+\texttt{if torch.cuda.is\_available():}\\
+\texttt{  dev = "cuda:0"}\\
+\texttt{else:}\\
+\texttt{  dev = "cpu"}\\
+\texttt{device = torch.device(dev)}
+
+  得到device数据类型，定义使用CPU或使用哪一GPU\\
+\texttt{Tensor.get\_device()}
+
+  查看张量存在的CPU/GPU
+
+
 
 % ----------------------------------------------------------------------
 % |                           tensor数据类型                             |
@@ -32,11 +49,23 @@
 
   \texttt{torch.arange(a, b)} 得到Tensor$[a, a+1, ..., a+n]$，n为整数且$a+n < b$
 
-  \texttt{torch.arange(a, b, c)} 得到Tensor$[a, a+c, ..., a+nc]$，n为整数且$a+nc < b$\\
+  \texttt{torch.arange(a, b, c)} 得到Tensor$[a, a+c, ..., a+nc]$，n为整数且$a+nc < b$
+  
+  \texttt{torch.arange(..., requires\_grad=True)} 分配空间记录斜率，同mxnet的attach\_grad()
+  
+  \texttt{torch.arange(..., device=device数据类型)} 将张量分配进指定CPU/GPU\\
+\texttt{torch.tesnor([], REQUIRES\_GRAD, DEVICE)}
+  
+  通过python数组创建Tensor
+
+  REQUIRES\_GRAD = \texttt{True} 分配空间记录斜率
+  
+  DEVICE = \texttt{device数据类型} 将张量分配进指定CPU/GPU\\
 \texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
 \texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
 \texttt{+-*/} 同NDArray使用广播机制\\
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
+\texttt{Tensor.to(device)} 将张量分配进指定CPU/GPU\\
 \texttt{torch.random(MEAN, STD, SIZE*)}
 
   \texttt{size=($x_1, x_2, ...$)} 限定输出张量形状
@@ -52,7 +81,9 @@
 \texttt{dataset = torch.utils.data.TensorDataset(样本Tensor, 标签Tensor)}\\
 \texttt{dataiter = torch.utils.data.DataLoader(dataset, batch\_size=批量大小, shuffle=True)}
 
-  使用torch进行批量迭代\\
+  使用torch进行批量迭代
+  
+  dataiter输出的feature，label使用的CPU/GPU\ 和样本Tensor，标签Tensor使用的CPU/GPU分别对应
 
 
 % ----------------------------------------------------------------------
@@ -67,13 +98,15 @@
 
   \texttt{}\\
 \textbf{可使用层直接进行前向计算，训练函数中使用[layer.weight, net.bias]传入参数}\\
+\textbf{前向计算为(|B|, 特征数) 和\ 权重\ 矩阵相乘}\\
 \texttt{net.weight/bias.data.fill\_(值)} 对层中所有权重/偏差赋值\\
 \texttt{nn.init.xavier\_uniform(net.weight/.bias)} 对层中所有权重/偏差使用xavier初始化\\
 \texttt{loss = nn.MSELoss()} 平方代价函数\\
 \texttt{trainer = optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数
 
   trainer.step() 进行迭代\\
-\texttt{net.parameters()} 得到权重
+\texttt{net.parameters()} 得到权重\\
+\texttt{loss(y\_hat, y).backward()} 得到代价函数值，求导
 
   
 

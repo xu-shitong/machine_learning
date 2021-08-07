@@ -6,6 +6,14 @@ from pandas.plotting import scatter_matrix
 import torch.nn as nn
 import torch.optim as optim
 
+# define device used
+if torch.cuda.is_available():
+  dev = 'cuda:0'
+else:
+  dev = 'cpu'
+
+device = torch.device(dev)
+
 # define super parameters
 sample_size = 1000
 feature_num = 3
@@ -14,11 +22,11 @@ batch_size = 10
 learning_rate = 0.3
 
 # define training data 
-true_w = torch.tensor([4, 2.3, 6]).reshape((-1, 1))
-true_b = torch.tensor(0.5)
-training_feature = torch.normal(0, 0.1, size=(sample_size, feature_num))
-training_label = torch.mm(training_feature, true_w) + true_b
-training_label += torch.normal(0, 0.01, size=(sample_size, 1))
+true_w = torch.tensor([4, 2.3, 6]).reshape((-1, 1)).to(device)
+true_b = torch.tensor(0.5).to(device)
+training_feature = torch.normal(0, 0.1, size=(sample_size, feature_num)).to(device)
+training_label = torch.mm(training_feature, true_w) + true_b.to(device)
+training_label += torch.normal(0, 0.01, size=(sample_size, 1)).to(device)
 dataset = torch.utils.data.TensorDataset(training_feature, training_label)
 dataiter = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
