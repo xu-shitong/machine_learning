@@ -22,11 +22,11 @@ batch_size = 10
 learning_rate = 0.3
 
 # define training data 
-true_w = torch.tensor([4, 2.3, 6]).reshape((-1, 1)).to(device)
-true_b = torch.tensor(0.5).to(device)
-training_feature = torch.normal(0, 0.1, size=(sample_size, feature_num)).to(device)
-training_label = torch.mm(training_feature, true_w) + true_b.to(device)
-training_label += torch.normal(0, 0.01, size=(sample_size, 1)).to(device)
+true_w = torch.tensor([4, 2.3, 6], device=device).reshape((-1, 1))
+true_b = torch.tensor(0.5, device=device)
+training_feature = torch.normal(0, 0.1, size=(sample_size, feature_num), device=device)
+training_label = torch.mm(training_feature, true_w) + true_b
+training_label += torch.normal(0, 0.01, size=(sample_size, 1), device=device)
 dataset = torch.utils.data.TensorDataset(training_feature, training_label)
 dataiter = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
@@ -48,6 +48,7 @@ loss = nn.MSELoss()
 trainer = optim.SGD(net.parameters(), lr=learning_rate)
 
 # train
+print(f"training using {dev}")
 for i in range(epoch_num):
   trainer.zero_grad()
   acc_loss = 0
