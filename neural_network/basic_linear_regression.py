@@ -1,8 +1,8 @@
 import torch
 import numpy as np
-import pandas
-import matplotlib.pyplot as plt
-from pandas.plotting import scatter_matrix
+# import pandas
+# import matplotlib.pyplot as plt
+# from pandas.plotting import scatter_matrix
 import torch.nn as nn
 import torch.optim as optim
 
@@ -42,7 +42,7 @@ dataiter = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=T
 
 # define network 
 net = nn.Sequential()
-net.add_module('layer1', nn.Linear(feature_num, 1))
+net.add_module('layer1', nn.Linear(feature_num, 1).to(device))
 
 loss = nn.MSELoss()
 trainer = optim.SGD(net.parameters(), lr=learning_rate)
@@ -61,3 +61,6 @@ for i in range(epoch_num):
   print(f"epoch {i+1} has acc loss: {acc_loss}")
 
 print(f"final parameters: {net.parameters()}")
+
+for param in list(net.parameters()):
+  print(f"paramname: {param.name} has parameter {param.data}")
