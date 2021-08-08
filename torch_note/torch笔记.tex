@@ -83,8 +83,9 @@
 
   使用torch进行批量迭代
   
-  dataiter输出的feature，label使用的CPU/GPU\ 和样本Tensor，标签Tensor使用的CPU/GPU分别对应
-
+  dataiter输出的feature，label使用的CPU/GPU\ 和样本Tensor，标签Tensor使用的CPU/GPU分别对应\\
+\texttt{torch.save(Tensor, '文件名')} 文件中保存一张量\\
+\texttt{Tensor = torch.load('文件名')} 读取文件中张量
 
 % ----------------------------------------------------------------------
 % |                           torch神经网络                              |
@@ -99,13 +100,20 @@
   \texttt{}\\
 \textbf{可使用层直接进行前向计算，训练函数中使用[layer.weight, net.bias]传入参数}\\
 \textbf{前向计算为(|B|, 特征数) 和\ 权重\ 矩阵相乘}\\
-\texttt{net.weight/bias.data.fill\_(值)} 对层中所有权重/偏差赋值\\
-\texttt{nn.init.xavier\_uniform(net.weight/.bias)} 对层中所有权重/偏差使用xavier初始化\\
+\textbf{使用GPU时层定义后需加.to(device), 并不可以使用device=赋GPU}\\
+\texttt{net.weight/bias.data.fill\_(值)} 对\textbf{层}中所有权重/偏差赋值\\
+\texttt{nn.init.xavier\_uniform(net.weight/.bias)} 对\textbf{层}中所有权重/偏差使用xavier初始化\\
 \texttt{loss = nn.MSELoss()} 平方代价函数\\
 \texttt{trainer = optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数
 
   trainer.step() 进行迭代\\
-\texttt{net.parameters()} 得到权重\\
+\texttt{net.parameters()} 得到权重
+
+  \texttt{list(net.parameters())} 得到param类型数组，包含\texttt{[第一层权重, 第一层偏差, ..., 最后一层参数]}
+  
+  \texttt{param类型数组.data} 得到参数张量
+  
+  \texttt{param类型数组.name} 得到所属层名，可为空\\
 \texttt{loss(y\_hat, y).backward()} 得到代价函数值，求导
 
   
