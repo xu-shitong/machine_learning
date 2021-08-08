@@ -17,7 +17,7 @@ device = torch.device(dev)
 # define super parameters
 sample_size = 1000
 feature_num = 3
-epoch_num = 30
+epoch_num = 10
 batch_size = 10
 learning_rate = 0.3
 
@@ -45,7 +45,8 @@ net = nn.Sequential()
 net.add_module('layer1', nn.Linear(feature_num, 1).to(device))
 
 loss = nn.MSELoss()
-trainer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
+# trainer = optim.SGD(net.parameters(), lr=0.7, momentum=0.9)
+trainer = optim.Adam(net.parameters(), lr=0.7)
 
 # train
 print(f"training using {dev}")
@@ -66,3 +67,6 @@ print(f"final parameters: {net.parameters()}")
 
 for param in list(net.parameters()):
   print(f"paramname: {param.name} has parameter {param.data}")
+
+torch.save(net, 'parameter_log/basic_linear_regression.log')
+print("data saved in parameter_log/basic_linear_regression.log")

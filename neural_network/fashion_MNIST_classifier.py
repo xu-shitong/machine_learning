@@ -2,6 +2,9 @@ from sklearn.datasets import fetch_openml
 import torch
 from torch import nn
 import torch.optim as optim
+import torch.nn.functional as F
+import torchvision
+import torchvision.transforms as transforms
 # import matplotlib.pyplot as plt
 
 # define device used
@@ -15,7 +18,7 @@ device = torch.device(dev)
 
 # define training superparameter
 train_test_ratio = 0.9
-leanring_rate = 0.9
+leanring_rate = 0.001
 batch_size = 10
 epoch_num = 20
 
@@ -38,29 +41,49 @@ train_iter = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuff
 # plt.show()
 
 # define network, using LeNet
-net = nn.Sequential(
-  nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5, stride=1), # 24*24
-  nn.Sigmoid(),
-  nn.MaxPool2d(kernel_size=2,stride=2), # 12*12
-  nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1), # 8*8
-  nn.Sigmoid(),
-  nn.MaxPool2d(kernel_size=2, stride=2), # 4*4
-  nn.Flatten(),
-  nn.Linear(4*4*16, 120),
-  nn.Sigmoid(),
-  nn.Linear(120, 84),
-  nn.Sigmoid(),
-  nn.Linear(84, 10),
-  nn.Softmax(dim=1)
-)
+# net = nn.Sequential(
+#   nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5, stride=1), # 24*24
+#   nn.Sigmoid(),
+#   nn.MaxPool2d(kernel_size=2,stride=2), # 12*12
+#   nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1), # 8*8
+#   nn.Sigmoid(),
+#   nn.MaxPool2d(kernel_size=2, stride=2), # 4*4
+#   nn.Flatten(),
+#   nn.Linear(4*4*16, 120),
+#   nn.Sigmoid(),
+#   nn.Linear(120, 84),
+#   nn.Sigmoid(),
+#   nn.Linear(84, 10),
+#   nn.Softmax(dim=1)
+# )
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 6, 5) # 24*24
+        self.pool = nn.MaxPool2d(2, 2) # 12*12
+        self.conv2 = nn.Conv2d(6, 16, 5) # 8*8
+        self.fc1 = nn.Linear(16 * 4 * 4, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 10)
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = torch.flatten(x, 1) # flatten all dimensions except batch
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+net = Net()
 net.to(device)
 
 # define loss, trainer
 loss = nn.CrossEntropyLoss()
 # trainer = optim.SGD(net.parameters(), lr=leanring_rate) # trial trainer 1
-trainer = optim.SGD(net.parameters(), lr=leanring_rate, momentum=0.9) # trial trainer 2
+# trainer = optim.SGD(net.parameters(), lr=0.7, momentum=0.7) # trial trainer 2
+trainer = optim.Adam(net.parameters(), lr=0.001)
 
 # train 
+j=0
 for i in range(epoch_num):
 
   acc_loss = 0
@@ -68,9 +91,14 @@ for i in range(epoch_num):
     trainer.zero_grad()
     y_hat = net(X.reshape((10, 1, 28, 28)).float())
     l = loss(y_hat, y.long())
+    trainer.zero_grad()
     l.backward()
-    acc_loss += l
     trainer.step()
+    acc_loss += l
+    if j < 10 and i == 0: 
+      print(f"epoch 1 loss + {l}")
+      j+=1
+
   print(f"epoch {i+1} has loss {acc_loss / (len(train_iter) / batch_size)}")
 
 # test on test dataset
@@ -78,5 +106,5 @@ y_hat = net(test_feature_set.reshape((-1,1, 28,28)).float())
 l = loss(y_hat, test_label_set.long())
 print(f"test loss {l}")
 
-torch.save(net, '../training_outputs/fashion_MNIST_classifier.log')
-print(f"write net data to ../training_outputs/fashion_MNIST_classifier.log")
+torch.save(net, 'parameter_log/fashion_MNIST_classifier.log')
+print(f"write net data to parameter_log/fashion_MNIST_classifier.log")
