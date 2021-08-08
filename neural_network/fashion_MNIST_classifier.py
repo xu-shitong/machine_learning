@@ -15,9 +15,9 @@ device = torch.device(dev)
 
 # define training superparameter
 train_test_ratio = 0.9
-leanring_rate = 0.3
+leanring_rate = 0.9
 batch_size = 10
-epoch_num = 3
+epoch_num = 20
 
 # get dataset from MNIST
 mnist = fetch_openml('mnist_784', version=1)
@@ -45,14 +45,13 @@ net = nn.Sequential(
   nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1), # 8*8
   nn.Sigmoid(),
   nn.MaxPool2d(kernel_size=2, stride=2), # 4*4
-  # flatten?
   nn.Flatten(),
   nn.Linear(4*4*16, 120),
   nn.Sigmoid(),
   nn.Linear(120, 84),
   nn.Sigmoid(),
   nn.Linear(84, 10),
-  nn.Softmax()
+  nn.Softmax(dim=1)
 )
 net.to(device)
 
@@ -65,6 +64,7 @@ for i in range(epoch_num):
 
   acc_loss = 0
   for X, y in train_iter:
+    trainer.zero_grad()
     y_hat = net(X.reshape((10, 1, 28, 28)).float())
     l = loss(y_hat, y.long())
     l.backward()

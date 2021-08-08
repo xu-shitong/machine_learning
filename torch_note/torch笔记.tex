@@ -106,7 +106,9 @@
 \texttt{loss = nn.MSELoss()} 平方代价函数\\
 \texttt{trainer = optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数
 
-  trainer.step() 进行迭代\\
+  trainer.step() 进行迭代
+  
+  \textbf{每一迭代中trainer.grad\_zero()清零斜率，否则训练斜率为随机值，代价值在某一高值波动}\\
 \texttt{net.parameters()} 得到权重
 
   \texttt{list(net.parameters())} 得到param类型数组，包含\texttt{[第一层权重, 第一层偏差, ..., 最后一层参数]}
