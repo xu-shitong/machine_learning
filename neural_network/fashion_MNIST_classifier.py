@@ -57,7 +57,8 @@ net.to(device)
 
 # define loss, trainer
 loss = nn.CrossEntropyLoss()
-trainer = optim.SGD(net.parameters(), lr=leanring_rate)
+# trainer = optim.SGD(net.parameters(), lr=leanring_rate) # trial trainer 1
+trainer = optim.SGD(net.parameters(), lr=leanring_rate, momentum=0.9) # trial trainer 2
 
 # train 
 for i in range(epoch_num):
@@ -70,7 +71,12 @@ for i in range(epoch_num):
     l.backward()
     acc_loss += l
     trainer.step()
-  print(f"epoch {i+1} has loss {acc_loss}")
+  print(f"epoch {i+1} has loss {acc_loss / (len(train_iter) / batch_size)}")
 
-torch.save(net, 'fashion_MNIST_classifier.log')
-print(f"write net data to fashion_MNIST_classifier.log")
+# test on test dataset
+y_hat = net(test_feature_set.reshape((-1,1, 28,28)).float())
+l = loss(y_hat, test_label_set.long())
+print(f"test loss {l}")
+
+torch.save(net, '../training_outputs/fashion_MNIST_classifier.log')
+print(f"write net data to ../training_outputs/fashion_MNIST_classifier.log")

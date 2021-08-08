@@ -17,7 +17,7 @@ device = torch.device(dev)
 # define super parameters
 sample_size = 1000
 feature_num = 3
-epoch_num = 15
+epoch_num = 30
 batch_size = 10
 learning_rate = 0.3
 
@@ -45,19 +45,21 @@ net = nn.Sequential()
 net.add_module('layer1', nn.Linear(feature_num, 1).to(device))
 
 loss = nn.MSELoss()
-trainer = optim.SGD(net.parameters(), lr=learning_rate)
+trainer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
 
 # train
 print(f"training using {dev}")
 for i in range(epoch_num):
-  trainer.zero_grad()
   acc_loss = 0
   for X, y in dataiter:
     y_hat = net(X)
     l = loss(y_hat, y)
+    trainer.zero_grad()
     l.backward()
     trainer.step()
     acc_loss += l
+    if i == 0: 
+      print(f"epoch 1 loss+ {l}")
   print(f"epoch {i+1} has acc loss: {acc_loss}")
 
 print(f"final parameters: {net.parameters()}")
