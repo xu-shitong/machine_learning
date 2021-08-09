@@ -9,7 +9,7 @@ def train(net, data_iter, loss, trainer, epoch_num, fst_display_num=5):
     acc_loss = 0
     for X, y in data_iter:
       y_hat = net(X)
-      l = loss(y_hat, y.long())
+      l = loss(y_hat, y)
       trainer.zero_grad()
       l.backward()
       trainer.step()
