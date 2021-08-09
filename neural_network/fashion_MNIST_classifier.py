@@ -2,7 +2,6 @@ from sklearn.datasets import fetch_openml
 import torch
 from torch import nn
 import torch.optim as optim
-import torch.nn.functional as F
 # import matplotlib.pyplot as plt
 
 # define device used
@@ -39,39 +38,20 @@ train_iter = torch.utils.data.DataLoader(train_set, batch_size=batch_size, shuff
 # plt.show()
 
 # define network, using LeNet
-# net = nn.Sequential(
-#   nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5, stride=1), # 24*24
-#   nn.Sigmoid(),
-#   nn.MaxPool2d(kernel_size=2,stride=2), # 12*12
-#   nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1), # 8*8
-#   nn.Sigmoid(),
-#   nn.MaxPool2d(kernel_size=2, stride=2), # 4*4
-#   nn.Flatten(),
-#   nn.Linear(4*4*16, 120),
-#   nn.Sigmoid(),
-#   nn.Linear(120, 84),
-#   nn.Sigmoid(),
-#   nn.Linear(84, 10),
-#   nn.Softmax(dim=1)
-# )
-class Net(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = nn.Conv2d(1, 6, 5) # 24*24
-        self.pool = nn.MaxPool2d(2, 2) # 12*12
-        self.conv2 = nn.Conv2d(6, 16, 5) # 8*8
-        self.fc1 = nn.Linear(16 * 4 * 4, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
-    def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = torch.flatten(x, 1) # flatten all dimensions except batch
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-net = Net()
+net = nn.Sequential(
+  nn.Conv2d(in_channels=1, out_channels=6, kernel_size=5, stride=1), # 24*24
+  nn.Sigmoid(),
+  nn.MaxPool2d(kernel_size=2,stride=2), # 12*12
+  nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1), # 8*8
+  nn.Sigmoid(),
+  nn.MaxPool2d(kernel_size=2, stride=2), # 4*4
+  nn.Flatten(),
+  nn.Linear(4*4*16, 120),
+  nn.Sigmoid(),
+  nn.Linear(120, 84),
+  nn.Sigmoid(),
+  nn.Linear(84, 10)
+)
 net.to(device)
 
 # define loss, trainer

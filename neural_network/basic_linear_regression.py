@@ -5,6 +5,9 @@ import numpy as np
 # from pandas.plotting import scatter_matrix
 import torch.nn as nn
 import torch.optim as optim
+import sys
+sys.path.append('../machine_learning/')
+from utils.funcitons import train
 
 # define device used
 if torch.cuda.is_available():
@@ -49,24 +52,22 @@ loss = nn.MSELoss()
 trainer = optim.Adam(net.parameters(), lr=0.7)
 
 # train
-print(f"training using {dev}")
-for i in range(epoch_num):
-  acc_loss = 0
-  for X, y in dataiter:
-    y_hat = net(X)
-    l = loss(y_hat, y)
-    trainer.zero_grad()
-    l.backward()
-    trainer.step()
-    acc_loss += l
-    if i == 0: 
-      print(f"epoch 1 loss+ {l}")
-  print(f"epoch {i+1} has acc loss: {acc_loss}")
+# print(f"training using {dev}")
+# for i in range(epoch_num):
+#   acc_loss = 0
+#   for X, y in dataiter:
+#     y_hat = net(X)
+#     l = loss(y_hat, y)
+#     trainer.zero_grad()
+#     l.backward()
+#     trainer.step()
+#     acc_loss += l
+#     if i == 0: 
+#       print(f"epoch 1 loss+ {l}")
+#   print(f"epoch {i+1} has acc loss: {acc_loss}")
 
-print(f"final parameters: {net.parameters()}")
-
-for param in list(net.parameters()):
-  print(f"paramname: {param.name} has parameter {param.data}")
+# print(f"final parameters: {net.parameters()}")
+train(net, dataiter, loss, trainer, 100)
 
 torch.save(net, 'parameter_log/basic_linear_regression.log')
 print("data saved in parameter_log/basic_linear_regression.log")

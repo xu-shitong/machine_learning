@@ -103,10 +103,20 @@
 \textbf{使用GPU时层定义后需加.to(device), 并不可以使用device=赋GPU}\\
 \texttt{net.weight/bias.data.fill\_(值)} 对\textbf{层}中所有权重/偏差赋值\\
 \texttt{nn.init.xavier\_uniform(net.weight/.bias)} 对\textbf{层}中所有权重/偏差使用xavier初始化\\
-\texttt{loss = nn.MSELoss()} 平方代价函数\\
-\texttt{trainer = optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数
+\texttt{loss}
 
-  trainer.step() 进行迭代
+  \texttt{= nn.MSELoss(REDUCTION*)} 平方代价函数
+
+  \quad REDUCTION = \texttt{'none' | 'mean' | 'sum'} 得到每一样本代价值向量 | 得到平均代价 | 得到代价和。默认为'mean'
+
+  \texttt{= nn.CrossEntropyLoss()} 交叉熵损失函数，\textbf{已经包含softmax计算}\\
+\texttt{trainer}
+
+  \texttt{= optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数
+
+  \texttt{= optim.Adam(net.parameters(), lr=学习率)} Adam-SGD迭代
+
+  \texttt{trainer.step()} 进行迭代
   
   \textbf{每一迭代中trainer.grad\_zero()清零斜率，否则训练斜率为随机值，代价值在某一高值波动}\\
 \texttt{net.parameters()} 得到权重
@@ -117,6 +127,8 @@
   
   \texttt{param类型数组.name} 得到所属层名，可为空\\
 \texttt{loss(y\_hat, y).backward()} 得到代价函数值，求导
+
+  不会调用\texttt{.sum()} 或\texttt{.mean()}，求和方法在loss函数中定义
 
   
 
