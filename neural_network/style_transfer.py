@@ -32,10 +32,12 @@ transform = transforms.Compose([
   transforms.Normalize(image_mean, image_std)
 ])
 style_image = transform(Image.open('/Users/xushitong/Desktop/整合/背景/en-route.jpg')).reshape((1, 3, image_shape[0], image_shape[1]))
+style_image = style_image.to(device)
 content_image = transform(Image.open('/Users/xushitong/Desktop/整合/背景/moskou.jpg')).reshape((1, 3, image_shape[0], image_shape[1]))
+content_image = content_image.to(device)
 
 # define output image
-image = torch.normal(0, 1, size=((1, 3, image_shape[0], image_shape[1])))
+image = torch.normal(0, 1, size=((1, 3, image_shape[0], image_shape[1])), requires_grad=True, device=device)
 
 # define structure of model
 style_layers = [0, 5, 10, 19, 20]
@@ -43,6 +45,7 @@ content_layers = [25]
 net = nn.Sequential()
 for i in range(max(style_layers + content_layers) + 1):
   net.add_module(f'layer {i}', vgg19.features[i])
+net.to(device)
 
 def extract_feature(net, X, style_layers, content_layers):
   style_outputs = []
@@ -63,6 +66,10 @@ def loss(content_hat, src_content, style_hat, src_style, image, weights):
   def mean_square_loss(y_hat, y):
     return ((y - y_hat) ** 2).mean()
 
+  def gram(X):
+    X = X.reshape((X.shape[1], -1))
+    return torch.mm(X, X.T) / X.numel()
+
   # calculate content loss
   content_loss = 0
   for layer_index in range(len(src_content)):
@@ -72,9 +79,9 @@ def loss(content_hat, src_content, style_hat, src_style, image, weights):
   # calculate style loss
   style_loss = 0
   for layer_index in range(len(style_hat)):
-    X_hat = torch.flatten(style_hat[layer_index], start_dim=2)
-    X = torch.flatten(src_style[layer_index], start_dim=2)
-    style_loss += mean_square_loss(torch.mm(X, X.T), torch.mm(X_hat, X_hat.T))
+    X_hat = style_hat[layer_index]
+    X = src_style[layer_index]
+    style_loss += mean_square_loss(gram(X), gram(X_hat))
   print(f"style_loss: {style_loss}")
 
   # calculate tv loss
