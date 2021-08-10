@@ -43,13 +43,27 @@ dataiter = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=T
 # scatter_matrix(data, figsize=(12,10))
 # plt.show()
 
-# define network 
-net = nn.Sequential()
-net.add_module('layer1', nn.Linear(feature_num, 1).to(device))
+# # define network method 1
+# net = nn.Sequential()
+# net.add_module('layer1', nn.Linear(feature_num, 1).to(device))
+
+# define network method 2
+W = torch.ones(feature_num,1, requires_grad=True)
+b = torch.zeros(1, requires_grad=True)
+class MyNet(nn.Module):
+  def __init__(self) -> None:
+    super().__init__()
+    self.weight = W
+    self.bias = b
+
+  def forward(self, X):
+    return torch.mm(X, self.weight) + self.bias
+
+net = MyNet()
 
 loss = nn.MSELoss()
-# trainer = optim.SGD(net.parameters(), lr=0.7, momentum=0.9)
-trainer = optim.Adam(net.parameters(), lr=0.7)
+trainer = optim.SGD([W, b], lr=0.7, momentum=0.9)
+# trainer = optim.Adam(net.parameters(), lr=0.7)
 
 # train
 # print(f"training using {dev}")
@@ -67,7 +81,8 @@ trainer = optim.Adam(net.parameters(), lr=0.7)
 #   print(f"epoch {i+1} has acc loss: {acc_loss}")
 
 # print(f"final parameters: {net.parameters()}")
-train(net, dataiter, loss, trainer, 100)
+train(net, dataiter, loss, trainer, epoch_num)
+print(f"parameters: W: {W}, \nb: {b}")
 
 torch.save(net, 'parameter_log/basic_linear_regression.log')
 print("data saved in parameter_log/basic_linear_regression.log")

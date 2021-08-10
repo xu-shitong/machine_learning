@@ -128,7 +128,21 @@
   \texttt{param类型数组.name} 得到所属层名，可为空\\
 \texttt{loss(y\_hat, y).backward()} 得到代价函数值，求导
 
-  不会调用\texttt{.sum()} 或\texttt{.mean()}，求和方法在loss函数中定义
+  不会调用\texttt{.sum()} 或\texttt{.mean()}，求和方法在loss函数中定义\\
+\texttt{class out\_image(nn.Module):}
+
+  \texttt{def \_\_init\_\_(self):}
+
+  \quad \texttt{super().\_\_init\_\_()}
+
+  \texttt{def forward(self, x):}
+
+  \quad 自定义神经网络\\
+\texttt{}
+
+  
+
+
 
   
 
