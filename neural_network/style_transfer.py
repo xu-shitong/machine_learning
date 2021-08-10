@@ -1,4 +1,3 @@
-from _typeshed import Self
 from torchvision import transforms
 import torchvision.models as models
 import torch
@@ -43,7 +42,7 @@ class GeneratedImage(nn.Module):
     super().__init__()
     self.param = nn.Linear(3, image_shape[0] * image_shape[1])
   def forward(self):
-    return self.param.weight.reshape((3, image_shape[0], image_shape[1]))
+    return self.param.weight.reshape((1, 3, image_shape[0], image_shape[1]))
 
 image = GeneratedImage()
 
@@ -107,13 +106,16 @@ _, _, src_content = extract_feature(net=net, X=content_image, style_layers=style
 
 # training
 for i in range(epoch_num):
-  Y, style_hat, content_hat = extract_feature(net=net, X=image, style_layers=style_layers, content_layers=content_layers)
-  l = loss(content_hat, src_content, style_hat, src_style, image, (content_weight, style_weight, tv_weight))
-  l.backward()
+  Y, style_hat, content_hat = extract_feature(net=net, X=image(), style_layers=style_layers, content_layers=content_layers)
+  l = loss(content_hat, src_content, style_hat, src_style, image(), (content_weight, style_weight, tv_weight))
+  if i == (epoch_num - 1):
+    l.backward()
+  else:
+    l.backward(retain_graph=True)
   trainer.step()
   print(f"epoch {i} loss: {l}")
 
 # output 
 print("======== finishi training =======")
-torch.save(image, 'parameter_log/style_transfer.log')
+torch.save(image(), 'parameter_log/style_transfer.log')
 print('data saved in parameter_log/style_transfer.log')
