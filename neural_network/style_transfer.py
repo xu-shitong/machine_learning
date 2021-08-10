@@ -1,3 +1,4 @@
+from _typeshed import Self
 from torchvision import transforms
 import torchvision.models as models
 import torch
@@ -37,7 +38,14 @@ content_image = transform(Image.open('/Users/xushitong/Desktop/整合/背景/mos
 content_image = content_image.to(device)
 
 # define output image
-image = torch.normal(0, 1, size=((1, 3, image_shape[0], image_shape[1])), requires_grad=True, device=device)
+class GeneratedImage(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.param = nn.Linear(3, image_shape[0] * image_shape[1])
+  def forward(self):
+    return self.param.weight.reshape((3, image_shape[0], image_shape[1]))
+
+image = GeneratedImage()
 
 # define structure of model
 style_layers = [0, 5, 10, 19, 20]
@@ -91,7 +99,7 @@ def loss(content_hat, src_content, style_hat, src_style, image, weights):
   # weighted sum of the three loss
   return weights[0] * content_loss + weights[1] * style_loss + weights[2] * tv_loss
 
-trainer = optim.Adam([image], lr=learning_rate)
+trainer = optim.Adam(image.parameters(), lr=learning_rate)
 
 # define loss from style and content image
 _, src_style, _ = extract_feature(net=net, X=style_image, style_layers=style_layers, content_layers=content_layers)
