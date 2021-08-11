@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 import sys
 sys.path.append('../machine_learning/')
-from utils.funcitons import train
+from utils.functions import train
 
 # define device used
 if torch.cuda.is_available():

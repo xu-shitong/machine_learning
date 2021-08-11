@@ -1,4 +1,5 @@
-
+import torch
+from torchvision import transforms
 
 # carry out EPOCH_NUM times
 # print out FST_DISPLAY_NUM loss values in the first batch
@@ -22,3 +23,8 @@ def train(net, data_iter, loss, trainer, epoch_num, fst_display_num=5):
   print("======= training finished ========")
   for param in list(net.parameters()):
     print(f"paramname: {param.name} has parameter {param.data}")
+
+def show_tensor_image(image_path, image_shape):
+  image_ = torch.load(image_path, map_location=torch.device('cpu'))
+  image = transforms.ToPILImage()(image_.reshape(image_shape))
+  image.show()
