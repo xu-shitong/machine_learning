@@ -16,7 +16,7 @@ device = torch.device(dev)
 
 # define super parameters
 content_weight, style_weight, tv_weight = 1, 1e3, 5
-epoch_num = 2
+epoch_num = 450
 image_shape = (1800, 1024)
 learning_rate = 0.01
 
@@ -31,9 +31,9 @@ transform = transforms.Compose([
   transforms.ToTensor(),
   transforms.Normalize(image_mean, image_std)
 ])
-style_image = transform(Image.open('/Users/xushitong/Desktop/整合/背景/en-route.jpg')).reshape((1, 3, image_shape[0], image_shape[1]))
+style_image = transform(Image.open('en-route.jpg')).reshape((1, 3, image_shape[0], image_shape[1]))
 style_image = style_image.to(device)
-content_image = transform(Image.open('/Users/xushitong/Desktop/整合/背景/moskou.jpg')).reshape((1, 3, image_shape[0], image_shape[1]))
+content_image = transform(Image.open('moskou.jpg')).reshape((1, 3, image_shape[0], image_shape[1]))
 content_image = content_image.to(device)
 
 # define output image
@@ -45,6 +45,7 @@ class GeneratedImage(nn.Module):
     return self.param.weight.reshape((1, 3, image_shape[0], image_shape[1]))
 
 image = GeneratedImage()
+image.to(device)
 
 # define structure of model
 style_layers = [0, 5, 10, 19, 20]
@@ -81,7 +82,6 @@ def loss(content_hat, src_content, style_hat, src_style, image, weights):
   content_loss = 0
   for layer_index in range(len(src_content)):
     content_loss += mean_square_loss(content_hat[layer_index], src_content[layer_index])
-  print(f"content_loss: {content_loss}")
 
   # calculate style loss
   style_loss = 0
@@ -89,14 +89,12 @@ def loss(content_hat, src_content, style_hat, src_style, image, weights):
     X_hat = style_hat[layer_index]
     X = src_style[layer_index]
     style_loss += mean_square_loss(gram(X), gram(X_hat))
-  print(f"style_loss: {style_loss}")
 
   # calculate tv loss
   tv_loss = abs(image[:, :, :-1, :] - image[:, :, 1:, :]).mean() + abs(image[:, :, :, :-1] - image[:, :, :, 1:]).mean()
-  print(f"tv_loss: {tv_loss}")
   
   # weighted sum of the three loss
-  return weights[0] * content_loss + weights[1] * style_loss + weights[2] * tv_loss
+  return weights[0] * content_loss, weights[1] * style_loss, weights[2] * tv_loss
 
 trainer = optim.Adam(image.parameters(), lr=learning_rate)
 
@@ -107,13 +105,15 @@ _, _, src_content = extract_feature(net=net, X=content_image, style_layers=style
 # training
 for i in range(epoch_num):
   Y, style_hat, content_hat = extract_feature(net=net, X=image(), style_layers=style_layers, content_layers=content_layers)
-  l = loss(content_hat, src_content, style_hat, src_style, image(), (content_weight, style_weight, tv_weight))
+  c_loss, s_loss, tv_loss = loss(content_hat, src_content, style_hat, src_style, image(), (content_weight, style_weight, tv_weight))
+  l = c_loss + s_loss + tv_loss
   if i == (epoch_num - 1):
     l.backward()
   else:
     l.backward(retain_graph=True)
   trainer.step()
-  print(f"epoch {i} loss: {l}")
+  if (i % 50) == 0: 
+      print(f"epoch {i} loss: {c_loss}, {s_loss}, {tv_loss}, total: {l}")
 
 # output 
 print("======== finishi training =======")
