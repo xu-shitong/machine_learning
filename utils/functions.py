@@ -24,7 +24,6 @@ def train(net, data_iter, loss, trainer, epoch_num, fst_display_num=5):
   for param in list(net.parameters()):
     print(f"paramname: {param.name} has parameter {param.data}")
 
-def show_tensor_image(image_path, image_shape):
-  image_ = torch.load(image_path, map_location=torch.device('cpu'))
-  image = transforms.ToPILImage()(image_.reshape(image_shape))
+def show_tensor_image(image_tensor):
+  image = transforms.ToPILImage()(image_tensor)
   image.show()

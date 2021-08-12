@@ -17,9 +17,10 @@
 % |                              import                                |
 % ----------------------------------------------------------------------
 \section{import}
-\noindent \texttt{from torch import nn}\\
+\noindent \texttt{from torch import nn, optim}\\
 \texttt{import torch.nn.functional as F}\\
-\texttt{import torch.optim as optim}
+\texttt{from torchvision import models, transforms}\\
+\texttt{from PIL import Image}
 
 % ----------------------------------------------------------------------
 % |                           tensor使用GPU                             |
@@ -65,6 +66,8 @@
 \texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
 \texttt{+-*/} 同NDArray使用广播机制\\
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
+\texttt{Tensor.permute(SHAPE)} 等同mxnet的transpose，更改纬度顺序\\
+\texttt{Tnesor.transpose(dim0, dim1)} 交换两个纬度\\
 \texttt{Tensor.to(device)} 将张量分配进指定CPU/GPU\\
 \texttt{torch.random(MEAN, STD, SIZE*)}
 
@@ -85,7 +88,8 @@
   
   dataiter输出的feature，label使用的CPU/GPU\ 和样本Tensor，标签Tensor使用的CPU/GPU分别对应\\
 \texttt{torch.save(Tensor, '文件名')} 文件中保存一张量\\
-\texttt{Tensor = torch.load('文件名')} 读取文件中张量
+\texttt{Tensor = torch.load('文件名')} 读取文件中张量\\
+\texttt{torch.cuda.synchronize()} 等待异步计算结束，打印结果同样等待异步计算
 
 % ----------------------------------------------------------------------
 % |                           torch神经网络                              |
@@ -138,9 +142,28 @@
   \texttt{def forward(self, x):}
 
   \quad 自定义神经网络\\
-\texttt{}
+\texttt{net = models.NET\_NAME(pretrained=True)} 得到预训练的神经网络\\
 
+
+% ----------------------------------------------------------------------
+% |                             读取图像                                 |
+% ----------------------------------------------------------------------
+\section{读取图像}
+\noindent \texttt{image = Image.open('图像路径'))}
+
+  得到图片，显示图片直接调取\texttt{image.show()}，显示结果不阻断python程序。\\
+\texttt{transform = transforms.Compose([trans1, trnas2, ...])}
+
+  合并多个对图像的变换
+
+  \texttt{transforms.Resize(图片形状)} 缩放图片
+
+  \texttt{transforms.ToTensor()} 图片变为张量
+
+  \texttt{transforms.Normalize(MEAN, STD)} 对图片的张量输入，求标准化。MEAN，STD可为张量
   
+  \quad 内部实现：对RGB 3通道上的像素分别使用(3, )形状的MEAN，STD值求标准化\\
+\texttt{}
 
 
 
