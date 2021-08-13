@@ -27,3 +27,8 @@ def train(net, data_iter, loss, trainer, epoch_num, fst_display_num=5):
 def show_tensor_image(image_tensor):
   image = transforms.ToPILImage()(image_tensor)
   image.show()
+
+def un_normalize_image(image_tensor, rgb_mean, rgb_std):
+  image_tensor = image_tensor.permute((1, 2, 0))
+  image_tensor = (image_tensor * rgb_std) + rgb_mean
+  return image_tensor.permute((2,0,1))
