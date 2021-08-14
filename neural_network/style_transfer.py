@@ -22,7 +22,7 @@ else:
 device = torch.device(dev)
 
 # define super parameters
-content_weight, style_weight, tv_weight = 1, 1e8, 10
+content_weight, style_weight, tv_weight = 1, 1e9, 0.1
 epoch_num = 5000
 image_shape = (150, 225)
 learning_rate = 0.01
