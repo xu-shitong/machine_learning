@@ -25,6 +25,7 @@ def train(net, data_iter, loss, trainer, epoch_num, fst_display_num=5):
     print(f"paramname: {param.name} has parameter {param.data}")
 
 def show_tensor_image(image_tensor):
+  image_tensor = image_tensor.clamp(min=0, max=1)
   image = transforms.ToPILImage()(image_tensor)
   image.show()
 

@@ -22,8 +22,8 @@ else:
 device = torch.device(dev)
 
 # define super parameters
-content_weight, style_weight, tv_weight = 1, 1e9, 0.1
-epoch_num = 5000
+content_weight, style_weight, tv_weight = 1, 1e3, 10
+epoch_num = 500
 image_shape = (150, 225)
 learning_rate = 0.01
 
@@ -81,13 +81,14 @@ def extract_feature(image, style_layers, content_layers):
   for i in range(0, len(net)):
     X = net[i](X)
     if i in style_layers:
-      # X_copy = X.detach().clone()
-      # styles.append(X_copy) 
-      styles.append(X)
+      X_copy = X.clone()
+      styles.append(X_copy) 
+      # styles.append(X)
     if i in content_layers:
-      # X_copy = X.detach().clone()
-      # contents.append(X_copy) 
-      contents.append(X)
+      X_copy = X.clone()
+      contents.append(X_copy) 
+      # contents.append(X)
+      # print(contents)
   
   return styles, contents
 
@@ -156,7 +157,7 @@ def loss(contents_hat, src_content, styles_Y_hat, styles_Y_gram, image):
   style_l=0
   for Y_hat, Y in zip( styles_Y_hat, styles_Y_gram):
     _, d, h, w = Y_hat.shape
-    style_l += (gram(Y_hat) - Y).square().mean() / (d * h * w)
+    style_l += (gram(Y_hat) - Y).square().mean()
   
   tv_l = tv_loss(image) * tv_weight
   
@@ -172,7 +173,7 @@ _, src_content = extract_feature(content_image, style_layers, content_layers)
 style_Y_gram = [gram(Y) for Y in src_style]
 # style_Y_gram = src_style
 
-# show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
+show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
 # show_tensor_image(image.reshape((3,150,225)))
 
 # training
@@ -217,12 +218,12 @@ for i in range(epoch_num):
   trainer.step()
   if (i % 10) == 0: 
     print(f"epoch {i} loss: {c_loss}, {s_loss}, {tv_l}, total: {tot_loss}")
-    # print(f"epoch {i} loss: total: {l}")
+    # print(f"epoch {i} loss: total: {l}")    
 
 # output 
 print("======== finish training =======")
 torch.save(image, 'parameter_log/style_transfer.log')
 print('data saved in parameter_log/style_transfer.log')
 
-# show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
+show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
 # show_tensor_image(image.reshape((3, 150, 225)))
