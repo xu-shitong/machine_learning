@@ -23,7 +23,7 @@ device = torch.device(dev)
 
 # define super parameters
 content_weight, style_weight, tv_weight = 1, 1e3, 10
-epoch_num = 500
+epoch_num = 5000
 image_shape = (150, 225)
 learning_rate = 0.01
 
@@ -173,7 +173,7 @@ _, src_content = extract_feature(content_image, style_layers, content_layers)
 style_Y_gram = [gram(Y) for Y in src_style]
 # style_Y_gram = src_style
 
-show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
+# show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
 # show_tensor_image(image.reshape((3,150,225)))
 
 # training
@@ -219,11 +219,15 @@ for i in range(epoch_num):
   if (i % 10) == 0: 
     print(f"epoch {i} loss: {c_loss}, {s_loss}, {tv_l}, total: {tot_loss}")
     # print(f"epoch {i} loss: total: {l}")    
+  if (i % 200) == 0 and i != 0:
+    for g in trainer.param_groups:
+      g['lr'] /= 10
+      print(f"learning rate decreased to {g['lr']}")
 
 # output 
 print("======== finish training =======")
 torch.save(image, 'parameter_log/style_transfer.log')
 print('data saved in parameter_log/style_transfer.log')
 
-show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
+# show_tensor_image(un_normalize_image(image.reshape((3,150,225)), image_mean, image_std))
 # show_tensor_image(image.reshape((3, 150, 225)))

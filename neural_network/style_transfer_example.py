@@ -91,10 +91,10 @@ style_weights = {'conv1_1': 1.5,
 content_weight = 1e-2  
 style_weight = 1e9  
 
-show = 10
+show = 100
 
 optimizer = optim.Adam([target], lr=0.01)
-steps = 50  
+steps = 5000  
 
 show_tensor_image(un_normalize_image(target.reshape((3,150,225)), image_mean, image_std))
 
