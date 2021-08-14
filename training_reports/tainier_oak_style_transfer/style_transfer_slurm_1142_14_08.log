@@ -1,3 +1,22 @@
+********************************************************
+This is log of the slurm file content
+time: 
+  Sat 14 Aug 11:34:10 BST 2021
+imple. main points:
+  1.use clone() instead of detach().clone() in extract_feature(), 
+    ensure gradient calculation take in account content and style loss
+    and solve asynchronous problem in feature extraction
+  2.output image initialize as content image
+  3.decreased learning rate every 200 epoch
+  4.super parameter: 1, 1e3, 10, same as tutorial
+  5.clamped output tensor, removed red plots in output images
+result: 
+  1.correctly reduced loss, output image correctly shows style from style image
+  2.redundent learning after 500 epoch since learning rate too small
+solution: 
+  1.moving to train moskou.jpg and en-route.jpg
+  2.change learning epoch number to 500
+********************************************************
 /var/spool/slurm/d/job37817/slurm_script: line 7: [: missing `]'
 This is a test
 Today is Sat 14 Aug 11:34:10 BST 2021

@@ -163,13 +163,42 @@
   \texttt{transforms.Normalize(MEAN, STD)} 对图片的张量输入，求标准化。MEAN，STD可为张量
   
   \quad 内部实现：对RGB 3通道上的像素分别使用(3, )形状的MEAN，STD值求标准化\\
-\texttt{}
+\texttt{显示图片}
 
+  \texttt{image = transforms.ToPILImage()(image\_tensor)}
 
-
+  \texttt{image.show()}
   
+  \quad 或使用自定义包，支持反标准化
 
+  \texttt{import sys}
+
+  \texttt{sys.path.append('../machine\_learning/')}
+
+  \texttt{from utils.functions import show\_tensor\_image, un\_normalize\_image}
+
+  \texttt{show\_tensor\_image(un\_normalize\_image(image.reshape((3, height, width)), image\_mean, image\_std))}
+
+% ----------------------------------------------------------------------
+% |                             常见错误                                 |
+% ----------------------------------------------------------------------
+\section{常见错误}
+\noindent 调用\texttt{trainer.zero\_grad()}
+
+  否则参数代价值高，并迭代后不下降\\
+使用网络层作为权重，不参与斜率计算时\ 调用\texttt{layer.requires\_grad\_(False)}
+
+  否则调用\texttt{loss.backward()}时提示需要\texttt{retain\_graph=True}\\
+\texttt{transforms.ToPILImage()}不保证像素值在\texttt{[0,1]}区间，需调用\texttt{image\_tensor.clamp(min=0, max=1)}
+
+  d2lzh自动对图像做clip，保证值在\texttt{[0,1]}区间
   
+  否则图像中包含突出像素点，如红\ 紫\ 蓝像素。\\
+循环中更改\texttt{Tensor}值并将\texttt{Tensor}加入数组，使用\texttt{Tensor.clone()}复制斜率
 
+  否则下一迭代可能更改上一迭代已经加入数组的张量\\
+前向计算中不能调用\texttt{Tensor.detach()}
+
+  否则此项无法求斜率，无法进行迭代
 
 \end{document}
