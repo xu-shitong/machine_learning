@@ -367,11 +367,136 @@
 
   \textbf{GM Model}：假设所有样本都由多个正态分部产生
 
+
+% ----------------------------------------------------------------------
+% |                              对抗网络                                |
+% ----------------------------------------------------------------------
+\section{GAN对抗网络}
+\noindent \textbf{基本结构}：
+
+  generator：得到正则噪声，生成伪数据。
   
+  discriminator，从实际数据集或generator得到数据判断真伪(是否来自实际数据集)。
+
+  一次训练：
+
+  \quad 1.discriminator从数据集得到一批量真实数据\ 和\ 一批量伪数据。使用二元交叉熵损失函数训练
+
+  \quad \quad 目标为：对伪数据输出0\ 真数据1
+
+  \quad 2.generator生成图像
+  
+  \quad \quad 目标为生成discriminator输出为1的数据\\
+\textbf{Deep Convolutional GAN}
 
 
+% ----------------------------------------------------------------------
+% |                             RL强化学习                               |
+% ----------------------------------------------------------------------
+\section{RL强化学习}
+\noindent \textbf{基本定义}
 
+  程序在 environment环境中根据观测得到的 state状态，选择 action行为，得到reward反馈
 
+  模型整体符号定义<A, S, R, P>
+
+  \quad Action space $A$
+  
+  \quad State space $S$
+  
+  \quad Reward $R$: $\sum$ × $A$ × $S$ → $R$
+  
+  \quad Transition $P$: $\sum$ × $A$ → $S$
+
+  第$i$决策的符号定义：
+
+  \quad $a_i \in A$ 采取的行为
+
+  \quad $r_i \in R$ 得到的reward，每一行为可以立即得到反馈值
+  
+  exploring探索：模型尝试新行为
+  
+  exploiting利用：模型使用已知高反馈行为\\
+\textbf{policy}
+
+  根据观测选择$a_i$的算法
+
+  stochastic policy：policy中有随机性
+
+  \quad 随机性提高模型 explore新行为
+
+  generic algorithm：遗传算法
+
+  policy gradients：对参数求导，更新参数\\
+\textbf{credit assignment}：
+
+  对每一决策分配discounted reward，代表此决策对随后几次决策的反馈值影响
+
+  定义：
+
+  \quad $l$ 此次试验一共包含的决策数
+
+  计算：
+
+  \quad 第$l-1$决策有决策有discounted reward：$dr_i = r_i$
+  
+  \quad 第$i$决策有discounted reward：$dr_i = r_i + \gamma dr_{i+1}$
+  
+  \quad 正则化：对所有实验中每一次决策$r_i$取整体平均值，方差，求标准化\\
+\textbf{neural network policy}
+
+  \textbf{前向传播}：使用神经网络得到行为可能性，根据可能性选择行为。属于generic gradient policy
+
+  \textbf{迭代}：
+
+  \quad 定义：一次决策
+
+  \quad \quad 1.从policy得到行为可能性
+
+  \quad \quad 2.代价函数根据\ 采取的行为\ 和\ \textbf{采取的}行为可能性\ 计算代价值
+
+  \quad \quad 3.根据代价函数求斜率，斜率使神经网络输出可能性更偏向采取的行为。\textbf{但不立即使用斜率}
+
+  \quad 1.随机初始化1次模型，对$n$个随机初始化环境进行试验，每一试验中包含多个决策
+  
+  \quad \quad 每一环境得到决策数不一定相同，取决于试验中进行的决策次数
+
+  \quad 2.对每一决策求discounted reward
+  
+  \quad 3.对每一参数，斜率为$n$次训练中所有决策\ 对\ 此参数的斜率\ 的加权平均值。权重为discounted reward
+
+  \quad 4.使用权重更新参数值\\
+\textbf{Markov Decison Process MPD}
+
+  每一状态$s_i$有可执行的行为集合$A_{s_i} \subseteq A$。不同状态行为集合可有交集
+
+  行为$a_{ij} \in A_{s_i}$代表状态$s_i$执行行为$a_j$。执行$a_{ij}$后有$p_{a_{ij}, s_k}$几率到达状态$s_k$
+
+  optimal state value $V^*(s_i)$：
+  
+  \quad 模型到达状态$s_i$后1.选择最理想的$a_{ij}$能得到的discounted reward总和
+
+  \quad $V^*(s_i) = max_j \sum_s [p_{a_{ij}, s_k} (R(s_i, a_{ij}, s_j) + \gamma \cdot V^*(s_j))]$
+  
+  Q-value：
+
+  \quad 得到\ 从$s_i$选择$a_{ij}$后期望的discounted reward值
+
+  \quad 迭代：$Q_{n+1}(s_i, a_{ij}) = \sum_j [p(a_{ij}, s_j) (R(s_i, a_{ij}, s_j) + \gamma \cdot max_{a_{jk}} (Q_n(s_k, a_{jk})))]$
+  
+  policy：状态为$s_i$时选取$a_{ij} = max_{a_{ij}} Q^*(s_i, a_{ij})$\\
+\textbf{Temporal Difference Learning TD learing}
+
+  在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得到$V(s_i)$\\
+\textbf{Q-Learning}
+
+  在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得$Q(s_i, a_{ij})$
+
+  $Q_{n+1}(s_i, a_{ij}) = r'_i + \gamma \cdot max_k (Q_{n}(s_i, a_{jk}))$
+
+  
+  
+  deep Q-networks DQNs
 % ----------------------------------------------------------------------
 % |                              分析结果                                |
 % ----------------------------------------------------------------------
