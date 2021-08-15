@@ -478,7 +478,7 @@
 
   \quad $V^*(s_i) = max_j \sum_s [p_{a_{ij}, s_k} (R(s_i, a_{ij}, s_j) + \gamma \cdot V^*(s_j))]$
   
-  Q-value：
+  Q-value iteration algorithm：
 
   \quad 得到\ 从$s_i$选择$a_{ij}$后期望的discounted reward值
 
@@ -492,11 +492,10 @@
 
   在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得$Q(s_i, a_{ij})$
 
-  $Q_{n+1}(s_i, a_{ij}) = r'_i + \gamma \cdot max_k (Q_{n}(s_i, a_{jk}))$
+  $Q_{n+1}(s_i, a_{ij}) = r'_i + \gamma \cdot max_k (Q_{n}(s_i, a_{jk}))$\\
+\textbf{deep Q-networks DQNs}
 
   
-  
-  deep Q-networks DQNs
 % ----------------------------------------------------------------------
 % |                              分析结果                                |
 % ----------------------------------------------------------------------
