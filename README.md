@@ -16,3 +16,5 @@ training_reports: contains summary and result from each training in GPU cluster.
 
 ## Reference
 Chinese translation of `Hands-On Machine Learning` https://docsplayer.com/docview/105/168276284/#file=/storage/105/168276284/168276284.pdf 
+
+Only created and used for personal practise and reference, not for any commercial propose. 
