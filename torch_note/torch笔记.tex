@@ -55,13 +55,15 @@
   \texttt{torch.arange(..., requires\_grad=True)} 分配空间记录斜率，同mxnet的attach\_grad()
   
   \texttt{torch.arange(..., device=device数据类型)} 将张量分配进指定CPU/GPU\\
-\texttt{torch.tesnor([], REQUIRES\_GRAD, DEVICE)}
+\texttt{torch.tensor([], REQUIRES\_GRAD, DEVICE)}
   
   通过python数组创建Tensor
 
   REQUIRES\_GRAD = \texttt{True} 分配空间记录斜率
   
   DEVICE = \texttt{device数据类型} 将张量分配进指定CPU/GPU\\
+\texttt{torch.numpy()} 得到NDArray \\
+\texttt{torch.tolist()} 得到python 数组 \\
 \texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
 \texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
 \texttt{+-*/} 同NDArray使用广播机制\\

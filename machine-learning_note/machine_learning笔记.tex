@@ -141,17 +141,21 @@
 
   \quad \quad 前提：对每一样本$i$, $1.y^{(i)}\hat{p}^{(i)} \geq 1$，即标签和计算结果相同
 
-  \quad \quad 求解：使用拉格朗日乘数法，其中$\alpha$改为向量，非常数。$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\alpha^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
+  \quad \quad 求解：1.直接解以上带前提的不等式
 
-  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\alpha^{(i)}\hat{p}^{(i)}x^{(i)}$, $3.\sum_{i=1}^{m}\alpha^{(i)}\hat{p}^{(i)}=0$
+  \quad \quad \quad '当样本数高于参数数量时使用，由于dual form的复杂度为$O(|S|^2)$ - $O(|S|^3)$，直接解复杂度为$O(|S|)$'
+  
+  \quad \quad 2.使用拉格朗日乘数法得到dual form，其中$\alpha$改为向量，非常数。$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\alpha^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
 
-  \quad \quad \quad 带入得$\mathcal{L} (W, \alpha) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\alpha^{(i)}\alpha^{(j)}\hat{p}^{(i)}\hat{p}^{(j)}x^{(i)T}x^{(j)} - \sum_{i=1}^{|B|}\alpha^{(i)}$，解$\alpha$
+  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\alpha^{(i)}y^{(i)}x^{(i)}$, $3.\sum_{i=1}^{m}\alpha^{(i)}y^{(i)}=0$
 
-  \quad \quad \quad 解$W$：由$\alpha$带入1.式计算
+  \quad \quad \quad 带入得$\mathcal{L} (W, \alpha) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\alpha^{(i)}\alpha^{(j)}y^{(i)}y^{(j)}x^{(i)T}x^{(j)} - \sum_{i=1}^{|B|}\alpha^{(i)}$，解$\alpha$
+
+  \quad \quad \quad 解$W$：由$\alpha$带入2.式计算
 
   \quad \quad \quad 解$b$：由于所有support vector$x^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
 
-  \quad \quad \quad \quad $b = E(\hat{p}^{(i)}-W^Tx^{(i)})$
+  \quad \quad \quad \quad $b = E(y^{(i)}-W^Tx^{(i)})$
   
   \quad \textbf{软性分类}：
 
@@ -164,6 +168,8 @@
   非线性分类方法：
 
   \textbf{- 使用polynomial做$f$}
+
+  \quad 必须使用dual form求解，目的为\textbf{对$\phi(x)$得到线性权重和偏差}，求解使用dual form，其中包含$\phi(a)^T \cdot \phi(b)$项即可使用kernel method
 
   \textbf{- 使用similarity function}：
   
