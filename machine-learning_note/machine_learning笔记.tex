@@ -80,22 +80,28 @@
 
   定义：
 
-  \quad 对输入向量$X$，$C(X) \geq 0$为constrain。目标为在满足$C(X) \geq 0$的前提下取$f(X)$最值
+  \quad 对输入向量$W$，$g(W) \geq 0$为constrain。目标为在满足$g(W) \geq 0$的前提下取$f(W)$最值
 
-  \quad Lagrange function $\mathcal{L} (X, \alpha) = f(X) + \alpha(C(X))$
+  \quad Lagrange function $\mathcal{L} (W, \alpha) = f(W) - \alpha(g(W))$
 
-  \quad \quad $\alpha$为变量
+  \quad \quad $\alpha$为需要求解的变量之一，参与最终计算$W$的值。
+
+  \quad \quad 当有多个constrain $g^{(i)}(W)$时，$\vec{\alpha}$为向量，求偏导对每一$\vec{\alpha}^{(i)}$求导
+
+  \quad \quad 只有当$\alpha \geq 0$ 或每一$\vec{\alpha}^{(i)} \geq 0$，结果才有效
+
+  \quad \quad $\vec{\alpha}^{(i)} = 0$代表对应的constrain $g^{(i)}(W)$为一个support vector
 
   计算：
   
-  \quad 对每一$X$的元素\ 和\ $\alpha$取偏导，即向量
+  \quad 对每一$W$的元素\ 和\ $\alpha$取偏导，即向量
   $\begin{bmatrix}
-    \frac{d \mathcal{L}(X, \alpha)}{d x_1}  \\
-    \frac{d \mathcal{L}(X, \alpha)}{d x_n} \\
+    \frac{d \mathcal{L}(W, \alpha)}{d w_1}  \\
+    \frac{d \mathcal{L}(W, \alpha)}{d w_n} \\
     ... \\
-    \frac{d \mathcal{L}(X, \alpha)}{d x_n} \\
-    \frac{d \mathcal{L}(X, \alpha)}{d \alpha}
-  \end{bmatrix}$，计算向量$=\vec{0} $时的$X$, $\alpha$取值
+    \frac{d \mathcal{L}(W, \alpha)}{d w_n} \\
+    \frac{d \mathcal{L}(W, \alpha)}{d \alpha}
+  \end{bmatrix}$，计算向量$=\vec{0} $时的$W$, $\alpha$取值
 
 
 
@@ -131,7 +137,7 @@
 
   \quad 区别：$f$可为polynomial，非线性函数。可使用kernel trick
 
-  线性分类训练：$\hat{p} = W^Tx + b$
+  线性分类训练：$\hat{p} = W^Tx + b$，$W$ 为参数\textbf{向量}
 
   \quad \textbf{硬性分类}：
 
@@ -145,13 +151,13 @@
 
   \quad \quad \quad '当样本数高于参数数量时使用，由于dual form的复杂度为$O(|S|^2)$ - $O(|S|^3)$，直接解复杂度为$O(|S|)$'
   
-  \quad \quad 2.使用拉格朗日乘数法得到dual form，其中$\alpha$改为向量，非常数。$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\alpha^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
+  \quad \quad 2.使用拉格朗日乘数法得到dual form，其中$\vec{\alpha}$为向量。$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
 
-  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\alpha^{(i)}y^{(i)}x^{(i)}$, $3.\sum_{i=1}^{m}\alpha^{(i)}y^{(i)}=0$
+  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\vec{\alpha}^{(i)}y^{(i)}x^{(i)}$, $3.\sum_{i=1}^{m}\vec{\alpha}^{(i)}y^{(i)}=0$
 
-  \quad \quad \quad 带入得$\mathcal{L} (W, \alpha) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\alpha^{(i)}\alpha^{(j)}y^{(i)}y^{(j)}x^{(i)T}x^{(j)} - \sum_{i=1}^{|B|}\alpha^{(i)}$，解$\alpha$
+  \quad \quad \quad 带入得$\mathcal{L} (W, \vec{\alpha}) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\vec{\alpha}^{(i)}\vec{\alpha}^{(j)}y^{(i)}y^{(j)}x^{(i)T}x^{(j)} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$，解$\vec{\alpha}$
 
-  \quad \quad \quad 解$W$：由$\alpha$带入2.式计算
+  \quad \quad \quad 解$W$：由$\vec{\alpha}$带入2.式计算
 
   \quad \quad \quad 解$b$：由于所有support vector$x^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
 
