@@ -18,55 +18,10 @@ def quadprog_solve_qp(P, q, G=None, h=None, A=None, b=None):
         meq = 0
     return quadprog.solve_qp(qp_G, qp_a, qp_C, qp_b, meq)[0]
 
-# define hyper parameters
-feature_num = 2
-sample_num = 15
+P = np.array([[8, 0], [0, 12]], dtype='float')
+q = np.array([-3, -2], dtype='float')
+G = np.array([[-1, 1], [0, 0]], dtype='float')
+h = np.array([-1,0], dtype='float')
 
-# # define dataset
-# raw_data = torch.normal(mean=0, std=0.5, size=(sample_num // 3, feature_num))
-# cluster1 = raw_data + torch.tensor([2, 4] + ([1] * (feature_num - 2))) # first cluster of data centered at (2, 4)
-# cluster2 = raw_data + torch.tensor([5, 2] +([1] * (feature_num - 2))) # second cluster data center at (5, 2)
-# cluster3 = raw_data + torch.tensor([4, 4]+ ([1] * (feature_num - 2))) # third cluster centerred at (4, 4)
-
-# feature_set = torch.cat([cluster1, cluster2, cluster3])
-# label_set = torch.tensor([1] * (sample_num // 3 * 2) + [-1] * (sample_num // 3))
-
-# # visualize data
-# plt.scatter(cluster1[:, 0].tolist(), cluster1[:, 1].tolist(), 1)
-# plt.scatter(cluster2[:, 0].tolist(), cluster2[:, 1].tolist(), 1)
-# plt.scatter(cluster3[:, 0].tolist(), cluster3[:, 1].tolist(), 2)
-# plt.show()
-
-# torch.save(feature_set, 'SVM/svm_features.log')
-# torch.save(label_set, 'SVM/svm_labels.log')
-
-# read data from defined dataset
-feature_set = torch.load('SVM/svm_features.log')
-label_set = torch.load('SVM/svm_labels.log')
-
-# # visualize dataset
-# plt.scatter(feature_set[:, 0].tolist(), feature_set[:, 1].tolist(), 1)
-# plt.show()
-
-# define dual problem parameters, calculate vector a
-P = feature_set * label_set.reshape((-1, 1))
-P = torch.mm(P, P.T).numpy().astype('float')
-P += np.diag([0.00001] * sample_num)
-q = -np.ones(sample_num).astype('float')
-
-G = -np.diag([1] * sample_num).astype('float')
-h = np.zeros(sample_num).astype('float')
 ans = quadprog_solve_qp(P, q, G, h)
-print(f"ans = {ans}")
-print(f"features = {feature_set}")
-print(f"label = {label_set}")
-print(f"P = {P}")
-print(f"q = {q}")
-print(f"G = {G}")
-print(f"h = {h}")
-W = feature_set * label_set.reshape((-1, 1)) * ans.reshape((-1, 1))
-W = W.T.sum(dim=1)
-b = label_set - (feature_set * W).sum(dim=1)
-b = b.mean()
-print(f"W = {W}, b = {b}")
-print(f"output results: {torch.mv(feature_set.type(torch.float64), W) + b}")
+print(ans)
