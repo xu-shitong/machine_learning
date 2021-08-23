@@ -66,10 +66,13 @@
 \texttt{torch.tolist()} 得到python 数组 \\
 \texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
 \texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
+\texttt{torch.mm(Tensor, Tensor)} 矩阵\ 向量乘法\\
+\texttt{torch.matmul(Tensor, Tensor)} 任意张量间乘法，包含广播机制\\
 \texttt{+-*/} 同NDArray使用广播机制\\
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
 \texttt{Tensor.permute(SHAPE)} 等同mxnet的transpose，更改纬度顺序\\
-\texttt{Tnesor.transpose(dim0, dim1)} 交换两个纬度\\
+\texttt{Tensor.transpose(dim0, dim1)} 交换两个纬度\\
+\texttt{torch.sum(Tensor, *DIM)} 将某一纬度一下的值求和\\
 \texttt{Tensor.to(device)} 将张量分配进指定CPU/GPU\\
 \texttt{torch.random(MEAN, STD, SIZE*)}
 

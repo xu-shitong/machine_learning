@@ -151,17 +151,17 @@
 
   \quad \quad \quad '当样本数高于参数数量时使用，由于dual form的复杂度为$O(|S|^2)$ - $O(|S|^3)$，直接解复杂度为$O(|S|)$'
   
-  \quad \quad 2.使用拉格朗日乘数法得到dual form，其中$\vec{\alpha}$为向量。$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
+  \quad \quad 2.使用拉格朗日乘数法得到dual form，其中$\vec{\alpha}$为向量。$\textbf{x}^{(i)}$为第i样本的特征值向量$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
 
-  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\vec{\alpha}^{(i)}y^{(i)}x^{(i)}$, $3.\sum_{i=1}^{m}\vec{\alpha}^{(i)}y^{(i)}=0$
+  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}\textbf{x}^{(i)}$, $3.\sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}=0$
 
-  \quad \quad \quad 带入得$\mathcal{L} (W, \vec{\alpha}) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\vec{\alpha}^{(i)}\vec{\alpha}^{(j)}y^{(i)}y^{(j)}x^{(i)T}x^{(j)} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$，解$\vec{\alpha}$
+  \quad \quad \quad 带入得$\mathcal{L} (W, \vec{\alpha}) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\vec{\alpha}_i\vec{\alpha}_jy^{(i)}y^{(j)}\textbf{x}^{(i)^T}\textbf{x}^{(j)} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$，解$\vec{\alpha}$
 
   \quad \quad \quad 解$W$：由$\vec{\alpha}$带入2.式计算
 
-  \quad \quad \quad 解$b$：由于所有support vector$x^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
+  \quad \quad \quad 解$b$：由于所有support vector $\textbf{x}^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
 
-  \quad \quad \quad \quad $b = E(y^{(i)}-W^Tx^{(i)})$
+  \quad \quad \quad \quad $b = E(y^{(i)}-W^T\textbf{x}^{(i)})$
   
   \quad \textbf{软性分类}：
 
