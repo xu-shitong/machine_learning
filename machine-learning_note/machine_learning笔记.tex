@@ -164,7 +164,7 @@
 
   \quad \quad \quad 带入得$\mathcal{L} (W, \vec{\alpha}) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\vec{\alpha}_i\vec{\alpha}_jy^{(i)}y^{(j)}\textbf{x}^{(i)^T}\textbf{x}^{(j)} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$
   
-  \quad \quad \quad \quad $=\frac{1}{2}\vec{\alpha}^T (\textbf{x} * y)^T(\textbf{x} * y) \vec{\alpha} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$
+  \quad \quad \quad \quad $=\frac{1}{2}\vec{\alpha}^T (\textbf{x} * y)(\textbf{x} * y)^T \vec{\alpha} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$
 
   \quad \quad \quad \quad 其中$(\textbf{x} * y)$为广播乘法\ 将训练集矩阵每一样本乘以对应标签值，$y$为标签列向量
 
@@ -178,13 +178,17 @@
 
   \quad \quad 3.直接进行梯度下降，代价函数$J(W, b) = \frac{1}{2}W^TW + const \sum_i HingeLoss(y^{(i)}, \hat{p}^{(i)})$
   
-  \quad \quad \textbf{常见错误}：
+  \quad \quad \textbf{经验总结}：
 
-  \quad \quad \quad 1.当样本有重叠，无法使用硬性分类，通过拉格朗日乘数法得到的权重和偏差无法有效分类数据。
+  \quad \quad \quad 1.当样本有重叠，仍可使用拉格朗日乘数法，异常样本被分入错误类别。
 
   \quad \quad \quad 2.QP solver中无需clamp使$\vec{\alpha} \geq 0$
 
   \quad \quad \quad 3.梯度下降直接得到最优$W, b$无需得到$\vec{\alpha}$
+
+  \quad \quad \quad 4.QP solver需要$(\textbf{x} * y)(\textbf{x} * y)^T$为positive definite，计算时加上对角矩阵$diag(\epsilon)$即可，$\epsilon$多取$10^{-4}$
+
+  \quad \quad \quad 5.QP solver中需限定$\sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}=0$，否则得出$\hat{\alpha}$不遵循此等式
   
   \quad \textbf{软性分类}：
 

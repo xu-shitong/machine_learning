@@ -25,3 +25,4 @@ h = np.array([-1,0], dtype='float')
 
 ans = quadprog_solve_qp(P, q, G, h)
 print(ans)
+print(f"zero check = {np.dot(ans.T, )}")
