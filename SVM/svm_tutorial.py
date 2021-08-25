@@ -6,10 +6,10 @@ from torch import optim
 from cvxopt import matrix as cvxopt_matrix
 from cvxopt import solvers as cvxopt_solvers
 
-cvxopt_solvers.options['show_progress'] = False
-cvxopt_solvers.options['abstol'] = 1e-10
-cvxopt_solvers.options['reltol'] = 1e-10
-cvxopt_solvers.options['feastol'] = 1e-10
+# cvxopt_solvers.options['show_progress'] = False
+# cvxopt_solvers.options['abstol'] = 1e-10
+# cvxopt_solvers.options['reltol'] = 1e-10
+# cvxopt_solvers.options['feastol'] = 1e-10
 
 # define hyper parameters
 feature_num = 2

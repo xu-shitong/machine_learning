@@ -17,20 +17,18 @@ feature_num = 2
 sample_num = 40
 batch_size = 10
 
-# # define dataset
-# raw_data = torch.normal(mean=0, std=1, size=(batch_size, feature_num))
-# cluster1 = raw_data + torch.tensor([2, 4] + ([1] * (feature_num - 2))) # first cluster of data centered at (2, 4)
-# cluster2 = raw_data + torch.tensor([5, 2] + ([1] * (feature_num - 2))) # second cluster data center at (5, 2)
-# cluster3 = raw_data + torch.tensor([4, 6] + ([1] * (feature_num - 2))) # third cluster centerred at (4, 4)
-# cluster4 = raw_data + torch.tensor([6, 4] + ([1] * (feature_num - 2))) # third cluster centerred at (5, 4)
+# define dataset
+raw_data = torch.normal(mean=0, std=1, size=(batch_size, feature_num))
+cluster1 = raw_data + torch.tensor([2, 4] + ([1] * (feature_num - 2))) # first cluster of data centered at (2, 4)
+cluster2 = raw_data + torch.tensor([5, 2] + ([1] * (feature_num - 2))) # second cluster data center at (5, 2)
+cluster3 = raw_data + torch.tensor([4, 4] + ([1] * (feature_num - 2))) # third cluster centerred at (4, 4)
+cluster4 = raw_data + torch.tensor([5, 4] + ([1] * (feature_num - 2))) # third cluster centerred at (5, 4)
 
-# X = torch.cat([cluster1, cluster2, cluster3, cluster4])
-# y = torch.tensor([1] * (batch_size * 2) + [-1] * (batch_size * 2)).type(torch.float64)
-# y = y.reshape((-1,1))
+X = torch.cat([cluster1, cluster2, cluster3, cluster4])
+y = torch.tensor([1] * (batch_size * 2) + [-1] * (batch_size * 2)).type(torch.float64)
+y = y.reshape((-1,1))
 
-# # print(X)
-# plt.scatter(X[:, 0], X[:, 1])
-# plt.show()
+
 
 torch.save(X, 'SVM/svm_features.log')
 torch.save(y, 'SVM/svm_labels.log')
@@ -38,12 +36,16 @@ torch.save(y, 'SVM/svm_labels.log')
 # X = torch.load('SVM/svm_features.log')
 # y = torch.load('SVM/svm_labels.log')
 
+# print(X)
+plt.scatter(X[:, 0], X[:, 1])
+plt.show()
+
 X = X.type(torch.float64).numpy()
-y = y.numpy()
+y = y.type(torch.float64).numpy()
 
 m, n = X.shape
 K = poly_kernel(X, X, degree = 2, intercept = 1)
-P = matrix(np.matmul(y,y.T) * K)
+P = matrix(np.matmul(y,y.T) * K + np.eye(sample_num)*0.0001)
 q = matrix(np.ones((m, 1)) * -1)
 A = matrix(y.reshape(1, -1))
 b = matrix(np.zeros(1))
@@ -67,7 +69,7 @@ print(f"prod = {prod}")
 
 # boundaries = []
 # all = []
-epsilon = 1e-1
+epsilon = 1e-2
 
 # for i in np.linspace(0, 15, 100):
 #   for j in np.linspace(0, 15, 100):
@@ -91,6 +93,7 @@ print(len(boundaries_i))
 
 
 # printing seperating line on graph
-plt.scatter(X[:, 0].tolist(), X[:, 1].tolist(), color='blue')
+plt.scatter(X[:(batch_size*2), 0].tolist(), X[:(batch_size*2), 1].tolist(), color='blue')
+plt.scatter(X[(batch_size*2):, 0].tolist(), X[(batch_size*2):, 1].tolist(), color='red')
 plt.scatter(boundaries_i, boundaries_j, color='black')
 plt.show()
