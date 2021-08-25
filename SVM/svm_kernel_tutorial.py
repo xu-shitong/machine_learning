@@ -52,14 +52,13 @@ sv_y = y[ind]
 alphas = ans[ind]
 
 print(f"raw alpha = {ans}") # alpha without clamp only positive value
-print(f"zero check = {np.dot(A, ans)}") # check y^T * alpha = 0 condition is met
+print(f"zero check = {np.dot(label_set.T, ans)}") # check y^T * alpha = 0 condition is met
 
 # get bias value
 b = sv_y - np.sum(np.dot(sv, sv.T)**2 * sv_y * alphas, axis=0)
 b = np.sum(b) / b.size
 
 # get coordinates where SVM classify as 0, these points lie on the boundary SVM use
-test_matrix = []
 boundaries_i = []
 boundaries_j = []
 for i in np.linspace(0, 15, 100):

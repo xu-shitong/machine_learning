@@ -170,33 +170,13 @@
 
   \quad \quad \quad 使用QP solver得到使$\mathcal{L} (W, \vec{\alpha})$最小，$\vec{a}^{(i)} \geq 0$的向量$\vec{\alpha}$
 
-  \quad \quad \quad 解$W$：由$\vec{\alpha}$带入2.式计算
+  \quad \quad \quad 解$W$：由$\vec{\alpha}$带入2.式计算，$\vec{\alpha}$已被clamp，见经验2.
 
   \quad \quad \quad 解$b$：由于所有support vector $\textbf{x}^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
 
-  \quad \quad \quad \quad $b = E(y^{(i)}-W^T\textbf{x}^{(i)})$
+  \quad \quad \quad \quad $b = E_{a^{(i)} \geq 0}(y^{(i)}-W^T\textbf{x}^{(i)})$
 
   \quad \quad 3.直接进行梯度下降，代价函数$J(W, b) = \frac{1}{2}W^TW + const \sum_i HingeLoss(y^{(i)}, \hat{p}^{(i)})$
-  
-  \quad \quad \textbf{经验总结}：
-
-  \quad \quad \quad 1.QP solver中需限定$\sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}=0$，否则得出$\hat{\alpha}$不遵循此等式
-
-  \quad \quad \quad 2.当样本有重叠，仍可使用拉格朗日乘数法，异常样本被分入错误类别。
-
-  \quad \quad \quad \quad 此时$\vec{\alpha}$包含负值，对应的样本在计算权重\ 偏差时被忽略
-
-  \quad \quad \quad 3.QP solver中无需clamp使$\vec{\alpha} \geq 0$
-
-  \quad \quad \quad 4.梯度下降直接得到最优$W, b$无需得到$\vec{\alpha}$
-
-  \quad \quad \quad 5.QP solver需要$(\textbf{x} * y)(\textbf{x} * y)^T$为positive definite，计算时加上对角矩阵$diag(\epsilon)$即可，$\epsilon$多取$10^{-4}$
-
-  \quad \quad \quad \quad 否则迭代解QP时出现KKT condition not met或positive definite条件不满足
-
-  \quad \quad \quad \quad 条件不满足时中断得到的$\vec{\alpha}$无法作为有效结果参与后续计算权重和偏差
-
-  \quad \quad \quad \quad 优先将此矩阵转为float64类型，否则需要$\epsilon$较大才能保证得到$\vec{\alpha}$
   
   \quad \textbf{软性分类}：
 
@@ -210,7 +190,11 @@
 
   \textbf{- 使用polynomial做$f$}
 
-  \quad 必须使用dual form求解，目的为\textbf{对$\phi(x)$得到线性权重和偏差}，求解使用dual form，其中包含$\phi(a)^T \cdot \phi(b)$项即可使用kernel method
+  \quad 必须使用拉格朗日乘数法求解，目的为\textbf{对$\phi(x)$得到线性权重和偏差}，求解使用dual form，其中包含$\phi(a)^T \cdot \phi(b)$项即可使用kernel method
+
+  \quad 权重$W$公式不再适用，由于结果不为线性
+
+  \quad 偏差$b = \sum_{a^{(i)} \geq 0} y^{(i)} - \sum_{a^{(j)} \geq 0} a^{(i)} * y^{(j)} * K(X^{(i)}, X^{(j)})$
 
   \textbf{- 使用similarity function}：
   
@@ -238,6 +222,27 @@
   \quad \quad Gaussian RBF: $f(a, b) = exp(-\gamma ||a-b||^2)$
 
   \quad \quad Sigmoid: $f(a, b) = tanh(\gamma a^Tb + r)$
+
+  \quad \textbf{经验总结}：
+
+  \quad \quad 1.QP solver中需限定$\sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}=0$，否则得出$\hat{\alpha}$不遵循此等式
+
+  \quad \quad 2.当样本有重叠，仍可使用拉格朗日乘数法，异常样本被分入错误类别。
+
+  \quad \quad \quad 此时$\vec{\alpha}$包含负值，对应的样本在计算权重\ 偏差时被忽略，即需clamp使$\vec{\alpha} \geq 0$
+
+  \quad \quad \quad 若不进行clamp，得到的分界仅有略微差别，不会造成大幅误差。(在线性\ 非线性分类都有验证)
+
+  \quad \quad 3.梯度下降直接得到最优$W, b$，无法通过梯度下降得到$\vec{\alpha}$ 由于梯度下降忽略限制条件
+
+  \quad \quad 4.QP solver需要$(\textbf{x} * y)(\textbf{x} * y)^T$为positive definite，计算时加上对角矩阵$diag(\epsilon)$即可，$\epsilon$多取$10^{-4}$
+
+  \quad \quad \quad 否则迭代解QP时出现KKT condition not met或positive definite条件不满足
+
+  \quad \quad \quad 条件不满足时中断得到的$\vec{\alpha}$无法作为有效结果参与后续计算权重和偏差
+
+  \quad \quad \quad 优先将此矩阵转为float64类型，否则需要$\epsilon$较大才能保证positive definite
+  
 
 % ----------------------------------------------------------------------
 % |                              决策树                                 |
