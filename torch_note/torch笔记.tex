@@ -168,6 +168,7 @@
   \texttt{transforms.Normalize(MEAN, STD)} 对图片的张量输入，求标准化。MEAN，STD可为张量
   
   \quad 内部实现：对RGB 3通道上的像素分别使用(3, )形状的MEAN，STD值求标准化\\
+\texttt{transform(image)} 使用transform\\
 \texttt{显示图片}
 
   \texttt{image = transforms.ToPILImage()(image\_tensor)}
