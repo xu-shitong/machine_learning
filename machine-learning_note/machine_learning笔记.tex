@@ -492,22 +492,22 @@
 
   计算：
 
-  \quad 第$l-1$决策有决策有discounted reward：$dr_i = r_i$
+  \quad 第$l-1$决策有决策有discounted reward：$d_i = r_i$
   
-  \quad 第$i$决策有discounted reward：$dr_i = r_i + \gamma dr_{i+1}$
+  \quad 第$i$决策有discounted reward：$d_i = r_i + \gamma * d_{i+1}$
   
   \quad 正则化：对所有实验中每一次决策$r_i$取整体平均值，方差，求标准化\\
 \textbf{neural network policy}
 
   \textbf{前向传播}：使用神经网络得到行为可能性，根据可能性选择行为。属于generic gradient policy
 
-  \textbf{迭代}：
+  \textbf{单次迭代}：
 
   \quad 定义：一次决策
 
   \quad \quad 1.从policy得到行为可能性
 
-  \quad \quad 2.代价函数根据\ 采取的行为\ 和\ \textbf{采取的}行为可能性\ 计算代价值
+  \quad \quad 2.用交叉熵代价函数求代价值，\texttt{y\_hat}为1.中可能性，\texttt{y}为实际采取的行为
 
   \quad \quad 3.根据代价函数求斜率，斜率使神经网络输出可能性更偏向采取的行为。\textbf{但不立即使用斜率}
 
@@ -515,11 +515,13 @@
   
   \quad \quad 每一环境得到决策数不一定相同，取决于试验中进行的决策次数
 
-  \quad 2.对每一决策求discounted reward
-  
-  \quad 3.对每一参数，斜率为$n$次训练中所有决策\ 对\ 此参数的斜率\ 的加权平均值。权重为discounted reward
+  \quad 2.对每一决策求discounted reward，结果包含n组数组，第$l_i$组数组对应第$i$次实验的discount reward数组
 
-  \quad 4.使用权重更新参数值\\
+  \quad 3.对所有discounted reward标准化，平均值\ 方差为所有dis reward值
+  
+  \quad 4.对每一参数每一决策的斜率 乘对应决策的dis reward。对结果中所有属于同一参数的乘积取平均值，为此参数的斜率
+
+  \quad 5.使用斜率更新参数值\\
 \textbf{Markov Decison Process MPD}
 
   每一状态$s_i$有可执行的行为集合$A_{s_i} \subseteq A$。不同状态行为集合可有交集
