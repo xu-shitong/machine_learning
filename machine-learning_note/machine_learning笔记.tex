@@ -369,7 +369,7 @@
   
   \quad 重复第2.3.步，直至centroid不再移动
 
-  优化：
+  迭代：
   
   \quad 多次随机初始化centroid，选择其中inertia最小的centroid取法进行训练
 
@@ -549,7 +549,46 @@
   在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得$Q(s_i, a_{ij})$
 
   $Q_{n+1}(s_i, a_{ij}) = r'_i + \gamma \cdot max_k (Q_{n}(s_i, a_{jk}))$\\
-\textbf{deep Q-networks DQNs}
+\textbf{deep Q-networks DQNs}\\
+\textbf{Generic algorithm}
+
+  通过交换参数的一部分得到更优的参数组合
+
+  模型：
+
+  \quad 对参数向量$\vec{x} = [x_1, x_2, ...]$，评估方程$f(\vec{x}) \in \mathbb{R} $
+
+  目标：得到$\vec{x}$使$f(\vec{x})$值最大化
+
+  算法：
+
+  \quad 随机初始化n参数向量
+
+  \quad 每一迭代中取m个参数向量进入集合$S$
+
+  \quad \quad 取法1：每一参数向量$\vec{x_i}$有$\frac{f(x_i)}{\sum_i f(x_i)}$几率被选中进入$S$
+
+  \quad \quad 取法2：将每一参数向量$\vec{x_i}$根据$f(\vec{x_i})$排序，排名第j向量有$P(\vec{x_i}) = p * (1-p)^(j-1)$几率被选中进入$S$
+
+  \quad \quad 取法3：定义参数向量间间距$D(\vec{x_i}, \vec{x_j})$，用于保证选取的参数分部范围广泛
+
+  \quad \quad \quad 取$f(\vec{x_i})$最大的$\vec{x_i}$放入m集合
+
+  \quad \quad \quad 随后选取m-1个向量，选取$\vec{x_j}$ 使得$f(\vec{x_j}) * E_{v \in S}(D(\vec{x_j}, v))$最大的
+
+  \quad \quad \quad 即选取参数向量使得\ 其与已经选择的向量平均距离 * 自身$f(\vec{x_j})$值\ 最大化
+
+  \quad 根据最优m个参数向量，交换参数得到m个下一代参数向量，变异出剩余n-m个参数向量
+
+  \quad \quad 交换参数：对$\vec{x} = [x_1, x_2, ...]$，$\vec{y} = [y_1, y_2, ...]$ 交换结果为$\vec{x}' = [x_1, y_2, ...]$，$\vec{y}' = [y_1, x_2, ...]$
+
+  \quad \quad \quad 交换元素的位置根据算法可变
+
+  \quad \quad 变异向量由已有的m个后代参数向量变异得到
+
+  \quad \quad \quad 对$\vec{x} = [x_1, x_2, ...]$，变异参数向量每一元素$x'_i$有$x'_i \thicksim U(-step\_size + x_i, step\_size + x_i)$
+
+  \quad \quad \quad 使用的分部不一定为Uniform分部
 
   
 % ----------------------------------------------------------------------

@@ -110,7 +110,8 @@
 \textbf{可使用层直接进行前向计算，训练函数中使用[layer.weight, net.bias]传入参数}\\
 \textbf{前向计算为(|B|, 特征数) 和\ 权重\ 矩阵相乘}\\
 \textbf{使用GPU时层定义后需加.to(device), 并不可以使用device=赋GPU}\\
-\texttt{net.weight/bias.data.fill\_(值)} 对\textbf{层}中所有权重/偏差赋值\\
+\texttt{net.weight/bias.data.fill\_(值)} 对\textbf{层}中所有权重/偏差赋\textbf{同一}值\\
+\texttt{net.weight/bias = nn.Parameter(Tensor)} 将参数初始化为指定张量\\
 \texttt{nn.init.xavier\_uniform(net.weight/.bias)} 对\textbf{层}中所有权重/偏差使用xavier初始化\\
 \texttt{loss}
 
