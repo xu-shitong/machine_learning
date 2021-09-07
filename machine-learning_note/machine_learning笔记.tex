@@ -530,7 +530,7 @@
 
   optimal state value $V^*(s_i)$：
   
-  \quad 模型到达状态$s_i$后1.选择最理想的$a_{ij}$能得到的discounted reward总和
+  \quad 模型到达状态$s_i$后\ 选择最理想的$a_{ij}$能得到的discounted reward总和
 
   \quad $V^*(s_i) = max_j \sum_s [p_{a_{ij}, s_k} (R(s_i, a_{ij}, s_j) + \gamma \cdot V^*(s_j))]$
   
@@ -546,29 +546,93 @@
   在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得到$V(s_i)$\\
 \textbf{Q-Learning}
 
-  在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得$Q(s_i, a_{ij})$
+  方法1：在$p_{a_{ij}, s_j}$, $R$未知的情况下\textbf{每次决策更新一个}$Q(s_i, a_{ij})$值。每次决策选择$Q_{s_i, a_{ij}}$最大的行为
 
-  $Q_{n+1}(s_i, a_{ij}) = r'_i + \gamma \cdot max_k (Q_{n}(s_i, a_{jk}))$\\
-\textbf{deep Q-networks DQNs}\\
+  \quad 更新函数：$Q(s_i, a_{ij}) = r + \gamma \cdot max_{a_{jk}} (Q_{n}(s_j, a_{jk}))$
+
+  \quad \quad 所有$Q(s_i, a_{ij})$初始化为0
+  
+  \quad \quad $r$为实际得到的reward
+
+  \quad \quad $max_{a_{jk}} (Q_{n}(s_j, a_{jk}))$ 为估计的discounted reward总和，取值为：决策后\textbf{实际到达的下一状态}$s_j$的所有$Q(s_j, a_{jk})$中最大值
+
+  方法2：为避免需要过多实验才能得到准确的$Q^*(s_i, a_{ij})$，使用$\epsilon-greedy\ policy$。
+  
+  \quad 决策时每一步有$\epsilon$几率随机选择下一行为，$1-\epsilon$几率选择$Q_{s_i, a_{ij}}$最大的行为
+
+  \quad $Q$更新函数同方法1
+  
+  方法3：另一随机explore算法，使用exploration function根据行为被选择的次数判断行为被explore的程度
+  
+  \quad 选择行为时仍选取$max_{a_{ij}} Q(s_i, a_{ij})$
+  
+  \quad 更新函数：$Q(s_i, a_{ij}) = r + \gamma * max_{a_{jk}} f(Q_n(s_j, a_{jk}), N(s_j, a_{jk}))$
+  
+  \quad \quad $N(s_j, a_{jk})$为行为$a_{jk}$在状态$s_j$下被选择的次数。
+  
+  \quad \quad $f(Q, N)$ 根据选择次数和$Q$值决定行为的优先级。例：$f(Q, N) = Q + \frac{\kappa}{1 = N} $\\
+\textbf{Approximate Q-Learning}
+
+  解决当模型的状态数\ 行为数过大时训练过慢的问题。通过找到方程$Q_{\theta}(s_i, a_{ij})$估计实际$Q^*(s_i, a_{ij})$，根据给定参数向量$\vec{\theta}$\\
+\textbf{deep Q-networks DQNs}
+
+  使用神经网络估计$Q_{\theta}(s_i, a_{ij})$值，使用的神经网络称DQN
+  
+  DQN得到$s_i$，返回$Q_{\theta}(s_i, a_{ij})$。最终选取行为时根据$Q_{target}(s_i, a_{ij}) = r + \gamma * max_{a_{jk}} Q_{\theta}(s_j, a_{jk})$
+
+  得到训练集：
+
+  \quad 一个样本包含$s_i$，$a_{ij}$，得到的reward$r$，进入的下一$s_j$，bool值$done$代表下一状态为终止状态
+
+  \quad 将所有样本加入集合replay buffer，取样本时随机选取，避免相邻样本的correlation影响训练
+
+  \quad $s_i$ 可为图片，无需人工得到参数
+  
+  迭代：
+  
+  \quad 1.进行多组试验，每组试验的每一决策加入replay buffer。前几次迭代不进行训练，由于replay buffer中样本多样性较低
+  
+  \quad 2.训练从replay buffer取一批量样本，对于每一样本($s_i$, $a_{ij}$, $r$, $s_j$, $done$)
+
+  \quad \quad 得到$Q_{target}(s_i, a_{ij})$
+  
+  \quad \quad \quad 将下一状态$s_j$通过DQN得到向量$\vec{Q_{\theta}(s_j, a_{jk})}$，元素数为行为数
+
+  \quad \quad \quad 对$\vec{Q_{\theta}(s_j, a_{jk})}$取最大值，即得到$max_{a_{jk}} Q_{\theta}(s_j, a_{jk})$值
+
+  \quad \quad \quad 根据$max_{a_{jk}} Q_{\theta}(s_j, a_{jk})$计算$s_i$的新target值$Q_{target}(s_i, a_{ij})$
+
+  \quad \quad 得到$Q_{\theta}(s_i, a_{ij})$
+
+  \quad \quad \quad 将$s_i$传入DQN，得到$\vec{Q_{\theta}(s_i, a_{ij})}$。并和one hot向量点乘\ 得到决策实际选取的行为$a_{ij}$的$Q(s_i, a_{ij})$
+
+  \quad 3.代价值为一批量的$Q_{\theta}(s_i, a_{ij})$和$Q_{target}(s_i, a_{ij})$的平均平方代价值，根据代价值梯度下降训练DQN\\
+\textbf{Fixed Q-Value Target}
+
+  使用2神经网络，分别负责计算$Q_{target}$，$Q_{\theta}$
+
+  两网络初始参数一致，每n次循环后将计算$Q_{\theta}$的网络参数抄入$Q_{target}$网络
+
+  计算target时使用$s_i$传入$Q_{target}$网络的结果。即\ 使得target计算不再每一循环一更新而是每n循环更新。训练更稳定\\
 \textbf{Generic algorithm}
 
   通过交换参数的一部分得到更优的参数组合
 
   模型：
 
-  \quad 对参数向量$\vec{x} = [x_1, x_2, ...]$，评估方程$f(\vec{x}) \in \mathbb{R} $
+  \quad 对参数向量$\vec{x} = [x_1, x_2, ...]$ 评估方程$f(\vec{x}) \in \mathbb{R} $
 
   目标：得到$\vec{x}$使$f(\vec{x})$值最大化
 
   算法：
 
-  \quad 随机初始化n参数向量
+  \quad 1.随机初始化n参数向量
 
-  \quad 每一迭代中取m个参数向量进入集合$S$
+  \quad 2.每一迭代中取m个参数向量进入集合$S$
 
   \quad \quad 取法1：每一参数向量$\vec{x_i}$有$\frac{f(x_i)}{\sum_i f(x_i)}$几率被选中进入$S$
 
-  \quad \quad 取法2：将每一参数向量$\vec{x_i}$根据$f(\vec{x_i})$排序，排名第j向量有$P(\vec{x_i}) = p * (1-p)^(j-1)$几率被选中进入$S$
+  \quad \quad 取法2：将每一参数向量$\vec{x_i}$根据$f(\vec{x_i})$排序，排名第j向量有$P(\vec{x_i}) = p * (1-p)^(j-1)$几率被选中进入$S$。第m参数向量有可能性$1-$(1到m-1参数可能性之和)
 
   \quad \quad 取法3：定义参数向量间间距$D(\vec{x_i}, \vec{x_j})$，用于保证选取的参数分部范围广泛
 
@@ -578,7 +642,7 @@
 
   \quad \quad \quad 即选取参数向量使得\ 其与已经选择的向量平均距离 * 自身$f(\vec{x_j})$值\ 最大化
 
-  \quad 根据最优m个参数向量，交换参数得到m个下一代参数向量，变异出剩余n-m个参数向量
+  \quad 3.根据最优m个参数向量，交换参数得到m个下一代参数向量，变异出剩余n-m个参数向量
 
   \quad \quad 交换参数：对$\vec{x} = [x_1, x_2, ...]$，$\vec{y} = [y_1, y_2, ...]$ 交换结果为$\vec{x}' = [x_1, y_2, ...]$，$\vec{y}' = [y_1, x_2, ...]$
 
