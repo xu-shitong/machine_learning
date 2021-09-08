@@ -488,7 +488,7 @@
 
   定义：
 
-  \quad $l$ 此次试验一共包含的决策数
+  \quad $l$ 此次试验一共包含的决策数，$\gamma$为discount factor
 
   计算：
 
@@ -543,12 +543,22 @@
   policy：状态为$s_i$时选取$a_{ij} = max_{a_{ij}} Q^*(s_i, a_{ij})$\\
 \textbf{Temporal Difference Learning TD learing}
 
-  在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得到$V(s_i)$\\
+  在$p_{a_{ij}, s_j}$, $R$未知的情况下迭代得到$V(s_i)$
+  
+  更新函数：$V(s) = (1-\alpha)V(s) + \alpha \cdot (r + \gamma \cdot V(s'))$
+  
+  \quad = $\leftarrow_{\alpha} r + \gamma \cdot V(s') $\ \ \ \ \ 简介写法
+  
+  \quad $s'$为状态$s$能达到的下一状态
+  
+  \quad $\alpha$为学习率，$\gamma$为discount factor\\
 \textbf{Q-Learning}
 
   方法1：在$p_{a_{ij}, s_j}$, $R$未知的情况下\textbf{每次决策更新一个}$Q(s_i, a_{ij})$值。每次决策选择$Q_{s_i, a_{ij}}$最大的行为
 
-  \quad 更新函数：$Q(s_i, a_{ij}) = r + \gamma \cdot max_{a_{jk}} (Q_{n}(s_j, a_{jk}))$
+  \quad 更新函数：$Q(s_i, a_{ij}) \leftarrow_{\alpha} r + \gamma \cdot max_{a_{jk}} (Q(s_j, a_{jk}))$
+
+  \quad \quad $\alpha$为学习率，$\gamma$为discount factor
 
   \quad \quad 所有$Q(s_i, a_{ij})$初始化为0
   
@@ -566,11 +576,11 @@
   
   \quad 选择行为时仍选取$max_{a_{ij}} Q(s_i, a_{ij})$
   
-  \quad 更新函数：$Q(s_i, a_{ij}) = r + \gamma * max_{a_{jk}} f(Q_n(s_j, a_{jk}), N(s_j, a_{jk}))$
+  \quad 更新函数：$Q(s_i, a_{ij}) \leftarrow_{\alpha} r + \gamma * max_{a_{jk}} f(Q(s_j, a_{jk}), N(s_j, a_{jk}))$
   
   \quad \quad $N(s_j, a_{jk})$为行为$a_{jk}$在状态$s_j$下被选择的次数。
   
-  \quad \quad $f(Q, N)$ 根据选择次数和$Q$值决定行为的优先级。例：$f(Q, N) = Q + \frac{\kappa}{1 = N} $\\
+  \quad \quad $f(Q, N)$ 根据选择次数和$Q$值决定行为的优先级。例：$f(Q, N) = Q + \frac{\kappa}{1 - N} $\\
 \textbf{Approximate Q-Learning}
 
   解决当模型的状态数\ 行为数过大时训练过慢的问题。通过找到方程$Q_{\theta}(s_i, a_{ij})$估计实际$Q^*(s_i, a_{ij})$，根据给定参数向量$\vec{\theta}$\\
@@ -614,6 +624,12 @@
   两网络初始参数一致，每n次循环后将计算$Q_{\theta}$的网络参数抄入$Q_{target}$网络
 
   计算target时使用$s_i$传入$Q_{target}$网络的结果。即\ 使得target计算不再每一循环一更新而是每n循环更新。训练更稳定\\
+\textbf{Double DQN} 
+
+  类似 Fixed Q-Value layer，每次循环更新$Q_{target}$网络，每n次循环后将$Q_{target}$抄入$Q_{\theta}$\\
+\textbf{Pritorized Experience Relay}
+
+  
 \textbf{Generic algorithm}
 
   通过交换参数的一部分得到更优的参数组合
