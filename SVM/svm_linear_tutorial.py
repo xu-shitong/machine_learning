@@ -21,8 +21,8 @@ cluster4 = raw_data + torch.tensor([5, 4] + ([1] * (feature_num - 2))) # third c
 feature_set = torch.cat([cluster1, cluster2, cluster3, cluster4])
 label_set = torch.tensor([1] * (batch_size * 2) + [-1] * (batch_size * 2))
 
-torch.save(feature_set, 'SVM/svm_features.log')
-torch.save(label_set, 'SVM/svm_labels.log')
+torch.save(feature_set, 'parameter_log/svm_features.log')
+torch.save(label_set, 'parameter_log/svm_labels.log')
 
 # change data to numpy data, easy for later calculation
 feature_set = feature_set.type(torch.float64).numpy()

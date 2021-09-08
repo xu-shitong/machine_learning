@@ -1,5 +1,6 @@
 # This program is trial on algorithm about matching anchor boxes with target anchor boxes. 
 # Does not contain training part
+# WIP: being able to display anchor boxes but target detection unimplemented
 import torch
 from math import sqrt
 from PIL import Image

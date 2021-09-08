@@ -1,4 +1,4 @@
-# This code has not been finished, require further work on multiBoxTarget, data reading and iterating implemented
+# WIP: This code has not been finished, require further work on multiBoxTarget, data reading and iterating implemented
 
 import torch
 from torch import nn
