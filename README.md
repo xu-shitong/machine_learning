@@ -1,5 +1,5 @@
 # machine_learning
-This directory contains python programs and latex notes on books `Hands-On-Machine Learning with Scikit-Learn, Keras & TensorFlow`, and `Hands on Deep Learning`.
+This directory contains python programs and latex notes on books `Hands-On-Machine Learning with Scikit-Learn, Keras & TensorFlow`, and `Dive into Deep Learning`.
 
 ## usage
 The main propose of the directory is to make notes of the two referenced books, and support with implementations and experiments on tutorials from the books. 
@@ -7,6 +7,8 @@ The main propose of the directory is to make notes of the two referenced books, 
 To run any experiment python code, execute under root directory. Otherwise there might be 'file not found' error
 
 To submit a program to Imperial College London GPU cluster, run `sbatch submit.sh FILE.py` under root directory. The training outputs will be saved in the root directory. 
+
+Note that the notes in machine-learning_note directory concentrated on machine learning excluding Deep Learning. Deep Learning pdf notes are in the deep_learning project.
 
 ## file structure
     /machine_learning
