@@ -30,6 +30,9 @@
   对于每一epoch，当验证集MSE值增高时，证明开始overfit，停止训练
 
   即在epoch-error图中泛化误差最低时停止训练\\
+\textbf{semi-supervised learning}: 部分样本有对应标签\\
+\textbf{weakly-supervised learning}: 对样本标记包含的物体，而不标注对应目标的具体位置\\
+\textbf{non parametric model}: 无法用有限的distribution parameter代表的模型，如Nearest neighbour\\
 \textbf{在训练中使用正则化代价函数，训练结束后测试中代价函数不使用正则化项}
 
 % ----------------------------------------------------------------------
@@ -108,18 +111,43 @@
     ... \\
     \frac{d \mathcal{L}(W, \alpha)}{d w_n} \\
     \frac{d \mathcal{L}(W, \alpha)}{d \alpha}
-  \end{bmatrix}$，计算向量$=\vec{0} $时的$W$, $\alpha$取值
+  \end{bmatrix}$，计算向量$=\vec{0} $时的$W$, $\alpha$取值\\
+\textbf{Distance Metrics}
 
+  Manhattan distance(L1-norm): $d(x^{(i)}, x^{(j)}) = \sum_k |x^{(i)}_k - x^{(j)}_k|$
 
+  Euclidean distance(L2-norm): $d(x^{(i)}, x^{(j)}) = \sqrt{\sum_k (x^{(i)}_k - x^{(j)}_k) ^ 2}$
 
+  Chebyshev distance(L$\inf$-norm): $d(x^{(i)}, x^{(j)}) = \max_k |x^{(i)}_k - x^{(j)}_k|$\\
+\textbf{information entropy}
 
+  对单一一组数据$X = [x_1, ... x_n]$，$x_i$在$X$中出现百分比为$p(x_i)$
+  
+  $X$的数据熵$H(X) = -\sum_i p(x_i)log_2(p(x_i))$
+
+  当$x_i$为continuous，不为离散值时，$X$即一分部。此时$H(X) = -\int_{x} p(x)log_2(p(x))\,dx $
 % ----------------------------------------------------------------------
 % |                             分类模型                                |
 % ----------------------------------------------------------------------
 \section{分类模型}
-\noindent \textbf{logistic regression}:
+\noindent \textbf{classification}:
+
+  binary classification: 拥有2类标签
+
+  Multi-class classification: 拥有多类标签
+
+  Milti-lable classification: 单个样本可以属于多个标签\\
+\textbf{logistic regression}:
 
   判断输入符合每一输出类别的可能性，
+
+  分类：
+
+  \quad Simple regression：单个样本变量个数为1
+
+  \quad Multiple regression：样本变量个数 > 1
+
+  \quad Mutivariate regression: 单个样本对应标签个数 > 1
 
   前向计算：
   
@@ -243,6 +271,52 @@
 
   \quad \quad \quad 优先将此矩阵转为float64类型，否则需要$\epsilon$较大才能保证positive definite
   
+% ----------------------------------------------------------------------
+% |                               KNN                                  |
+% ----------------------------------------------------------------------
+\section{KNN}
+\noindent lazy learner: 仅在得到特征后进行计算，得到训练集后仅仅保存训练集\\
+  定义：
+
+  \quad 得到样本集S，每次得到需要预测的特征向量$x$\\
+  算法：
+
+  \quad 从样本特征集中选取k个最邻近$x$的样本，距离由distance metric计算，返回k个样本标签中占比较大的标签\\
+\section{distance weighted KNN}
+
+  算法:
+
+  \quad 对k个邻近样本，每一分配权重$w_i$。
+
+  \quad 对k个样本中同一标签下的样本权重求和，总和较高的标签作为结果
+
+  取$w_i$方法1：
+
+  \quad 1. $w_i = \frac{1}{d(x^{(i)}, x)}$
+
+  \quad 2. $w_i = \frac{1}{2\pi} exp(-\frac{d(x^{(i)}, x)^2}{2})$
+
+  \quad $d(x^{(i)}, x)$来自distance metric
+
+  优劣：
+
+  \quad 1. k值影响较小，由于较远的样本$w_i$较小
+
+  \quad 2. 受curse of dimentionality影响。可对每一特征加权重\ 或\ feature extraction解决\\
+\textbf{KNN regression}
+
+  样本标签不为离散值，而为连续值，求regression。
+
+  算法：
+
+  \quad 对所有可能的feature向量$x$，取距离$x$最近的k个样本。
+  
+  \quad $x$的标签值为k个样本的平均值。此值即为regression结果\\
+\textbf{Locally weighted regression}
+
+  distance-weighted KNN，将K个邻近样本的距离作为权重$w_i$。计算$x$标签$ = \sum_i w_i \cdot d(x^{(i)}, x)$\\
+
+
 
 % ----------------------------------------------------------------------
 % |                              决策树                                 |
@@ -256,7 +330,7 @@
   
   \quad sample属性$S_i$：有多少样本\textbf{进入$N_i$节点}，非满足$N_i$节点条件的样本个数
 
-  \quad value属性$V_i = v_{i1}, ..., v_{in}$：$S_i$进入节点的样本中$v_i$个属于第$i$分类
+  \quad value属性$V_i = v_{i1}, ..., v_{in}$：$S_i$进入节点的样本中$v_{ij}$个属于第$j$分类
 
   \quad gini属性$G_i$：数据混杂度，$G_i = 1-\sum_{j=1}^{n}(\frac{v_{ij}}{S_i})^2$
   
@@ -271,6 +345,30 @@
   \quad 选取$(k, t_k)$方式：使代价函数$J(k, t_k) = \frac{S_{true}}{S_i}G_{true} + \frac{S_{false}}{S_i}G_{false}$最小
 
   直到决策树层数达到固定上限，或对所有分组条件$(k, t_k)$，$J(k, t_k) \geq G_i$\\
+\textbf{information gain创建决策树}
+
+  允许单个节点$N_i$有多个子节点$C_i = {N_j}$
+
+  选取子集方式：最大化information gain $IG(N_i, C_i) = H(N_i) - \sum_{N_j \in C_i}(\frac{S_j}{S_i}H(S_j))$
+  
+  \quad $H()$为information entropy
+  
+  所有特征为实数创建决策树：
+  
+  \quad 将$S_i$样本按照实数特征排序，随后选择特征\ 门槛$(k, t_k)$，将数据分为2组，最大化information gain
+
+  \quad 即CART algorithm，使用不同代价函数
+  
+  所有特征为类别参数：
+  
+  \quad 选择类别特征$t$，$t$中每一类别对应一子节点。即$t$的值域=子节点数\\
+\textbf{避免overfit}
+
+  1.设置决策树层数上限
+
+  2.设置节点样本下限，若样本数量低于下限则停止继续分类
+  
+  3.pruning\\
 \textbf{使用决策树进行regression}
 
   \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
@@ -351,11 +449,10 @@
   \quad 使所有$z^{(i)}$满足最小化$(z^{(i)} - \sum_{j=1}^{|B|}w_{ij}z^{(j)})^2$
 
 % ----------------------------------------------------------------------
-% |                             无监督学习                               |
+% |                             聚类分析                                |
 % ----------------------------------------------------------------------
-\section{无监督学习}
-\noindent \textbf{clustering}\\
-\textbf{K-mean}：
+\section{聚类分析}
+\noindent \textbf{K-mean}：
 
   将数据分为k个cluster，每个cluster有中心点称centroid
   
