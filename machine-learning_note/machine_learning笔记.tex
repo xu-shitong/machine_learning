@@ -331,11 +331,10 @@
   \quad sample属性$S_i$：有多少样本\textbf{进入$N_i$节点}，非满足$N_i$节点条件的样本个数
 
   \quad value属性$V_i = v_{i1}, ..., v_{in}$：$S_i$进入节点的样本中$v_{ij}$个属于第$j$分类
-
-  \quad gini属性$G_i$：数据混杂度，$G_i = 1-\sum_{j=1}^{n}(\frac{v_{ij}}{S_i})^2$
   
   \quad 子节点仅有2个，对应节点条件为true/false的情况\\
 分类方式：数据从根节点开始，根据节点条件传向对应子节点。直到到达叶节点。叶节点中$V$属性中最大项即数据分类\\
+在imbalanced dataset上训练效果不好\\
 \textbf{CART algorithm创建决策树}：
 
   根节点初始化为叶节点，没有节点条件
@@ -344,20 +343,22 @@
   
   \quad 选取$(k, t_k)$方式：使代价函数$J(k, t_k) = \frac{S_{true}}{S_i}G_{true} + \frac{S_{false}}{S_i}G_{false}$最小
 
+  \quad gini属性$G_i$：数据混杂度，$G_i = 1-\sum_{j=1}^{n}(\frac{v_{ij}}{S_i})^2$
+
   直到决策树层数达到固定上限，或对所有分组条件$(k, t_k)$，$J(k, t_k) \geq G_i$\\
 \textbf{information gain创建决策树}
 
-  允许单个节点$N_i$有多个子节点$C_i = {N_j}$
+  允许单个节点$N_i$有多个子节点$C_i = {N_j}$,(在特征为离散分类时)
 
   选取子集方式：最大化information gain $IG(N_i, C_i) = H(N_i) - \sum_{N_j \in C_i}(\frac{S_j}{S_i}H(S_j))$
   
-  \quad $H()$为information entropy
+  \quad $H()$为information entropy，\textbf{替换CART法中的gini属性}
   
   所有特征为实数创建决策树：
   
   \quad 将$S_i$样本按照实数特征排序，随后选择特征\ 门槛$(k, t_k)$，将数据分为2组，最大化information gain
 
-  \quad 即CART algorithm，使用不同代价函数
+  \quad 即CART algorithm，使用不同数据混杂度函数
   
   所有特征为类别参数：
   
@@ -772,32 +773,92 @@
 % |                              分析结果                                |
 % ----------------------------------------------------------------------
 \section{分析结果}
-\noindent \textbf{confusion matrix困惑矩阵}：分析二元/多元分类
+\noindent \textbf{训练过程}
+
+  分离训练，验证，测试数据集：
+  
+  - 将数据集按(0.6, 0.2, 0.2) - (0.8, 0.1, 0.1)分为训练\ 验证\ 测试集
+
+  - cross validation
+
+  \quad 样本分为N个fold$F = \{f_1, ..., f_N\}$
+
+  \quad \textbf{1.k-fold cross validation}
+
+  \quad \quad \textbf{当无需对超参数调参时使用，不能分离验证集的原因为：验证集过小，将没有代表性}
+
+  \quad \quad 算法：
+
+  \quad \quad \quad $f_1, ..., f_N$分别作为测试集$f_i$，剩余N-1 fold$\{F\setminus f_i\}$作为训练集。进行N次训练，得到N个\textbf{同一超参数}产生的训练结果
+  
+  \quad \quad \quad N个训练后模型在对应测试集准确率为${x_1, ..., x_N}$。\textbf{模型的}准确率为$\frac{1}{N}\sum_ix_i$
+
+  \quad \textbf{2.nested k-fold cross validation}
+
+  \quad \quad \textbf{比较M组不同超参数$p_1, ..., p_M$时使用}
+
+  \quad \quad 算法：
+  
+  \quad \quad \quad $f_1, ..., f_N$分别作为测试集$f_i$，在剩余N-1 fold$\{F\setminus f_i\}$中每一fold分别作为验证集$f_j$。
+
+  \quad \quad \quad - 每次tuning使用$\{F\setminus \{f_i, f_j\}\}$做训练集，$f_j$做验证集。
+
+  \quad \quad \quad - 每一$p_m$在$f_j \in \{F \setminus f_i\}$上测试有平均验证代价值$c_{(p_m, f_j)}$
+
+  \quad \quad \quad - 对每一$p_m$，得到$p_m$的平均验证代价值。取代价值最小的模型$p^*_i$在测试集$f_i$上测试
+
+  \quad \quad \quad 最优模型在测试集上得到测试集代价值$c_{(p^*_i f_i)}$。最终总代价值为$\sum_i\frac{c_{(p^*_i f_i)} }{N}$
+
+  \quad \quad \quad 最终测试集代价平均值为\textbf{选取模型的算法的代价值}
+
+  hyperparameter tuning得到最优模型设计：
+  
+  \quad 使用不同超参数在训练集上训练，得到多个训练结束的模型。
+  
+  \quad 在验证集上测试，选取准确度最高的hyperparameter。选取hyperparameter后可将测试集和验证集合并重新训练，使模型使用的训练数据集更大。
+  
+  \quad 最终在测试集上运行，得到模型准确度。\\
+\textbf{confusion matrix困惑矩阵}：分析二元/多元分类
   
   $\begin{bmatrix}
-    TN & FP \\
-    FN & TP
+    TP & FN \\
+    FP & TN
   \end{bmatrix}$
 
   一行对应同一期望输出，一列对应同一计算输出
 
-  $T/F$: 此位置的计算输出是否和预计输出一致
+  $T/F$: 此位置的计算输出是否和期望输出一致
 
-  $P/N$: 此位置的预计输出是否为真
+  $P/N$: 此位置的计算输出是否为真
+
+  \textbf{accuracy} $= \frac{TP + TN}{TP + TN + FP + FN}$
+
+  \textbf{classification error} = 1 - accuracy
 
   \textbf{precision} $= \frac{TP}{TP + FP}$
 
-  \quad 即$P($计算结果匹配 $|$ 计算结果为正$)$
+  \quad 即$P($计算结果匹配 $|$ 计算结果为正$)$：所有计算为真的样本中预测正确的概率
 
   \textbf{recall} = $\frac{TP}{TP + FN}$
 
-  \quad 即$P($计算结果匹配 $|$ 预计结果为正$)$
+  \quad 即$P($计算结果匹配 $|$ 期望结果为正$)$：所有期望为真的样本被正确预测的概率
+
+  \textbf{macro-average recall}：所有recall的平均值，此处recall为每行正确预测的概率
 
   \textbf{$F_1$} $= \frac{2}{\frac{1}{precision} + \frac{1}{recall}}$ 
   
   \quad precision 和 recall的调和平均值
+
+  \textbf{$F_\beta$} $= (1 - \beta^2) \cdot \frac{precision \cdot recall}{(\beta^2 \cdot precision) + recall}$
+
+  \quad $\beta$：当precision为recall$\beta$倍重要
   
   \textbf{specificity} = $\frac{TN}{TN + FN}$\\
+\textbf{imbalanced dataset}
+
+  1类标签样本数远多于另一样本
+  
+  \\
 \textbf{ROC curve}：分析二元/多元分类
 
   \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
