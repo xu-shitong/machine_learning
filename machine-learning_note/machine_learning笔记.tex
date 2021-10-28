@@ -831,34 +831,82 @@
 
   $P/N$: 此位置的计算输出是否为真
 
+  对一个类别/一元：
+
+  \quad \textbf{precision} $= \frac{TP}{TP + FP}$
+
+  \quad \quad 即$P($计算结果匹配 $|$ 计算结果为正$)$：所有计算为真的样本中预测正确的概率
+
+  \quad \textbf{recall} = $\frac{TP}{TP + FN}$
+
+  \quad \quad 即$P($计算结果匹配 $|$ 期望结果为正$)$：所有期望为真的样本被正确预测的概率
+
+  \quad \textbf{specificity} = $\frac{TN}{TN + FN}$
+
+  \quad \textbf{$F_1$} $= \frac{2}{\frac{1}{precision} + \frac{1}{recall}}$ 
+  
+  \quad \quad precision 和 recall的调和平均值
+
+  \quad \textbf{$F_\beta$} $= (1 + \beta^2) \cdot \frac{precision \cdot recall}{(\beta^2 \cdot precision) + recall}$
+
+  \quad \quad $\beta$：当precision为recall$\beta$倍重要
+
   \textbf{accuracy} $= \frac{TP + TN}{TP + TN + FP + FN}$
 
   \textbf{classification error} = 1 - accuracy
-
-  \textbf{precision} $= \frac{TP}{TP + FP}$
-
-  \quad 即$P($计算结果匹配 $|$ 计算结果为正$)$：所有计算为真的样本中预测正确的概率
-
-  \textbf{recall} = $\frac{TP}{TP + FN}$
-
-  \quad 即$P($计算结果匹配 $|$ 期望结果为正$)$：所有期望为真的样本被正确预测的概率
-
+  
   \textbf{macro-average recall}：所有recall的平均值，此处recall为每行正确预测的概率
 
-  \textbf{$F_1$} $= \frac{2}{\frac{1}{precision} + \frac{1}{recall}}$ 
-  
-  \quad precision 和 recall的调和平均值
+  \textbf{macro-average precision}：所有precision平均值，即每列求precision取均值\\
+\textbf{多类标签confusion matrix}
 
-  \textbf{$F_\beta$} $= (1 - \beta^2) \cdot \frac{precision \cdot recall}{(\beta^2 \cdot precision) + recall}$
-
-  \quad $\beta$：当precision为recall$\beta$倍重要
+  $\begin{bmatrix}
+    TP & FN & ... \\
+    FP & TN & undefine\\
+    ... & undefine & TN
+  \end{bmatrix}$
   
-  \textbf{specificity} = $\frac{TN}{TN + FN}$\\
+  对第一类标签的confusion matrix
+  
+  \textbf{micro-avaeraging}：将所有类别的TP之和 / 所有类别的TP + FN之和
+  
+  \quad 当所有样本只能符合一个类别时 = accuracy\\
 \textbf{imbalanced dataset}
 
   1类标签样本数远多于另一样本
   
-  \\
+  1. 将confusion matrix所有值换为关于横行的百分比，\textbf{假设所有期望类别下的样本数相同}
+  
+  2. down/up sample：舍弃/复制部分样本，使每一期望类别下样本数相同
+  
+  \quad 无法反应整个模型generalise性，由于实际使用时数据为imbalance的\\
+\textbf{confidence interval}
+
+  true error$error_D(h)$：模型$h$实际的代价值
+
+  sample error$error_S(h)$：模型$h$在测试集上运行的平均代价值\ 或预测错误类别的样本比例
+
+  error的confidence interval$= error_S(h) \pm \sqrt{\frac{error_S(h)(1-error_S(h))}{n}}$\\
+\textbf{比较两个模型}
+
+  randomisation test：随机交换2模型多个测试结果，比较交换前后模型performance
+
+  two-sample T-test：两模型在不同测试集上测试，得到performance个数不同。使用common variance求p值
+
+  paired T-test：两模型在相同测试集上测试，performance个数相同。取performance差求T-test p值\\
+\textbf{p-hacking}
+
+  定义：模型依赖于无关的参数得到p值<sig. level
+
+  \quad 例：对M pair特征，验证是否两个参数存在相关性。当增加实验的特征对时，仅有小部分相关性真实存在
+
+  解决：
+  
+  \quad 对M组特征的p值排序，得到$p_i < ...< p_M$
+
+  \quad 第$i$位置的特征使用sig. level$z_i = sig. level * \frac{i}{M}$ 
+
+  \quad 实际存在的特征对$i$为$p_i < z_i$\\
 \textbf{ROC curve}：分析二元/多元分类
 
   \begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
