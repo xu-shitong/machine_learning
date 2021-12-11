@@ -6,7 +6,7 @@ The main propose of the directory is to make notes of the two referenced books, 
 
 To run any experiment python code, execute under root directory. Otherwise there might be 'file not found' error
 
-To submit a program to Imperial College London GPU cluster, run `sbatch submit.sh FILE.py` under root directory. The training outputs will be saved in the root directory. 
+To submit a program to Imperial College London GPU cluster, 1. ssh into a gpu cluster 2. run `source .bashrc` 3. run `sbatch submit.sh FILE.py` under root directory. The training outputs will be saved in the root directory. 
 
 Note that the notes in machine-learning_note directory concentrated on machine learning excluding Deep Learning. Deep Learning pdf notes are in the deep_learning project.
 

@@ -463,6 +463,8 @@
   
   \quad 1.初始化随机选择k个样本位置做centroid，避免得到空cluster
 
+  \quad \quad 当迭代过程中出现空cluster，从其他cluster中分配一随机参数点给此cluster
+
   \quad 2.分配样本：每个样本分入距离最近的centroid的cluster
 
   \quad 3.更新centroid：新centroid为cluster中样本坐标平均值。
@@ -558,9 +560,9 @@
   
   \quad \quad \quad $\hat{p}(x) = N(x|\mu, \varSigma) = \frac{1}{\sqrt{2\pi \sigma^2}}exp(-\frac{(x - \mu)^2}{2\sigma^2})$
 
-  \quad \quad \quad \quad $\mu = \frac{1}{N}\sum x^{(i)}$
+  \quad \quad \quad \quad $\mu = \frac{1}{|S|}\sum x^{(i)}$
 
-  \quad \quad \quad \quad $\sigma = \frac{1}{|S|}\sum(x^{(i)} - \mu)^2$
+  \quad \quad \quad \quad $\sigma^2 = \frac{1}{|S|}\sum(x^{(i)} - \mu)^2$
 
   \quad \quad \quad \quad 即multivariate Normal dis中$D$ = 1情况
 
@@ -584,18 +586,18 @@
 
   \quad \quad \quad \quad $= \frac{N}{2}log(2\pi) + \frac{N}{2}log(\sigma^2) + \frac{1}{2\sigma^2}\sum_{x^{(i)} \in S}(x^{(i)} - \mu)^2$
 
-  \quad \quad \quad 当$\frac{d\mathcal{L}}{d\mu} = 0$和$\frac{d\mathcal{L}}{d\mu} = 0$，$\mu$和$\sigma$有以上公式求解\\
-\textbf{Gaussian Mixtures}：一种PDE
+  \quad \quad \quad 当$\frac{d\mathcal{L}}{d\mu} = 0$和$\frac{d\mathcal{L}}{d\sigma^2} = 0$，$\mu$和$\sigma$有以上公式求解\\
+\textbf{Gaussian Mixtures Model(GMM)}：一种PDE，假设所有子分部都为正态分部
 
-  使用多个子分部之和代表样本pdf分部，$p(x) = \sum_{k=1}^{K} \pi_kp_k(x)$
+  参数：$\theta = \{ \pi_k, \mu_k, \varSigma_k | k = 1..K\}$
+  
+  \quad \quad 共K个子分部，每一分部$\sim N(\mu_k, \varSigma_k)$
+  
+  使用多个子分部之和代表样本pdf分部，$p(x) = \sum_{k=1}^{K} \pi_kN(x|\mu_k, \varSigma_k)$
 
   \quad $0 \leq \pi_k \leq 1$, $\sum_{k=1}^{K}\pi_k = 1$，保证产生的pdf 积分为1
 
-  \textbf{GM Model(GMM)}：假设所有子分部都为正态分部
-
-  \quad 参数：$\theta = \{ \pi_k, \mu_k, \varSigma_k | k = 1..K\}$
-
-  \quad \quad 共K个子分部，每一分部$\sim N(\mu_k, \varSigma_k)$
+  迭代：
 
   \quad 1.随机初始化所有参数，仅保证$\sum \pi_k = 1$
 
@@ -611,15 +613,21 @@
 
   \quad \quad 更新covariance matrix $\varSigma_k = \frac{1}{N_k}\sum_{i=1}^{|B|}r_{ik}({\bf x}^{(i)} - \mu_k)({\bf x}^{(i)} - \mu_k)^T$
 
+  \quad \quad \quad 使用当前M-Step已更新的$\mu$
+
   \quad \quad 更新$\pi_k = \frac{N_k}{|B|}$
 
-  \quad 4.当$\theta$不再大幅改变则停止，否则回到2.
+  \quad 4.当$\theta$不再大幅改变，\textbf{或当neg. log likelihood不再下降}则停止，否则回到2.
+
+  \quad \quad neg. log likelihood $\mathcal{L} = -\sum_{x^{(i)} \in S} log(p({\bf x}^{(i)}|\mu, \varSigma))$
+
+  \quad \quad \quad $p$ 为K个子分部加权求和值，即一样本输出的fit值
 
   调参：选择子分部个数K
 
   \quad $BIC_K = \mathcal{L}(K) + \frac{P_K}{2}log(|B|)$
 
-  \quad \quad $\mathcal{L}(K)$为K类别的neg. log likelihood
+  \quad \quad $\mathcal{L}(K)$为使用K类别时的neg. log likelihood
 
   \quad \quad 当使用特征个数n时，$P_K = n * \frac{(n+1)n}{2} * k - 1$为使用的参数个数
 
@@ -707,7 +715,7 @@
 
   \quad 随机性提高模型 explore新行为
 
-  generic algorithm：遗传算法
+  genetic algorithm：遗传算法
 
   policy gradients：对参数求导，更新参数\\
 \textbf{credit assignment}：
@@ -857,8 +865,8 @@
   类似 Fixed Q-Value layer，每次循环更新$Q_{target}$网络，每n次循环后将$Q_{target}$抄入$Q_{\theta}$\\
 \textbf{Pritorized Experience Relay}
 
-  
-\textbf{Generic algorithm}
+  \\
+\textbf{Evolutionary algorithm}
 
   通过交换参数的一部分得到更优的参数组合
 
@@ -886,6 +894,16 @@
 
   \quad \quad \quad 即选取参数向量使得\ 其与已经选择的向量平均距离 * 自身$f(\vec{x_j})$值\ 最大化
 
+  \quad \quad tornament取法：每次随机选择n个参数向量，选择其中fit值最高者加入$S$
+
+  \quad \quad \quad 支持concurrent创建$S$
+
+  \quad \quad \quad 无需准确得到fit值，只需能够比较两参数向量优劣即可
+
+  \quad \quad Elitism取法：选择fit最优的部分参数向量直接加入$S$，比例多取10\%
+
+  \quad \quad \quad 
+
   \quad 3.根据最优m个参数向量，交换参数得到m个下一代参数向量，变异出剩余n-m个参数向量
 
   \quad \quad 交换参数：对$\vec{x} = [x_1, x_2, ...]$，$\vec{y} = [y_1, y_2, ...]$ 交换结果为$\vec{x}' = [x_1, y_2, ...]$，$\vec{y}' = [y_1, x_2, ...]$
@@ -897,6 +915,95 @@
   \quad \quad \quad 对$\vec{x} = [x_1, x_2, ...]$，变异参数向量每一元素$x'_i$有$x'_i \thicksim U(-step\_size + x_i, step\_size + x_i)$
 
   \quad \quad \quad 使用的分部不一定为Uniform分部
+
+  \quad 4. 当迭代次数达到限制，当一参数向量fit值达到限度，当fit值不再大幅改变，停止
+
+  \textbf{Genetic algorithm}
+  
+  \quad 定义：
+
+  \quad \quad Gene：单一可选的参数值
+  
+  \quad \quad Genetype：一段二进制值，对应一参数向量
+  
+  \quad \quad \quad 当参数使用编码导致可选值大于限定值域，将多余编码的评估值设为0，使其不被选入下一迭代
+
+  \quad \quad Phenotype：将Genetype分离成单个参数对应参数向量中每一元素
+
+  \quad crossover交换数据时交换Genotype一段bit值
+
+  \quad mutation变异：每一bit有m几率取相反值，m常取$\frac{1}{genotype\_length}$
+
+  \textbf{Evolutionary strategy $(\mu + \lambda)$ - ES}
+
+  \quad 定义： 
+
+  \quad \quad Genotype：一数组实数
+
+  \quad \quad $\mu$, $\lambda$为给定超参数。常取$\frac{\lambda}{\mu} = 5$
+
+  \quad 初始化：随机创建$\mu + \lambda$个参数向量
+
+  \quad 选择$S$：选择fit值最高的$\mu$个参数向量
+
+  \quad 生成下一迭代参数：
+  
+  \quad \quad 1.使用超参数$\sigma$：随机选择$\lambda$个向量$\vec{x}_i$，分别生成$\vec{x}_j = \vec{x}_i + N(0, \sigma)$
+
+  \quad \quad \quad + 为对每一$\vec{x}_i$中参数值加normal变量
+
+  \quad \quad \quad $\sigma$较大则数据分散。较小则学习率低，受局部最优影响。
+
+  \quad \quad 2. 在迭代过程中改变$\sigma$，有超参数$\tau_0 \propto \frac{1}{\sqrt{n}}$，n为参数向量元素数
+
+  \quad \quad \quad 前一迭代有$\sigma_i$，选择$\lambda$个参数向量$\vec{x}_i$
+
+  \quad \quad \quad 下一迭代有$\sigma_j = \sigma_i exp(\tau_0N(0, 1))$
+
+  \quad \quad \quad 生成新参数向量$\vec{x}_j = \vec{x}_i + \sigma_jN(0, 1)$
+
+  \textbf{Novelty Search}
+
+  \quad 定义：
+  
+  \quad \quad Novelty(x, A) = $\frac{1}{N}\sum_i^{N}d(x, x_i)$，即参数向量到A中N个邻近参数向量的平均距离。A为Novelty Archive，为一参数向量集合
+
+  \quad \quad behavioural descriptor：定义参数向量对应的策略类型，Novelty Search目标为找到合适的behaviour descriptor
+
+  \quad 迭代：
+
+  \quad \quad fit函数即Novelty(x)，一次迭代从参数向量中选择Novelty最高向量加入Archive，由archive生成下一代参数向量
+
+  \textbf{Novelty Search with Local Competition}
+
+  \quad 为一Multi-objective EA：同时最大化Novelty和Local Competition
+
+  \quad Local Competition LC(x)：对Archive中邻近的N个参数向量，其中fit值 < f(x)的向量个数
+
+  \quad \quad 迭代时将$f(x_i) < f(x)$的$x_i$替换为x
+
+  \textbf{MAP-Elites}
+
+  \quad 将参数向量对应到2d网格，每一格仅存在0-1个向量。
+
+  \quad \quad 向量在网格的分部不一定为uniform
+
+  \quad 迭代时随机选择一个参数，变异。得到新的参数向量对应网格中一格，若已有一参数向量对应此格，则选择两参数向量中fit值较大的加入archive，较小参数被移除
+
+  \quad performance计算：
+
+  \quad \quad diversity：archive size，即网格中有参数对应的格数
+
+  \quad \quad fit值：archive中参数的最大或平均fit值
+
+  \quad \quad converge速度
+
+  \quad \quad QD-Score：archive中参数的fit值总和
+
+  \quad \quad \quad 假设fit值全部为正
+
+  \quad \quad \quad 同时考虑diversity和fit值的表现
+
 
   
 % ----------------------------------------------------------------------
