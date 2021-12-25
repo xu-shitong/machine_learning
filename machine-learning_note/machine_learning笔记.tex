@@ -282,7 +282,7 @@
   算法：
 
   \quad 从样本特征集中选取k个最邻近$x$的样本，距离由distance metric计算，返回k个样本标签中占比较大的标签\\
-\section{distance weighted KNN}
+\textbf{distance weighted KNN}
 
   算法:
 
@@ -314,7 +314,7 @@
   \quad $x$的标签值为k个样本的平均值。此值即为regression结果\\
 \textbf{Locally weighted regression}
 
-  distance-weighted KNN，将K个邻近样本的距离作为权重$w_i$。计算$x$标签$ = \sum_i w_i \cdot d(x^{(i)}, x)$\\
+  distance-weighted KNN，将K个邻近样本的距离作为权重$w_i$。计算$x$标签$ = \sum_i w_i \cdot d(x^{(i)}, x)$
 
 
 
@@ -664,19 +664,33 @@
 \section{GAN对抗网络}
 \noindent \textbf{基本结构}：
 
-  generator：得到正则噪声，生成伪数据。
+  generator $G$：得到正则噪声$\mathbf{z}$，生成伪数据$\mathbf{x}'$。目标为使$D(\mathbf{x}') = 1$
   
-  discriminator，从实际数据集或generator得到数据判断真伪(是否来自实际数据集)。
+  discriminator $D$，从实际数据集$\mathbf{x}$或伪数据集$\mathbf{x}'$得到数据判断真伪。即对伪数据输出0\ 真数据1。
 
-  一次训练：
+  一次训练：(首先进行D更新，后进行G更新)
 
-  \quad 1.discriminator从数据集得到一批量真实数据\ 和\ 一批量伪数据。使用二元交叉熵损失函数训练
+  \quad \textbf{两部分使用不同trainer，每一部分计算代价值后立即更新参数}
 
-  \quad \quad 目标为：对伪数据输出0\ 真数据1
-
-  \quad 2.generator生成图像
+  \quad 1.discriminator部分：
   
-  \quad \quad 目标为生成discriminator输出为1的数据\\
+  \quad \quad 得到一批量正则噪声$\mathbf{z}$，计算伪数据$\mathbf{x}' = G(\mathbf{z})$，标签为$\vec{0}$。
+  
+  \quad \quad 取一批量真实数据$\mathbf{x}$，标签为$\vec{1}$。
+  
+  \quad \quad 对2批量数据分别使用二元交叉熵损失函数训练。最终代价值为两部分代价值平均值。
+
+  \quad \quad 调用D部分的trainer
+
+  \quad 2.generator生成数据
+
+  \quad \quad 与D部分使用同一批量正则噪声，使用未更新的G参数和\textbf{已更新的G参数}前向计算。输出的标签期望为$\vec{1}$
+  
+  \quad \quad 即代价函数为$J_G = -y \space log(D(G(\mathbf{z})))$ 
+  
+  \quad \quad \quad $ = - \space log(D(G(\mathbf{z})))$ (y必为1，由于期望产生$\mathbf{x}'$使$D(\mathbf{x}') = \vec{1}$)
+  
+  \quad \quad 调用G部分的trainer\\
 \textbf{Deep Convolutional GAN}
 
 

@@ -67,7 +67,7 @@
 \texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
 \texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
 \texttt{torch.mm(Tensor, Tensor)} 矩阵\ 向量乘法\\
-\texttt{torch.matmul(Tensor, Tensor)} 任意张量间乘法，包含广播机制\\
+\texttt{torch.matmul(Tensor, Tensor)} 任意张量间乘法\\
 \texttt{+-*/} 同NDArray使用广播机制\\
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
 \texttt{Tensor.permute(SHAPE)} 等同mxnet的transpose，更改纬度顺序\\
@@ -76,6 +76,9 @@
 \texttt{Tensor.nonzero()} 得到一list的index向量$\{v_i\}$，$Tensor[v_i]$为非零值\\
 \texttt{Tensor.to(device)} 将张量分配进指定CPU/GPU\\
 \texttt{Tensor.type(torch.float64)} \texttt{Np.astype('float')} 转换类型\\
+\texttt{F.one\_hot(Tensor, NUM\_CLASS)} 
+
+  将Tensor中每一元素转为NUM\_CLASS长度的onehot向量，NUM\_CLASS默认为Tensor中最大值\\
 \texttt{torch.random(MEAN, STD, SIZE*)}
 
   \texttt{size=($x_1, x_2, ...$)} 限定输出张量形状
