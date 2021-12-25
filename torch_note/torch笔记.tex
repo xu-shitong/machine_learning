@@ -20,7 +20,8 @@
 \noindent \texttt{from torch import nn, optim}\\
 \texttt{import torch.nn.functional as F}\\
 \texttt{from torchvision import models, transforms}\\
-\texttt{from PIL import Image}
+\texttt{from PIL import Image}\\
+\texttt{from numpy.random import default\_rng}
 
 % ----------------------------------------------------------------------
 % |                           tensor使用GPU                             |
@@ -62,17 +63,24 @@
   REQUIRES\_GRAD = \texttt{True} 分配空间记录斜率
   
   DEVICE = \texttt{device数据类型} 将张量分配进指定CPU/GPU\\
-\texttt{torch.numpy()} 得到NDArray \\
+\texttt{torch.numpy()} 得到numpy array \\
 \texttt{torch.tolist()} 得到python 数组 \\
+\texttt{Torch.item()} 当张量中仅有一个元素，得到此元素 \\
 \texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
 \texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
 \texttt{torch.mm(Tensor, Tensor)} 矩阵\ 向量乘法\\
 \texttt{torch.matmul(Tensor, Tensor)} 任意张量间乘法\\
 \texttt{+-*/} 同NDArray使用广播机制\\
+\texttt{torch.sum(Tensor, *DIM)} 将某一纬度一下的值求和\\
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
 \texttt{Tensor.permute(SHAPE)} 等同mxnet的transpose，更改纬度顺序\\
 \texttt{Tensor.transpose(dim0, dim1)} 交换两个纬度\\
-\texttt{torch.sum(Tensor, *DIM)} 将某一纬度一下的值求和\\
+\texttt{torch.vstack([Tensor, Tensor, ...])}在第0维方向连接张量，(对矩阵即在竖直方向上连接)\\
+\texttt{torch.hstack([Tensor, Tensor, ...])}在第1维方向连接张量，(对矩阵即在水平方向上连接)
+
+  \textbf{即vstack的形状第0位置值可不同，hstack形状第1位置可不同}
+
+  在循环中加入行得到张量，初始化张量为\texttt{torch.tensor([]).reshape((.., 0, ..))}\\
 \texttt{Tensor.nonzero()} 得到一list的index向量$\{v_i\}$，$Tensor[v_i]$为非零值\\
 \texttt{Tensor.to(device)} 将张量分配进指定CPU/GPU\\
 \texttt{Tensor.type(torch.float64)} \texttt{Np.astype('float')} 转换类型\\
@@ -99,7 +107,11 @@
   dataiter输出的feature，label使用的CPU/GPU\ 和样本Tensor，标签Tensor使用的CPU/GPU分别对应\\
 \texttt{torch.save(Tensor, '文件名')} 文件中保存一张量\\
 \texttt{Tensor = torch.load('文件名')} 读取文件中张量\\
-\texttt{torch.cuda.synchronize()} 等待异步计算结束，打印结果同样等待异步计算
+\texttt{torch.cuda.synchronize()} 等待异步计算结束，打印结果同样等待异步计算\\
+\texttt{random\_generator = default\_rng()}\\
+\texttt{shuffled\_index = random\_generator.permutation(列表大小)}
+
+  得到乱序index 列表
 
 % ----------------------------------------------------------------------
 % |                           torch神经网络                              |
@@ -109,9 +121,7 @@
 神经网络定义：\texttt{net.add\_module('层名', 层)}\\
 层定义：
 
-  \texttt{nn.Linear(输入节点数，输出节点数)} 定义全连接层
-
-  \texttt{}\\
+  \texttt{nn.Linear(输入节点数，输出节点数)} 定义全连接层\\
 \textbf{可使用层直接进行前向计算，训练函数中使用[layer.weight, net.bias]传入参数}\\
 \textbf{前向计算为(|B|, 特征数) 和\ 权重\ 矩阵相乘}\\
 \textbf{使用GPU时层定义后需加.to(device), 并不可以使用device=赋GPU}\\
