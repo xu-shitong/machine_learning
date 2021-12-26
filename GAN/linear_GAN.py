@@ -6,18 +6,13 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 
 # hyperparameter
-epoch = 100
+epoch = 20
 
 # dataset
 raw_x = torch.normal(0.0, 1, (1000, 2), dtype=torch.float32)
 A = torch.tensor([[1, 2], [-0.1, 0.5]], dtype=torch.float32)
 b = torch.tensor([1, 2])
 X = torch.matmul(raw_x, A) + b
-
-# # visualization
-# plt.scatter(X[:, 0], X[:, 1])
-# plt.show()
-
 
 dataset = torch.utils.data.TensorDataset(X, torch.ones((X.shape[0], 1), dtype=torch.float32))
 dataiter = torch.utils.data.DataLoader(dataset, batch_size=100, shuffle=True)
@@ -50,12 +45,13 @@ for i in range(epoch):
     z = G(X_prime)
     y_prime_hat = D(z.detach())
     y_real_hat = D(X)
-    l_d = (loss(y_real_hat, torch.zeros(y.shape)) + loss(y_prime_hat, torch.zeros(y.shape, dtype=torch.float32))) / 2
+    l_d = (loss(y_real_hat, torch.ones(y.shape, dtype=torch.float32)) + loss(y_prime_hat, torch.zeros(y.shape, dtype=torch.float32))) / 2
     l_d.backward()
     trainer_d.step()
 
     # G part
     trainer_g.zero_grad()
+    z = G(X_prime)
     y_prime_hat = D(z)
     l_g = loss(y_prime_hat, torch.ones(y.shape, dtype=torch.float32))
     l_g.backward()
@@ -68,3 +64,9 @@ for i in range(epoch):
 
 print(f"final weight: g: w: \n{G[0].weight.data}, b: \n{G[0].bias.data}")
 print(f"final weight: d: w: \n{D[0].weight.data}, b: \n{D[0].bias.data}")
+
+# visualization
+X_prime = G(raw_x).detach().numpy()
+plt.scatter(X[:, 0], X[:, 1])
+plt.scatter(X_prime[:, 0], X_prime[:, 1])
+plt.show()
