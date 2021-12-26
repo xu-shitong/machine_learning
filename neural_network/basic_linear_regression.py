@@ -48,7 +48,7 @@ dataiter = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=T
 # net.add_module('layer1', nn.Linear(feature_num, 1).to(device))
 
 # define network method 2
-W = torch.ones(feature_num,1, requires_grad=True)
+W = torch.ones(feature_num,1, requires_grad=False)
 b = torch.zeros(1, requires_grad=True)
 class MyNet(nn.Module):
   def __init__(self) -> None:

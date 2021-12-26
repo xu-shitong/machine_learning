@@ -87,7 +87,7 @@
 \texttt{F.one\_hot(Tensor, NUM\_CLASS)} 
 
   将Tensor中每一元素转为NUM\_CLASS长度的onehot向量，NUM\_CLASS默认为Tensor中最大值\\
-\texttt{torch.random(MEAN, STD, SIZE*)}
+\texttt{torch.normal(MEAN, STD, SIZE*)}
 
   \texttt{size=($x_1, x_2, ...$)} 限定输出张量形状
 
@@ -160,6 +160,12 @@
 \texttt{loss(y\_hat, y).backward()} 得到代价函数值，求导
 
   不会调用\texttt{.sum()} 或\texttt{.mean()}，求和方法在loss函数中定义\\
+\texttt{Tensor.detach()}
+
+  当此Tensor作为另一神经网络输入时，detach导致此张量不参与反向传播。即不对此张量和得到此张量的计算求导\\
+\texttt{Tensor.require\_grad=False}
+
+  前向计算中仍记录数值用于反向计算，但调用\texttt{step()}不会更新参数\\
 \texttt{class out\_image(nn.Module):}
 
   \texttt{def \_\_init\_\_(self):}
@@ -169,7 +175,7 @@
   \texttt{def forward(self, x):}
 
   \quad 自定义神经网络\\
-\texttt{net = models.NET\_NAME(pretrained=True)} 得到预训练的神经网络\\
+\texttt{net = models.NET\_NAME(pretrained=True)} 得到预训练的神经网络
 
 
 % ----------------------------------------------------------------------
@@ -216,7 +222,7 @@
   否则参数代价值高，并迭代后不下降\\
 使用网络层作为权重，不参与斜率计算时\ 调用\texttt{layer.requires\_grad\_(False)}
 
-  否则调用\texttt{loss.backward()}时提示需要\texttt{retain\_graph=True}\\
+  否则调用\texttt{loss.backward()}时提示需要\texttt{retain\_graph=True}，由于反向传播在错误的试图更新网络权重\\
 \texttt{transforms.ToPILImage()}不保证像素值在\texttt{[0,1]}区间，需调用\texttt{image\_tensor.clamp(min=0, max=1)}
 
   d2lzh自动对图像做clip，保证值在\texttt{[0,1]}区间
@@ -227,6 +233,11 @@
   否则下一迭代可能更改上一迭代已经加入数组的张量\\
 前向计算中不能调用\texttt{Tensor.detach()}
 
-  否则此项无法求斜率，无法进行迭代
+  否则此项无法求斜率，无法进行迭代\\
+\texttt{retain\_graph=True}
+
+  当一次前向计算保存的记录需要被再次使用，设置retain\_graph=True 
+
+  由于调用\texttt{.backward()}后前向传播记录被清空
 
 \end{document}
