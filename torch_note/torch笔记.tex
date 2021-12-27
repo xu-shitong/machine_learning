@@ -83,7 +83,7 @@
   在循环中加入行得到张量，初始化张量为\texttt{torch.tensor([]).reshape((.., 0, ..))}\\
 \texttt{Tensor.nonzero()} 得到一list的index向量$\{v_i\}$，$Tensor[v_i]$为非零值\\
 \texttt{Tensor.to(device)} 将张量分配进指定CPU/GPU\\
-\texttt{Tensor.type(torch.float64)} \texttt{Np.astype('float')} 转换类型\\
+\texttt{Tensor = Tensor.type(torch.float64)} \texttt{Np.astype('float')} 转换类型\\
 \texttt{F.one\_hot(Tensor, NUM\_CLASS)} 
 
   将Tensor中每一元素转为NUM\_CLASS长度的onehot向量，NUM\_CLASS默认为Tensor中最大值\\
@@ -141,7 +141,11 @@
 
   \quad REDUCTION = \texttt{'none' | 'mean' | 'sum'} 得到每一样本代价值向量 | 得到平均代价 | 得到代价和。默认为'mean'
 
-  \texttt{= nn.CrossEntropyLoss()} 交叉熵损失函数，\textbf{已经包含softmax计算}\\
+  \texttt{= nn.CrossEntropyLoss()} 交叉熵损失函数，\textbf{已经包含softmax计算}
+  
+  \texttt{= nn.BCELoss()} 交叉熵损失函数，不包含softmax
+  
+  \texttt{= nn.BCEWithLogitsLoss()} 包含sigmoid的交叉熵损失函数，数值稳定性更高\\
 \texttt{trainer}
 
   \texttt{= optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数

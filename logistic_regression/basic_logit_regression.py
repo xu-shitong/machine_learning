@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 import pandas
+import torch.nn as nn
 
 
 batch_size = 3
@@ -16,12 +17,12 @@ training_labels = torch.from_numpy(np.c_[[0]*13 + [1]*7])
 dataset = torch.utils.data.TensorDataset(training_features, training_labels)
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-# visualize data points
-training_labels_array = training_labels.numpy().tolist()
-training_features_array = training_features.numpy().tolist()
-data = pandas.DataFrame(data={'feature': training_features_array, 'label': training_labels_array})
-data.plot(kind='scatter', x='feature', y='label')
-plt.show()
+# # visualize data points
+# training_labels_array = training_labels.numpy().tolist()
+# training_features_array = training_features.numpy().tolist()
+# data = pandas.DataFrame(data={'feature': training_features_array, 'label': training_labels_array})
+# data.plot(kind='scatter', x='feature', y='label')
+# plt.show()
 
 # initialize model 
 W = torch.ones(1,1)
@@ -31,8 +32,10 @@ b = torch.zeros(1)
 def forward(x, W, b):
   return 1 / (1 + (-x * W - b).exp())
 
-def loss(p_hat, y):
-  return - sum(y*p_hat.log() + (1-y)*(1-p_hat).log()) / batch_size
+# def loss(p_hat, y):
+#   return - sum(y*p_hat.log() + (1-y)*(1-p_hat).log()) / batch_size
+
+loss = nn.CrossEntropyLoss(reduction="sum")
 
 def train(W, b, p_hat, x, y):
   W[:] = W - sum((p_hat - y) * x) * learning_rate / batch_size
@@ -43,6 +46,8 @@ for i in range(epoch_num):
   acc_loss = 0
   for feature, label in dataloader:
     p_hat = forward(feature, W, b)
+    label = label.type(torch.float32)
+    print(p_hat, label)
     l = loss(p_hat, label)
     train(W, b, p_hat, feature, label)
     acc_loss += l

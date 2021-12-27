@@ -24,15 +24,19 @@ dataiter = torch.utils.data.DataLoader(dataset, batch_size=100, shuffle=True)
 D = nn.Sequential(
     nn.Linear(2, 5), nn.Tanh(),
     nn.Linear(5, 3), nn.Tanh(),
-    nn.Linear(3, 1))
+    nn.Linear(3, 1),
+    nn.Sigmoid())
 trainer_d = optim.Adam(D.parameters(), lr=0.05)
 
 G = nn.Sequential(
   nn.Linear(in_features=2, out_features=2)
 )
 trainer_g = optim.Adam(G.parameters(), lr=0.005)
-# loss = nn.CrossEntropyLoss()
-loss = nn.BCEWithLogitsLoss(reduction='sum')
+loss = nn.BCELoss()
+# loss = nn.BCEWithLogitsLoss(reduction='sum')
+
+print(f"before training weight: g: w: \n{G[0].weight.data}, b: \n{G[0].bias.data}")
+print(f"before training weight: d: w: \n{D[0].weight.data}, b: \n{D[0].bias.data}")
 
 for i in range(epoch):
   acc_d_loss = 0
