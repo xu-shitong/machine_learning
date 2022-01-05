@@ -6,7 +6,7 @@ from torch import nn, optim
 
 T = 1000
 tau = 4
-epoch_num = 100
+epoch_num = 20
 time = torch.arange(T) / 100
 y = time.sin() + torch.normal(0, 0.1, time.shape)
 
@@ -49,7 +49,16 @@ for i in range(epoch_num):
     acc_loss += l
   print(f"epoch {i} acc_loss: {acc_loss}")
 
+
+# predict using 4 given data and generate the rest
+predicts = torch.zeros((T, ))
+predicts[:4] = y[:4]
+for i in range(4, T):
+  predicts[i] = net(predicts[i-4 : i].reshape((-1, tau))).item()
+
+
 # plot
 plt.plot(time[tau:], label)
 plt.plot(time[tau:], net(feature).detach().numpy())
+plt.plot(time, predicts)
 plt.show()
