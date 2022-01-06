@@ -141,11 +141,11 @@
 
   \quad REDUCTION = \texttt{'none' | 'mean' | 'sum'} 得到每一样本代价值向量 | 得到平均代价 | 得到代价和。默认为'mean'
 
-  \texttt{= nn.CrossEntropyLoss()} 交叉熵损失函数，\textbf{已经包含softmax计算}
+  \texttt{= nn.CrossEntropyLoss()} catagorical交叉熵损失函数，\textbf{已经包含softmax计算}
   
-  \texttt{= nn.BCELoss()} 交叉熵损失函数，不包含softmax
+  \texttt{= nn.BCELoss()} 二元交叉熵损失函数
   
-  \texttt{= nn.BCEWithLogitsLoss()} 包含sigmoid的交叉熵损失函数，数值稳定性更高\\
+  \texttt{= nn.BCEWithLogitsLoss()} 包含sigmoid的二元交叉熵损失函数，数值稳定性更高\\
 \texttt{trainer}
 
   \texttt{= optim.SGD(net.parameters(), lr=学习率)} SGD迭代函数
