@@ -7,7 +7,7 @@ T = 100
 batch_size = 16
 train_T = 6000
 tot_T = 10000
-epoch_num = 50
+epoch_num = 20
 time = torch.arange(tot_T) / 20
 # Y = time.sin() + torch.normal(0, 0.2, time.shape)
 Y = time.sin() + 1
@@ -54,26 +54,27 @@ def seq_data_iter_random(corpus, batch_size, num_steps):  #@save
 class RNN:
   def __init__(self, hidden_num) -> None:
     self.hidden_num = hidden_num
-    self.net = [torch.zeros((1, hidden_num)), torch.zeros((hidden_num, hidden_num)), torch.zeros((hidden_num)), torch.zeros((hidden_num, 1)), torch.zeros((1))]
-    nn.init.xavier_uniform_(self.net[0])
-    nn.init.xavier_uniform_(self.net[1])
-    nn.init.xavier_uniform_(self.net[3])
-    for param in self.net:
-      param.requires_grad_(True)
+    self.rnn = nn.RNN(1, hidden_num, 1, nonlinearity='relu')
+    self.output = nn.Linear(hidden_num, 1)
+    nn.init.xavier_uniform_(self.rnn.weight_hh_l0)
+    nn.init.xavier_uniform_(self.rnn.weight_ih_l0)
+    nn.init.xavier_uniform_(self.output.weight)
+
+    self.rnn.bias_hh_l0.data.fill_(0)
+    self.rnn.bias_ih_l0.data.fill_(0)
+    self.output.bias.data.fill_(0)
+
   
   def __call__(self, X, state):
-    print(X.shape)
-    W_xh, W_hh, b_h, W_hq, b_q = self.net
-    Y = torch.zeros(X.shape)
-    for i, x in enumerate(X):
-      x = x.reshape((-1, 1))
-      # ReLU generalize the best on function with periodicity, (e.g. sin), than Sigmoid, Tanh
-      state = nn.ReLU()(torch.mm(x, W_xh) + torch.mm(state, W_hh) + b_h)
-      Y[i, :] = (torch.mm(state, W_hq) + b_q).T
-    return Y, (state, )
+    Y, state = self.rnn(X.reshape((X.shape[0], X.shape[1], 1)), state)
+    Y = self.output(Y)
+    return Y, state
+  
+  def parameters(self):
+    return list(self.rnn.parameters()) + list(self.output.parameters())
   
 def grad_clipping(net, theta):
-  params = net.net
+  params = net.parameters()
   norm = torch.sqrt(sum([torch.sum(p.grad ** 2) for p in params]))
   if norm > theta:
     for param in params:
@@ -81,18 +82,19 @@ def grad_clipping(net, theta):
 
 
 net = RNN(256)
-trainer = optim.Adam(net.net, lr=0.001)
+trainer = optim.Adam(net.parameters(), lr=0.001)
 # trainer = optim.SGD(net.net, lr=0.004)
 loss = nn.MSELoss()
 
 for i in range(epoch_num):
   acc_loss = 0
-  state = torch.zeros((batch_size, 256))
-  for x, y in seq_data_iter_random(Y[:train_T], batch_size, T):
+  state = torch.zeros((1, batch_size, 256))
+  for x, y in sequential_sampling(Y[:train_T], batch_size, T):
     trainer.zero_grad()
     x = x.permute((1, 0))
-    y = y.permute((1, 0))
-    y_hat, (state, ) = net(x, state)
+    y = y.T
+    y = y.reshape((y.shape[0], y.shape[1], 1))
+    y_hat, state = net(x, state)
     l = loss(y_hat, y)
     l.backward()
     state.detach_()
@@ -103,14 +105,14 @@ for i in range(epoch_num):
   print(f"epoch {i} acc_loss: {acc_loss}")
 
 # net.clear_state(1)
-state = torch.zeros((1, 256))
+state = torch.zeros((1, 1,256))
 record = torch.zeros((tot_T, ))
 for i, y in enumerate(Y[:train_T//2]):
-  record[i], (state, ) = net(y.reshape((1, -1)), state)
+  record[i], state = net(y.reshape((1, -1)), state)
 for i in range(train_T//2, train_T):
-  record[i], (state, ) = net(record[i-1].reshape((1,-1)), state)
+  record[i], state = net(record[i-1].reshape((1,-1)), state)
 for i in range(train_T, tot_T):
-  record[i], (state, ) = net(record[i-1].reshape((1,-1)), state)
+  record[i], state = net(record[i-1].reshape((1,-1)), state)
 plt.plot(time, Y)
 plt.plot(time, record.detach().numpy())
 plt.show()
