@@ -121,7 +121,9 @@
 神经网络定义：\texttt{net.add\_module('层名', 层)}\\
 层定义：
 
-  \texttt{nn.Linear(输入节点数，输出节点数)} 定义全连接层\\
+  \texttt{nn.Linear(输入节点数，输出节点数)} 定义全连接层
+  
+  \quad \textbf{当全连接层输入为2维以上的张量时，全连接层仅对最低维操作。即最低维元素数同输入节点数}\\
 \textbf{可使用层直接进行前向计算，训练函数中使用[layer.weight, net.bias]传入参数}\\
 \textbf{前向计算为(|B|, 特征数) 和\ 权重\ 矩阵相乘}\\
 \textbf{使用GPU时层定义后需加.to(device), 并不可以使用device=赋GPU}\\
@@ -141,7 +143,7 @@
   
   HIDDEN\_SIZE：RNN 隐藏层neuron数
   
-  NUM\_LAYERS：RNN 隐藏层数。default 1
+  NUM\_LAYERS：RNN 隐藏层数，每层隐藏层都有HIDDEN\_SIZE neuron。default 1
   
   NONLINEARITY：激活函数，可\texttt{'relu'}或\texttt{'tanh'}字符创。default为\texttt{'tanh'}
 
@@ -151,16 +153,24 @@
 
   DROPOUT：定义每一隐藏层后dropout 层的几率，default为0。即不使用dropout
 
-  BIDIRECTIONAL：是否为双向神经网络，default为false\\
+  BIDIRECTIONAL：是否为双向神经网络，default为false
+  
+  \textbf{rnn不可用.weight/.bias取参数}\\
 \texttt{rnn(X, H)}
 
-  计算$H = \sigma(XW_{xh} + b_x + HW_{hh} + b_h)$
+  计算$H, H_n = \sigma(XW_{xh} + b_x + H_nW_{hh} + b_h)$
 
   \quad X形状见RNN BATCH\_SIZE变量说明
 
-  \quad H形状(隐藏层数，每层neuron数，特征数)。双向RNN中第一维值$\times$2
+  \quad H形状(隐藏层数，时间步数，每层neuron数，特征数)。双向RNN中第一维值$\times$2
 
-  \quad \textbf{输出仅为隐藏状态，不包含全连接层计算}\\
+  \quad $H_n$为所有隐藏层的输出，
+  
+  \textbf{输出仅为隐藏状态，不包含全连接层计算}
+
+  \textbf{$H$为参与最后全连接层计算的输出，即所有时间步的隐藏状态。}
+  
+  \textbf{$H_n$为参与下一次计算的隐藏状态张量，即最后一时间步的隐藏状态，与$H$中最后一张量相同}\\
 \texttt{loss}
 
   \texttt{= nn.MSELoss(REDUCTION*)} 平方代价函数
