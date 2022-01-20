@@ -595,6 +595,10 @@
   
   使用多个子分部之和代表样本pdf分部，$p(x) = \sum_{k=1}^{K} \pi_kN(x|\mu_k, \varSigma_k)$
 
+  \quad x可为向量，则$p(x)$计算方法同Multivariate Normal Distribution
+
+  \quad \quad 此时称多元混合高斯分布
+  
   \quad $0 \leq \pi_k \leq 1$, $\sum_{k=1}^{K}\pi_k = 1$，保证产生的pdf 积分为1
 
   迭代：

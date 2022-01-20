@@ -69,9 +69,27 @@
 \texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
 \texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
 \texttt{torch.mm(Tensor, Tensor)} 矩阵\ 向量乘法\\
-\texttt{torch.matmul(Tensor, Tensor)} 任意张量间乘法\\
-\texttt{+-*/} 同NDArray使用广播机制\\
+\texttt{torch.matmul(Tensor, Tensor)} 
+
+  任意张量间乘法
+  
+  \textbf{张量间乘法：两张量最后两维符合矩阵乘法，高维使用广播机制广播矩阵}\\
+\texttt{+-*/} 
+
+  同NDArray使用广播机制
+  
+  \textbf{广播机制要求：形状从最后一维开始，每一维元素/张量个数相同\ 或\ 其中一个数为1}\\
 \texttt{torch.sum(Tensor, *DIM)} 将某一纬度一下的值求和\\
+\texttt{torch.max(Tensor, *DIM)} 
+
+  当没有指定维度DIM，求所有\texttt{Tensor}元素最大值
+  
+  当给定纬度DIM，\textbf{返回(Tensor 1, Tensor 2)元组}。第一张量为给定维度最大元素，第二张量为给定维度最大元素index\\
+\texttt{Tensor[:, ..., None]} 
+  
+  '[]'中前n位置为':'，则在第n\ 至\ 第n+1维间插入一维
+
+  则形状由$(s_1, ..., s_n, s_{n+1}, ...)$转为$(s_1, ..., s_n, 1, s_{n+1}, ...)$\\
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
 \texttt{Tensor.permute(SHAPE)} 等同mxnet的transpose，更改纬度顺序\\
 \texttt{Tensor.transpose(dim0, dim1)} 交换两个纬度\\
