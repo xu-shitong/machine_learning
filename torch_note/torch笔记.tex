@@ -21,7 +21,53 @@
 \texttt{import torch.nn.functional as F}\\
 \texttt{from torchvision import models, transforms}\\
 \texttt{from PIL import Image}\\
-\texttt{from numpy.random import default\_rng}
+\texttt{from numpy.random import default\_rng}\\
+\textbf{import 自定义函数}
+
+  python\_file：调用import的python 文件
+
+  程序path：python\_file 的文件夹path
+
+  运行path：执行\texttt{python python\_file}时终端所在的path
+
+  import path：被import的程序path (包含文件名)
+
+  1. 当程序path和运行path相同
+
+  \quad \texttt{from directory. ... .python\_file import func}
+
+  2. 当程序path和运行path不同时
+
+  \quad \texttt{import sys}
+
+  \quad \texttt{sys.path.append(PATH1)}
+
+  \quad \texttt{from PATH2 import func}
+
+  \quad \quad 保证PATH1 + PATH2 = import path即可
+
+  \quad \textbf{sys.path中已包含程序path，但不可使用import ..path得到\ 不为程序path子文件夹内\ 的程序}
+
+  3. 在jupyter-notebook 中运行时
+
+  \quad 方法1：2. 中path需包含至运行path最底文件夹位置
+
+  \quad 方法2：代码同2. 在import 中的path每一文件夹下创建空\texttt{\_\_init\_\_.py}文件，重启jupyter kernel后运行
+
+  得到\textbf{运行path}：
+
+  \quad \texttt{import os}
+
+  \quad \texttt{path = os.path.abspath(os.path.join('.'))}
+
+  得到\textbf{现有sys path}：
+
+  \quad \texttt{import sys}
+
+  \quad \texttt{path = sys.path}
+
+  \textbf{import path：作用为在每一 sys.path 后连接path}
+
 
 % ----------------------------------------------------------------------
 % |                           tensor使用GPU                             |
@@ -146,7 +192,7 @@
 \textbf{前向计算为(|B|, 特征数) 和\ 权重\ 矩阵相乘}\\
 \textbf{使用GPU时层定义后需加.to(device), 并不可以使用device=赋GPU}\\
 \texttt{net.weight/bias.data.fill\_(值)} 对\textbf{层}中所有权重/偏差赋\textbf{同一}值\\
-\texttt{net.weight/bias = nn.Parameter(Tensor)} 将参数初始化为指定张量\\
+\texttt{net.weight/bias = nn.Parameter(Tensor)} 将参数初始化为指定张量，\textbf{参数参与反向传播，作为.parameters()的输出之一}\\
 \texttt{nn.init.xavier\_uniform\_(net.weight/.bias)} 对\textbf{层}中所有权重/偏差使用xavier初始化\\
 \texttt{nn.init.normal\_(net.weight/.bias, MEAN, STD)} 对\textbf{层}使用normal初始化\\
 \texttt{def init\_func(layer):}
@@ -261,7 +307,7 @@
 
   \texttt{image.show()}
   
-  \quad 或使用自定义包，支持反标准化
+  或使用自定义包，支持反标准化
 
   \texttt{import sys}
 
