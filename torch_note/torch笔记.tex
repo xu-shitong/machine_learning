@@ -135,7 +135,17 @@
   
   '[]'中前n位置为':'，则在第n\ 至\ 第n+1维间插入一维
 
-  则形状由$(s_1, ..., s_n, s_{n+1}, ...)$转为$(s_1, ..., s_n, 1, s_{n+1}, ...)$\\
+  则形状由$(s_1, ..., s_n, s_{n+1}, ...)$转为$(s_1, ..., s_n, 1, s_{n+1}, ...)$
+  
+  可使用多个None加入多个1元素维\\
+\texttt{Tensor.unsqueeze(dim*)}
+
+  在第dim-1至dim维加入一维，同\texttt{Tensor[(: * dim), None]}\\
+\texttt{Tensor.squeeze(dim)}
+
+  若第dim维为1元素维(即\texttt{Tensor.shape[dim] == 1})，则删除此维。
+
+  若dim为None，则将所有1元素维删除\\
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
 \texttt{Tensor.permute(SHAPE)} 等同mxnet的transpose，更改纬度顺序\\
 \texttt{Tensor.transpose(dim0, dim1)} 交换两个纬度\\
@@ -316,6 +326,22 @@
   \texttt{from utils.functions import show\_tensor\_image, un\_normalize\_image}
 
   \texttt{show\_tensor\_image(un\_normalize\_image(image.reshape((3, height, width)), image\_mean, image\_std))}
+
+  显示多行图片
+
+  \quad \texttt{grids = make\_grid([Tensor], nrow, padding)}
+
+  \quad \texttt{plt.imshow(grids.permute((1, 2, 0)))}
+
+  \quad \texttt{plt.show()}
+  
+  \quad \quad nrow定义一行图片个数
+
+  \quad \quad padding定义连接2图像时间隔像素数
+
+  \quad \quad make\_grid得到(n, c, h, w)形状张量，即n张图片，每一图使用c通道。返回将所有图片连接结果，形状为(3, h', w')
+
+
 
 % ----------------------------------------------------------------------
 % |                             常见错误                                 |
