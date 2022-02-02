@@ -19,7 +19,7 @@
 \section{import}
 \noindent \texttt{from torch import nn, optim}\\
 \texttt{import torch.nn.functional as F}\\
-\texttt{from torchvision import models, transforms}\\
+\texttt{from torchvision import models, transforms, utils.make_grid}\\
 \texttt{from PIL import Image}\\
 \texttt{from numpy.random import default\_rng}\\
 \textbf{import 自定义函数}
@@ -327,7 +327,7 @@
 
   \texttt{show\_tensor\_image(un\_normalize\_image(image.reshape((3, height, width)), image\_mean, image\_std))}
 
-  显示多行图片
+  显示多行图片，图片大小相同
 
   \quad \texttt{grids = make\_grid([Tensor], nrow, padding)}
 
@@ -341,6 +341,13 @@
 
   \quad \quad make\_grid得到(n, c, h, w)形状张量，即n张图片，每一图使用c通道。返回将所有图片连接结果，形状为(3, h', w')
 
+  并行显示图片，图片大小可不同
+
+  \quad \texttt{plt.subplot(abc)}
+
+  \quad \texttt{plt.plot}
+
+  \quad \quad 共a行b列，在第c图片位置画图
 
 
 % ----------------------------------------------------------------------

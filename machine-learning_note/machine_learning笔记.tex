@@ -33,7 +33,16 @@
 \textbf{semi-supervised learning}: 部分样本有对应标签\\
 \textbf{weakly-supervised learning}: 对样本标记包含的物体，而不标注对应目标的具体位置\\
 \textbf{non parametric model}: 无法用有限的distribution parameter代表的模型，如Nearest neighbour\\
-\textbf{在训练中使用正则化代价函数，训练结束后测试中代价函数不使用正则化项}
+\textbf{在训练中使用正则化代价函数，训练结束后测试中代价函数不使用正则化项}\\
+\textbf{curse of dimentionality}
+
+  令$d$为特征数，$e$为一特征覆盖范围
+
+  为了在$n$总样本中覆盖$k$个样本，平均需要e满足$e^d = \frac{n}{k}$
+
+  随d升高，e值接近1。即每一特征需覆盖大部分取值范围使得k样本每个参数能同时被d个特征覆盖
+
+  其余n-k样本存在特征取值范围的边界上，即\textbf{距离k样本距离几乎相同远}
 
 % ----------------------------------------------------------------------
 % |                              数学计算                               |
@@ -712,9 +721,9 @@
   
   \quad State space $S$
   
-  \quad Reward $R$: $\sum$ × $A$ × $S$ → $R$
+  \quad Reward $R$: $\sum \times A \times S$ → $R$
   
-  \quad Transition $P$: $\sum$ × $A$ → $S$
+  \quad Transition $P$: $\sum \times A$ → $S$
 
   第$i$决策的符号定义：
 
