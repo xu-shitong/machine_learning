@@ -418,6 +418,8 @@
   \quad random patches随机贴片：对特征和训练集同时取子集进行训练
   
   \quad random subspace随机子空间：对特征取子集，对整个总训练集进行训练
+
+  \quad \quad **使用bagging无法减少variance，需要对特征取子集提高效果**
   
   \quad extra-trees极度随机森林：'使用随机$t_k$而不使用最小化数据混杂度的$t_k$'
   
@@ -1031,10 +1033,46 @@
 
   \quad \quad \quad 同时考虑diversity和fit值的表现
 
+% ----------------------------------------------------------------------
+% |                              机器翻译                               |
+% ----------------------------------------------------------------------
+\section{机器翻译}
+\noindent 分析翻译结果
+
+  Bilingual Evaluation understudy BLEU-n：
+
+  \quad 对预测翻译$\hat{s} = [\hat{s}_1, \hat{s}_2, ...]$，计算和给定目标翻译$s$的相似度
+
+  \quad BLEU-n$ = BP * (\prod_i^n (i \cdot precision(i)))^{\frac{1}{n}}$
+
+  \quad \quad $precision(i)$：
+  
+  \quad \quad \quad 使用i词长度的窗口，选取$\hat{s}$的子字符串$\{ [\hat{s}_1, ..., \hat{s}_i], [\hat{s}_2, \hat{s}_{i+1}], ... \}$
+
+  \quad \quad \quad $precision(i) = $ 子字符串中同时为目标翻译substring的个数 / 子字符串个数
+
+  \quad \quad $Brevity Penalty BP$：当输出远小于目标长度，惩罚更多
+
+  \quad \quad \quad $BP = \min(1, \frac{|\hat{s}|}{|s|})$
+
+  BERTScore：
+
+  \quad 对预测和目标翻译每一词转为词向量
+
+  \quad 对每一目标词向量，和每一预测词向量点乘，取最高值作为权重
+
+  \quad 求目标词权重平均值，当赋目标词权重时可计算加权平均值\\
+\textbf{Recurrent Network Machine Translate RNMT}
+
+  使用两RNN，分别为encoder，decoder
+
+  encoder RNN得到输入句，产生隐藏状态作为decoder的隐藏状态。
+  
+  decoder初始输入为$<s>$代表句子开始产生词序，直至输出为$</s>$作为句末结束
 
   
 % ----------------------------------------------------------------------
-% |                              分析结果                                |
+% |                              分析结果                               |
 % ----------------------------------------------------------------------
 \section{分析结果}
 \noindent \textbf{训练过程}
