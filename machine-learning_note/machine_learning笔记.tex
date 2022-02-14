@@ -762,12 +762,31 @@
 
   \quad 根据上结论，令$q(\mathbf{z}) = q_{\phi}(\mathbf{z} | \mathbf{x})$，$\phi$为另一神经网络，得到$\mathbf{x}$，输出$\mathbf{z}$。
 
-  \quad 令$\vec{\mu}_{\phi}(\mathbf{x}), \log(\sigma_{\phi}(\mathbf{x}))$为网络$NN_{\phi}(\mathbf{x})$输出的均值\ log std。有$q_{\phi}(\mathbf{z} | \mathbf{x})$为$\mathcal{N}(\vec{\mu}_{\phi}(\mathbf{x}), diag(\sigma^2_{\phi}(\mathbf{x})))$
+  \quad 令$\vec{\mu}_{\phi}(\mathbf{x}), \log(\vec{\sigma}_{\phi}(\mathbf{x}))$为网络$NN_{\phi}(\mathbf{x})$输出的均值\ log std。有$q_{\phi}(\mathbf{z} | \mathbf{x})$为$\mathcal{N}(\vec{\mu}_{\phi}(\mathbf{x}), diag(\vec{\sigma}^2_{\phi}(\mathbf{x})))$
 
   \quad VAE目标即得到$\phi, \theta$使得$L(\phi, \theta)$最大
 
   \quad \quad $L(\phi, \theta) = E_{p_{data}(\mathbf{x})}(E_{q_{\phi}(\mathbf{z} | \mathbf{x})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z}))) - KL(q_{\phi}(\mathbf{z} | \mathbf{x})\| p(\mathbf{x})))$
 
+  \quad Theorem：$KL(q_{\phi}(\mathbf{z} | \mathbf{x})\| p(\mathbf{x})) = \frac{1}{2}(\|\vec{\mu}(\mathbf{x})\|^2 + \|\vec{\sigma}(\mathbf{x})\|^2) - 2(\log(\vec{\sigma}(\mathbf{x})) \cdot \vec{1} - d)$，d为z向量元素数
+
+  求导：
+
+  \quad Monte Carlo Estimation：$L(\phi, \theta)$中$E_{q_{\phi}(\mathbf{z} | \mathbf{x})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z}))) \approx \log(p_{\theta}(\mathbf{x} | \mathbf{z}))$，其中$\mathbf{z} \sim q_{\phi}(\mathbf{z} | \mathbf{x})$
+
+  \quad 则对$\theta$求导：$\frac{dL(x, \phi, \theta)}{d\theta} = \frac{d \log(p_{\theta}(x | z))}{d \theta}$，其中$\mathbf{z} \sim q_{\phi}(\mathbf{z} | \mathbf{x})$
+  
+  \quad 对$\phi$求导：$\frac{dL(x, \phi, \theta)}{d \phi} = \frac{d E_{q_{\phi}(\mathbf{z} | \mathbf{x})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z})))}{d\phi} - \frac{d KL(q_{\phi}(\mathbf{z} | \mathbf{x}) \| p(\mathbf{z}))}{d\phi}$
+
+  \quad \quad Reparameterisation trick：$\mathbf{z} \sim q_{\phi}(\mathbf{z} | \mathbf{x})$ iff $\mathbf{z} = \vec{\mu}_{\phi} + \vec{\sigma}_{\phi} \odot \vec{\epsilon}$，其中$\vec{\epsilon} \sim \mathcal{N}(\vec{0}, I)$
+
+  \quad \quad 则$E_{q_{\phi}(\mathbf{z} | \mathbf{x})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z}))) = E_{\vec{\epsilon} \sim \mathcal{N}(\vec{0}, I)}(\log(p_{\theta}(\mathbf{x} | \vec{\mu}_{\phi} + \vec{\sigma}_{\phi} \odot \vec{\epsilon})))$
+  
+  \quad \quad 则$\frac{E_{q_{\phi}(\mathbf{z} | \mathbf{x})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z})))}{d \phi} = E_{\vec{\epsilon} \sim \mathcal{N}(\vec{0}, I)}(\frac{\log(p_{\theta}(\mathbf{x} | \vec{\mu}_{\phi} + \vec{\sigma}_{\phi} \odot \vec{\epsilon}))}{d\phi})$
+
+  \quad \quad \quad $ = E_{\vec{\epsilon} \sim \mathcal{N}(\vec{0}, I)}(\frac{d\mathbf{z}}{d\phi}\frac{\log(p_{\theta}(\mathbf{x} | \mathbf{z}))}{d\mathbf{z}} |_{\mathbf{z} = \vec{\mu}_{\phi} + \vec{\sigma}_{\phi} \odot \vec{\epsilon}})$
+
+  \quad \quad \quad $ = \frac{d\mathbf{z}}{d\phi}\frac{\log(p_{\theta}(\mathbf{x} | \mathbf{z}))}{d\mathbf{z}} |_{\mathbf{z} = \vec{\mu}_{\phi} + \vec{\sigma}_{\phi} \odot \vec{\epsilon}})$，其中$\vec{\epsilon} \sim \mathcal{N}(\vec{0}, I)$
   
 
 % ----------------------------------------------------------------------
