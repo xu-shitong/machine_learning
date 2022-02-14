@@ -1,6 +1,7 @@
 \documentclass[UTF8]{ctexart}
 \usepackage{geometry}
 \usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{graphicx} %插入图片的宏包
 \usepackage{float} %设置图片浮动位置的宏包
 \geometry{a4paper,scale=0.8}
@@ -195,23 +196,23 @@
 
   \quad \quad \quad '当样本数高于参数数量时使用，由于dual form的复杂度为$O(|S|^2)$ - $O(|S|^3)$，直接解复杂度为$O(|S|)$'
   
-  \quad \quad 2.使用拉格朗日乘数法得到dual form，其中$\vec{\alpha}$为向量。$\textbf{x}^{(i)}$为第i样本的特征值向量$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
+  \quad \quad 2.使用拉格朗日乘数法得到dual form，其中$\vec{\alpha}$为向量。$\mathbf{x}^{(i)}$为第i样本的特征值向量$\mathcal{L} = \frac{1}{2}W^TW - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}(y^{(i)}\hat{p}^{(i)} - 1)$
 
-  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}\textbf{x}^{(i)}$, $3.\sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}=0$
+  \quad \quad \quad 使偏导向量为$\vec{0} $，得到$2.W = \sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}\mathbf{x}^{(i)}$, $3.\sum_{i=1}^{m}\vec{\alpha}_iy^{(i)}=0$
 
-  \quad \quad \quad 带入得$\mathcal{L} (W, \vec{\alpha}) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\vec{\alpha}_i\vec{\alpha}_jy^{(i)}y^{(j)}\textbf{x}^{(i)^T}\textbf{x}^{(j)} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$
+  \quad \quad \quad 带入得$\mathcal{L} (W, \vec{\alpha}) = \frac{1}{2}\sum_{i=1}^{|B|}\sum_{j=1}^{|B|}\vec{\alpha}_i\vec{\alpha}_jy^{(i)}y^{(j)}\mathbf{x}^{(i)^T}\mathbf{x}^{(j)} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$
   
-  \quad \quad \quad \quad $=\frac{1}{2}\vec{\alpha}^T (\textbf{x} * y)(\textbf{x} * y)^T \vec{\alpha} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$
+  \quad \quad \quad \quad $=\frac{1}{2}\vec{\alpha}^T (\mathbf{x} * y)(\mathbf{x} * y)^T \vec{\alpha} - \sum_{i=1}^{|B|}\vec{\alpha}^{(i)}$
 
-  \quad \quad \quad \quad 其中$(\textbf{x} * y)$为广播乘法\ 将训练集矩阵每一样本乘以对应标签值，$y$为标签列向量
+  \quad \quad \quad \quad 其中$(\mathbf{x} * y)$为广播乘法\ 将训练集矩阵每一样本乘以对应标签值，$y$为标签列向量
 
   \quad \quad \quad 使用QP solver得到使$\mathcal{L} (W, \vec{\alpha})$最小，$\vec{a}^{(i)} \geq 0$的向量$\vec{\alpha}$
 
   \quad \quad \quad 解$W$：由$\vec{\alpha}$带入2.式计算，$\vec{\alpha}$已被clamp，见经验2.
 
-  \quad \quad \quad 解$b$：由于所有support vector $\textbf{x}^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
+  \quad \quad \quad 解$b$：由于所有support vector $\mathbf{x}^{(i)}$ 满足1.式，则对所有support vector计算$b$取平均值
 
-  \quad \quad \quad \quad $b = E_{a^{(i)} \geq 0}(y^{(i)}-W^T\textbf{x}^{(i)})$
+  \quad \quad \quad \quad $b = E_{a^{(i)} \geq 0}(y^{(i)}-W^T\mathbf{x}^{(i)})$
 
   \quad \quad 3.直接进行梯度下降，代价函数$J(W, b) = \frac{1}{2}W^TW + const \sum_i HingeLoss(y^{(i)}, \hat{p}^{(i)})$
   
@@ -231,7 +232,7 @@
 
   \quad 权重$W$公式不再适用，由于结果不为线性
 
-  \quad 偏差$b = \sum_{\vec{\alpha}^{(i)} \geq 0} y^{(i)} - \sum_{\vec{\alpha}^{(j)} \geq 0} \vec{\alpha}^{(i)} * y^{(j)} * K(\textbf{x}^{(i)}, \textbf{x}^{(j)})$
+  \quad 偏差$b = \sum_{\vec{\alpha}^{(i)} \geq 0} y^{(i)} - \sum_{\vec{\alpha}^{(j)} \geq 0} \vec{\alpha}^{(i)} * y^{(j)} * K(\mathbf{x}^{(i)}, \mathbf{x}^{(j)})$
 
   \textbf{- 使用similarity function}：
   
@@ -272,7 +273,7 @@
 
   \quad \quad 3.梯度下降直接得到最优$W, b$，无法通过梯度下降得到$\vec{\alpha}$ 由于梯度下降忽略限制条件
 
-  \quad \quad 4.QP solver需要$(\textbf{x} * y)(\textbf{x} * y)^T$为positive definite，计算时加上对角矩阵$diag(\epsilon)$即可，$\epsilon$多取$10^{-4}$
+  \quad \quad 4.QP solver需要$(\mathbf{x} * y)(\mathbf{x} * y)^T$为positive definite，计算时加上对角矩阵$diag(\epsilon)$即可，$\epsilon$多取$10^{-4}$
 
   \quad \quad \quad 否则迭代解QP时出现KKT condition not met或positive definite条件不满足
 
@@ -706,8 +707,68 @@
   \quad \quad \quad $ = - \space log(D(G(\mathbf{z})))$ (y必为1，由于期望产生$\mathbf{x}'$使$D(\mathbf{x}') = \vec{1}$)
   
   \quad \quad 调用G部分的trainer\\
-\textbf{Deep Convolutional GAN}
+\textbf{Deep Convolutional GAN}\\
 
+\textbf{VAE}
+  \textbf{Divergence}
+
+  \quad 定义divergence function$D: \mathcal{P} \times \mathcal{P} \rightarrow \mathbb{R} $
+  
+  \quad 有$D(P, Q) \geq 0$，$D(P, P) = 0$
+
+  \textbf{Jensen's inequality}
+
+  \quad 有函数$f: \mathbb{R} \to \mathbb{R} $，random variable$\mathbf{x} \sim D$。令$p(\mathbf{x})$为D的pdf
+
+  \quad 则有$E_{p(\mathbf{x})}(f(\mathbf{x})) \geq f(E_{p(\mathbf{x})}(\mathbf{x}))$
+
+  \quad Law of Unconscious Statisticians：对$Y = g(\mathbf{x})$
+  
+  \quad \quad 若$E_{p_X(\mathbf{x})}(g(\mathbf{x})) < \infty$，则$E_{p_Y(y)}(y) = E_{p_X(\mathbf{x})}(g(\mathbf{x}))$
+
+  \quad Generalized Jensen's inequality：$E_{p_X(\mathbf{x})}(f(g(\mathbf{x}))) = f(E_{p_X(\mathbf{x})}(g(\mathbf{x})))$
+
+  \textbf{Kullback-Leibler KL divergence}
+
+  \quad divergence KL：$KL(P \| Q) = \int p(\mathbf{x})\ln(\frac{p(\mathbf{x})}{q(\mathbf{x})}) \,dx $
+
+  \quad 令真实数据集分部$X_{data}$，GAN根据参数$\theta$生成的数据集分部$X_{\theta}$
+  
+  \quad $\theta$代价函数$KL(X_{data} \| X_{\theta}) = E_{p_{data}(\mathbf{x})}(\ln(p_{data}(\mathbf{x}))) - E_{p_{data}(\mathbf{x})}(\ln(p_{\theta}(\mathbf{x})))$
+
+  \quad \quad 即最优化参数$\theta$为最小化$E_{p_{data}(\mathbf{x})}(\ln(p_{\theta}(\mathbf{x})))$
+
+  \quad Variational Inference：
+
+  \quad \quad 1. $p_{\theta}(\mathbf{x}) = \int p_{\theta}(\mathbf{x} | \mathbf{z})p(\mathbf{z}) \,dz $
+
+  \quad \quad \quad z为GAN生成使用的输入Gaussian noise，即$\mathbf{z} \sim \mathcal{N}(0, I)$
+
+  \quad \quad \quad $p_{\theta}(\mathbf{x} | \mathbf{z})$为使用$\theta$生成$\mathbf{x}$特征的几率
+
+  \quad \quad \quad 由于对高维向量$\mathbf{z}$求积分，难以计算
+
+  \quad \quad 2. $\log(p_{\theta}(\mathbf{x})) = \log\int p_{\theta}(\mathbf{x} | \mathbf{z})p(\mathbf{z}) \,dz $
+
+  \quad \quad \quad $ = \log\int q(\mathbf{z})\frac{p_{\theta}(\mathbf{x} | \mathbf{z})p(\mathbf{z})}{q(\mathbf{z})} \,dz $
+
+  \quad \quad \quad $ \geq \int q(\mathbf{z})\log(\frac{p_{\theta}(\mathbf{x} | \mathbf{z})p(\mathbf{z})}{q(\mathbf{z})}) \,dz $ (由Jensen's inequality)
+
+  \quad \quad \quad $ = E_{q(\mathbf{z})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z}))) - KL(q(\mathbf{z})\|p(\mathbf{z})) $
+
+  \quad \quad **结论：$q(\mathbf{z}) \approx p_{\theta}(\mathbf{z} | \mathbf{x})$时\ 代价值$E_{q(\mathbf{z})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z})))$较小**
+
+  \textbf{Variational auto-encoder}
+
+  \quad 根据上结论，令$q(\mathbf{z}) = q_{\phi}(\mathbf{z} | \mathbf{x})$，$\phi$为另一神经网络，得到$\mathbf{x}$，输出$\mathbf{z}$。
+
+  \quad 令$\vec{\mu}_{\phi}(\mathbf{x}), \log(\sigma_{\phi}(\mathbf{x}))$为网络$NN_{\phi}(\mathbf{x})$输出的均值\ log std。有$q_{\phi}(\mathbf{z} | \mathbf{x})$为$\mathcal{N}(\vec{\mu}_{\phi}(\mathbf{x}), diag(\sigma^2_{\phi}(\mathbf{x})))$
+
+  \quad VAE目标即得到$\phi, \theta$使得$L(\phi, \theta)$最大
+
+  \quad \quad $L(\phi, \theta) = E_{p_{data}(\mathbf{x})}(E_{q_{\phi}(\mathbf{z} | \mathbf{x})}(\log(p_{\theta}(\mathbf{x} | \mathbf{z}))) - KL(q_{\phi}(\mathbf{z} | \mathbf{x})\| p(\mathbf{x})))$
+
+  
 
 % ----------------------------------------------------------------------
 % |                             RL强化学习                               |
@@ -892,9 +953,7 @@
 \textbf{Double DQN} 
 
   类似 Fixed Q-Value layer，每次循环更新$Q_{target}$网络，每n次循环后将$Q_{target}$抄入$Q_{\theta}$\\
-\textbf{Pritorized Experience Relay}
-
-  \\
+\textbf{Pritorized Experience Relay}\\
 \textbf{Evolutionary algorithm}
 
   通过交换参数的一部分得到更优的参数组合
@@ -941,7 +1000,7 @@
 
   \quad \quad 变异向量由已有的m个后代参数向量变异得到
 
-  \quad \quad \quad 对$\vec{x} = [x_1, x_2, ...]$，变异参数向量每一元素$x'_i$有$x'_i \thicksim U(-step\_size + x_i, step\_size + x_i)$
+  \quad \quad \quad 对$\vec{x} = [x_1, x_2, ...]$，变异参数向量每一元素$x_i'$有$x_i' \thicksim U(-step\_size + x_i, step\_size + x_i)$
 
   \quad \quad \quad 使用的分部不一定为Uniform分部
 
