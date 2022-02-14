@@ -742,7 +742,7 @@
 
   \quad \quad 1. $p_{\theta}(\mathbf{x}) = \int p_{\theta}(\mathbf{x} | \mathbf{z})p(\mathbf{z}) \,dz $
 
-  \quad \quad \quad z为GAN生成使用的输入Gaussian noise，即$\mathbf{z} \sim \mathcal{N}(0, I)$
+  \quad \quad \quad z为GAN生成使用的输入Gaussian noise，即$\mathbf{z} \sim \mathcal{N}(\vec{0}, I)$
 
   \quad \quad \quad $p_{\theta}(\mathbf{x} | \mathbf{z})$为使用$\theta$生成$\mathbf{x}$特征的几率
 
@@ -788,6 +788,11 @@
 
   \quad \quad \quad $ = \frac{d\mathbf{z}}{d\phi}\frac{\log(p_{\theta}(\mathbf{x} | \mathbf{z}))}{d\mathbf{z}} |_{\mathbf{z} = \vec{\mu}_{\phi} + \vec{\sigma}_{\phi} \odot \vec{\epsilon}})$，其中$\vec{\epsilon} \sim \mathcal{N}(\vec{0}, I)$
   
+  应用：
+
+  \quad $p_{\theta}(\mathbf{x} | \mathbf{y})$中y代表期望产生的数据类别，生成网络输入为$y, z$
+
+
 
 % ----------------------------------------------------------------------
 % |                             RL强化学习                               |
