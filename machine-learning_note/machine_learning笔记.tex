@@ -136,6 +136,8 @@
   $X$的数据熵$H(X) = -\sum_i p(x_i)log_2(p(x_i))$
 
   当$x_i$为continuous，不为离散值时，$X$即一分部。此时$H(X) = -\int_{x} p(x)log_2(p(x))\,dx $
+
+
 % ----------------------------------------------------------------------
 % |                             分类模型                                |
 % ----------------------------------------------------------------------
@@ -1330,5 +1332,100 @@
   \end{figure}
 
   2种图，形状类似，x轴内容不同\\
+
+
+% ----------------------------------------------------------------------
+% |                              数学系笔记                              |
+% ----------------------------------------------------------------------
+\section{数学系笔记}
+\noindent \textbf{Spectral Factorization Theorem}
+
+  Thoeorem：对Symmetric matrix $A \in \mathbb{R}^{n \times n}$
+  
+  \quad 存在orthogonal matrix $U \in \mathbb{R}^{n \times n}$，对角矩阵$D \in \mathbb{R}^{n \times n}$使得$U^TAU = D$
+
+  Rayleigh quotient：对symmetric matric A，$R_A(\vec{x}) = \frac{\vec{x}^TA\vec{x}}{\|\vec{x}\|}, \forall \vec{x} \neq \vec{0}$
+
+  由Spectral Factorization Theorem：令$\lambda_{min}, \lambda_{max}$为A的最大最小eigenvalue
+
+  \quad 则$\lambda_{min} \leq R_A(\vec{x}) \leq \lambda_{max}$
+open ball：$B(\vec{c}, r) = \{x | \|\vec{x} - \vec{c}\| < r\}$\\
+closed ball：$B[\vec{c}, r] = \{x | \|\vec{x} - \vec{c}\| \leq r\}$\\
+interior point：对集合$U \subseteq \mathbb{R}^n$, $c \in U$
+
+  U的interior point集合$interior(U) = \{\vec{x} \in U | B(\vec{x}, r) \subseteq U, r > 0\}$\\
+\textbf{Closed Set}
+
+  集合$U \subseteq \mathbb{R}^n $为closed：对所有converge的子集$\{\vec{x}_i\} \subseteq U$，$\lim_{i \to \infty} \vec{x}_i = \vec{x}^*$)，则$\vec{x}^* \in U$\\
+\textbf{Closure}
+
+  对集合$U \subseteq \mathbb{R}^n $的closure$cl(U) = \bigcap\{T | U \subseteq T, T \space closed\}$
+
+  \quad 即最小的close 集合T使得$U \subseteq T$\\
+\textbf{求导}
+
+  Directional derivative：对定义在$S \subseteq \mathbb{R}^n$上的函数$f$，
+  
+  \quad 令$\vec{x} \in interior(S), \vec{d} \in \mathbb{R}^n$
+
+  \quad 若存在$\lim_{x \to 0} \frac{f(\vec{x} + t\vec{d})}{t} $，则称此为f在$\vec{x}$沿$\vec{d}$方向的directional derivative
+  
+  Partial derivative：当Directional derivative中$\vec{d}$为仅有i位置为1，其余为0的向量$\vec{e}_i$。
+  
+  \quad 写作$\frac{df}{d\vec{x}_i}|\vec{x}$
+
+  \quad 在点$\vec{x}$，对每一$\vec{x}_i$位置求partial derivative：$\nabla f(\vec{x}) = [..., \frac{df}{d\vec{x}_i}|\vec{x}, ...]^T$
+  
+  Continuous Differentiability：当定义在open set $S \subseteq \mathbb{R}^n$上的函数$f$所有的partial derivative都存在
+  
+  \quad 写作$(\nabla f(\vec{x}))^Td, \vec{x} \in U, \vec{d} \in \mathbb{R}^n$
+  
+  Linear Approximation Theorem：令函数$f$定义在open set $S \subseteq \mathbb{R}^n$上
+  
+  \quad 取$\vec{x} \in U, r > 0$使得$B(\vec{x}, r) \subseteq U$, 则对任意$\vec{y} \in U$存在$\xi \in [\vec{x}, \vec{y}]$使得
+  
+  \quad \quad $f(\vec{y}) = f(\vec{x}) + (\nabla f(\vec{x}))^T(\vec{y} - \vec{x}) + \frac{1}{2}(\vec{y} - \vec{x})^T\nabla^2 f(\xi) (\vec{y} - \vec{x})$
+  
+  Quadratic Approximation Theorem：
+  
+  \quad 同Linear Approximation Theorem，无需取$\xi$，有
+  
+  \quad \quad $f(\vec{y}) = f(\vec{x}) + (\nabla f(\vec{x}))^T(\vec{y} - \vec{x}) + \frac{1}{2}(\vec{y} - \vec{x})^T\nabla^2 f(\vec{x}) (\vec{y} - \vec{x}) + o(\|\vec{y} - \vec{x}\|^2)$
+  
+  \quad \quad o为complexity bonud\\
+stationary point：对集合$U \subseteq \mathbb{R}^n$，函数$f$定义在$U$上\\
+saddle point：非maximum和minimum的stationary point
+
+  若$f$在$\vec{x}$的hessian matrix$\frac{d^2f(\vec{x})}{d\vec{x}^2}$为indefinite，则点$\vec{x}$为saddle point\\
+coerciveness：令$f : \mathbb{R} \rightarrow \mathbb{R} $为continuous function
+
+  若$\lim_{\|\vec{x}\| \to \infty} f(\vec{x}) = \infty $，则f为coercive\\
+Global Optimality Condition Theorem：
+
+  令函数f定义在$\mathbb{R}^n$上，2次continuous differentiable，对任意$\vec{x} \in \mathbb{R}^n$有$\nabla^2 f(\vec{x})$semi positive definite。
+
+  令$\vec{x}^* \in \mathbb{R}^n$为任意$f$上stationary point，则$\vec{x}^*$为$f$global minimum point\\
+quatratic function：函数$f$定义在$\mathbb{R}^n$上。
+
+  定义：$f(\vec{x}) = \vec{x}^TAx + 2\vec{b}^T\vec{x} + c$，其中$A \in \mathbb{R}^{n \times n}$symmetric，$b \in \mathbb{R}^n$，$c \in \mathbb{R} $
+
+  \quad $\nabla f(\vec{x}) = 2A\vec{x} + 2\vec{b}$
+
+  \quad $\nabla f(\vec{x}) = 2A$
+
+  \quad 当$A = S^TS$，A semi positive definite
+
+  lemma：A positive definite iff $f$coercive
+
+  Theorem：$\forall \vec{x} \in \mathbb{R}^n, f(\vec{x}) \geq 0$ iff 矩阵$\begin{bmatrix}
+    A & b \\
+    b^T & c
+    \end{bmatrix}$ semi positive definite
+  
+
+  
+  
+
+
 
 \end{document}
