@@ -1404,7 +1404,19 @@ Global Optimality Condition Theorem：
 
   令函数f定义在$\mathbb{R}^n$上，2次continuous differentiable，对任意$\vec{x} \in \mathbb{R}^n$有$\nabla^2 f(\vec{x})$semi positive definite。
 
-  令$\vec{x}^* \in \mathbb{R}^n$为任意$f$上stationary point，则$\vec{x}^*$为$f$global minimum point\\
+  令$\vec{x}^* \in \mathbb{R}^n$为任意$f$上stationary point，则$\vec{x}^*$为$f$global minimum point
+  
+  证明：
+  
+  \quad 任取$\vec{y} \in \mathbb{R}^n$。
+  
+  \quad 由于$\vec{x}$为stationary point，$\nabla f(\vec{x}) = \vec{0}$
+  
+  \quad 由Linear Approximation theorem，有$f(\vec{y}) = f(\vec{x}) + \vec{0}^T(\vec{y} - \vec{x}) + \frac{1}{2}(\vec{y} - \vec{x})^T\nabla^2 f(\xi) (\vec{y} - \vec{x})$
+
+  \quad 由于$\nabla^2 f(\vec{x})$semi positive definite，有$(\vec{y} - \vec{x})^T\nabla^2 f(\xi) (\vec{y} - \vec{x}) \geq 0$
+
+  \quad 则$f(\vec{y}) \geq f(\vec{x}^*)$，$\vec{x}$为最小值点\\
 quatratic function：函数$f$定义在$\mathbb{R}^n$上。
 
   定义：$f(\vec{x}) = \vec{x}^TAx + 2\vec{b}^T\vec{x} + c$，其中$A \in \mathbb{R}^{n \times n}$symmetric，$b \in \mathbb{R}^n$，$c \in \mathbb{R} $
@@ -1420,8 +1432,73 @@ quatratic function：函数$f$定义在$\mathbb{R}^n$上。
   Theorem：$\forall \vec{x} \in \mathbb{R}^n, f(\vec{x}) \geq 0$ iff 矩阵$\begin{bmatrix}
     A & b \\
     b^T & c
-    \end{bmatrix}$ semi positive definite
+    \end{bmatrix}$ semi positive definite\\
+decent direction 
+
+  令$f : \mathbb{R}^n \rightarrow \mathbb{R} $为continuous differentiable
+
+  定义$\vec{d} \in \mathbb{R} \neq \vec{0}$为$\vec{x}$点的decent direction：$\nabla f(\vec{x})^T\vec{d} < 0$\\
+Lipschitz Gradient：令函数$f$Continuous differentiable，定义在$\mathbb{R}^n$
+
+  定义$f$有Lipschitz Gradient：存在$L > 0$，使得对任意$\vec{x}, \vec{y} \in \mathbb{R}^n$，$\|\nabla f(\vec{x}) - \nabla f(\vec{y})\| \leq L\|\vec{x} - \vec{y}\|$
+
+  \quad L称有Lipschitz Constant
+
+  $C^{1,1}_L(\mathbb{R}^n)$：定义在$\mathbb{R}^n$上的，有Lipschitz Const 为L的函数集合
+
+  \quad linear function属于$C^{1,1}_0$
+
+  \quad quadratic function$f(\vec{x}) = \vec{x}^TA\vec{x} + 2\vec{b}^T\vec{x} + c$，最小L为$2\|A\|_2$
+
+  Theorem：
+
+  \quad 令$f$定义在$\mathbb{R}^n$上，二次Continuous Differentiable。则$f \in C^{1,1}_L(\mathbb{R}^n)$\ iff\ $\forall \vec{x} \in \mathbb{R}^n, \|\nabla^2 f(\vec{x})\| \leq L$\\
+stepsize selection(learning rate)$\alpha$ 每次迭代中选择学习率
+
+  每次更新中$\vec{x}' = \vec{x} + \alpha \vec{d}$
+
+  constant：$\alpha$为常数
+
+  Exact stepsize：$\alpha = argmin_{\alpha} f(\vec{x} + \alpha \vec{d})$
+
+  Backtracking (Armijo rule)：
+
+  \quad 使用参数$s > 0$, $a \in (0, 1)$, $b \in (0, 1)$
+
+  \quad 初始化$\alpha = s$，从较大$\alpha$值开始，即初始时
   
+  \quad 每次迭代$\alpha = b\alpha$，直至代价函数减少量$f(\vec{x}) - f(\vec{x} + \alpha \vec{d}) \geq -a\alpha \nabla f(\vec{x})^T\vec{d}$
+
+  \quad \quad 减小量不等式称Sufficient Decrease Property\\
+Sufficient decrease of gradient method Lemma：
+
+  令$f \in C^{1,1}_L$，$\{\vec{x}\}$为由gradient method产生的$\vec{x}$数列
+
+  有$f(\vec{x}_i) - f(\vec{x}_{i+1}) \geq M\|\nabla f(\vec{x_i})\|^2$
+
+  \quad M = $\begin{cases}
+    \alpha(1 - \frac{\alpha L}{2}) & const \alpha \\
+    \frac{1}{2L} & exact stepsize \\
+    \alpha\min(s, \frac{2(1 - \alpha)\beta}{L}) & backtracking
+    \end{cases}$\\
+Converge of Gradient method Theorem：
+
+  令$f \in C^{1,1}_L(\mathbb{R}^n)$。存在$m \in \mathbb{R}$，对任意$\vec{x} \in \mathbb{R}^n$，$f(\vec{x}) > m$
+
+  则：1. $f(\vec{x}_{i + 1}) < f(\vec{x}_i)$，除非$\nabla f(\vec{x}_i) = 0$
+
+  \quad 2. $\lim_{i \to \infty} \nabla f(\vec{x}_i) = 0$\\
+令矩阵$A \in \mathbb{R}^{n \times n}$ positive definite，令$\lambda_{max}, \lambda_{min}$为A最大\ 最小eigenvalue
+
+  Kantorovich inequality：$\vec{x} \in \mathbb{R}^n, \vec{x} \neq \vec{0}$，有$\frac{(xTx)^2}{(x^TAx)(x^TA^{-1}x)} \geq \frac{4\lambda_{max}\lambda_{min}}{(\lambda_{max} + \lambda_{min})^2}$
+
+  Theorem：$\{\vec{x}\}$为gradient method解$\min \vec{x}^TAx$产生的$\vec{x}$数列，则$f(\vec{x}_{k + 1}) \leq (\frac{\lambda_{max} - \lambda_{min}}{\lambda_{max} - \lambda_{min}})^2f(\vec{x}_i)$
+
+  \quad 由Kantorovich inequality证得，可得出cond(A)较高时converge缓慢\\
+scaled gradient method：解决converge较慢问题
+
+  
+
 
   
   
