@@ -1497,8 +1497,25 @@ Converge of Gradient method Theorem：
   \quad 由Kantorovich inequality证得，可得出cond(A)较高时converge缓慢\\
 scaled gradient method：解决converge较慢问题
 
-  
+  Lemma：将代价函数$f(\vec{x})$转为$g(\vec{y}) = f(S\vec{y})$，其中$\vec{x} = S\vec{y}$，$\vec{x}, \vec{y} \in \mathbb{R}^n$，$S$为nonsingular 矩阵
 
+  \quad 则有$\nabla g(\vec{y}) = S^T\nabla f(Sy) = S^T\nabla f(\vec{x})$。带入$g(\vec{y})$的迭代中，$\vec{y}_{i+1} = \vec{y}_i - \alpha_i S^T\nabla f(S\vec{y}_i)$
+
+  \quad $\vec{x}_{i+1} = \vec{x}_i - \alpha_i SS^T\nabla f(\vec{x}_i)$
+
+  \quad 由于$SS^T$positive definite，$-SS^T\nabla f(\vec{x}_i)$为一新decent gradient
+
+  选择$SS^T$：
+
+  \quad $\nabla^2 g(\vec{y}) = S\nabla^2f(Sy)S = S\nabla^2f(\vec{x})S$
+
+  \quad 目标为选择$S$使得$S\nabla^2f(\vec{x})S$\ cond值较小
+
+  \quad \quad 方法1. Newton's method：$SS^T = \nabla^2f(\vec{x})^{-1}$
+
+  \quad \quad 方法2. $SS^T = diag((\frac{d^2 f(\vec{x})}{d\vec{x}_i^2})^{-1})$
+
+  
 
   
   

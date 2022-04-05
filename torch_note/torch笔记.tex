@@ -181,6 +181,9 @@
   dataiter输出的feature，label使用的CPU/GPU\ 和样本Tensor，标签Tensor使用的CPU/GPU分别对应\\
 \texttt{torch.save(Tensor, '文件名')} 文件中保存一张量\\
 \texttt{Tensor = torch.load('文件名')} 读取文件中张量\\
+\texttt{torch.save({"model": net, "loss": ...}, '文件名')} 保存一checkpoint\\
+\texttt{checkpoint = torch.load('文件名')} 读取一checkpoint\\
+\texttt{model.load\_state\_dict(checkpoint['model'].state\_dict())} 从checkpoint中读取参数\\
 \texttt{torch.cuda.synchronize()} 等待异步计算结束，打印结果同样等待异步计算\\
 \texttt{random\_generator = default\_rng()}\\
 \texttt{shuffled\_index = random\_generator.permutation(列表大小)}
@@ -203,6 +206,7 @@
 \textbf{使用GPU时层定义后需加.to(device), 并不可以使用device=赋GPU}\\
 \texttt{net.weight/bias.data.fill\_(值)} 对\textbf{层}中所有权重/偏差赋\textbf{同一}值\\
 \texttt{net.weight/bias = nn.Parameter(Tensor)} 将参数初始化为指定张量，\textbf{参数参与反向传播，作为.parameters()的输出之一}\\
+\texttt{net.weight/bias = nn.ModuleList([nn.Module])} 参数初始化为一列表的\texttt{module}，\textbf{参数参与反向传播}\\
 \texttt{nn.init.xavier\_uniform\_(net.weight/.bias)} 对\textbf{层}中所有权重/偏差使用xavier初始化\\
 \texttt{nn.init.normal\_(net.weight/.bias, MEAN, STD)} 对\textbf{层}使用normal初始化\\
 \texttt{def init\_func(layer):}
@@ -274,7 +278,9 @@
   \texttt{param类型数组.name} 得到所属层名，可为空\\
 \texttt{loss(y\_hat, y).backward()} 得到代价函数值，求导
 
-  不会调用\texttt{.sum()} 或\texttt{.mean()}，求和方法在loss函数中定义\\
+  不会调用\texttt{.sum()} 或\texttt{.mean()}，求和方法在loss函数中定义
+  
+  对同一网络的输出调用多次backward会将斜率叠加，不会覆盖斜率\\
 \texttt{Tensor.detach()}
 
   当此Tensor作为另一神经网络输入时，detach导致此张量不参与反向传播。即不对此张量和得到此张量的计算求导\\
@@ -317,6 +323,8 @@
 
   \texttt{image.show()}
   
+  \texttt{plt.figsize((h, w))} 限制每一子图大小
+
   或使用自定义包，支持反标准化
 
   \texttt{import sys}
@@ -343,11 +351,19 @@
 
   并行显示图片，图片大小可不同
 
-  \quad \texttt{plt.subplot(abc)}
+  \quad \quad \texttt{plt.subplot(abc)}
 
-  \quad \texttt{plt.plot}
+  \quad \quad \texttt{plt.plot}
 
-  \quad \quad 共a行b列，在第c图片位置画图
+  \quad \quad \quad 共a行b列，在第c图片位置画图
+
+  \quad 或：
+
+  \quad \quad \texttt{fig, axarr = plt.sublots(a, b, figsize=(h, w))}
+
+  \quad \quad \texttt{fig.suptitile(TITLE)} 设置图片标题
+
+  \quad \quad \texttt{axarr[i, j].imshow(Tensor)} 填充图片信息
 
 
 % ----------------------------------------------------------------------
