@@ -1155,6 +1155,57 @@
   
   decoder初始输入为$<s>$代表句子开始产生词序，直至输出为$</s>$作为句末结束
 
+% ----------------------------------------------------------------------
+% |            A Gental Introduction to Graph Neural Network           |
+% ----------------------------------------------------------------------
+\section{A Gental Introduction to Graph Neural Network}
+\noindent 目标：
+
+  使用其他深度学习得到目标的向量做输入，输出目标间关系\\
+定义：
+
+  V：节点集合，每一节点使用向量$v \in \mathbb{R}^{h_v}$
+
+  E：edge集合，每一edge连接两节点代表节点关系\ 使用向量$e \in \mathbb{R}^{h_e}$
+
+  G：代指整个graph，整个图使用唯一向量$g \in \mathbb{R}^{h_g}$
+  
+  图的连接性质对每一样本固定\\
+模型：
+
+  模型包含多个GNN layer，每一层输入输出都为整个graph
+
+  GNN layer：
+
+  \quad 对每一V中向量使用同一mlp，输出向量$v'$长度同$v$不变
+
+  \quad 对EG同理，共3个mlp
+
+  \quad GNN layer不改变graph的连接性质，
+
+  \quad message passing：使得VEG间向量值能够互相影响，交换信息
+
+  \quad \quad vertex message passing：
+
+  \quad \quad \quad 1. 对每一节点，求相邻edge向量和。经过全连接层转为$\mathbb{R}^{h_v}$向量
+
+  \quad \quad \quad 2. 1.中结果和此节点原向量相加，做mlp输入
+
+  \quad \quad edge message passing
+
+  \quad \quad \quad 同vertex message pass，将连接的节点向量求和做mlp输入
+
+  \quad \quad 使用graph 向量优化message passing
+
+  \quad \quad \quad 1. 每一节点/边向量求和，经过全连接层转为$\mathbb{R}^{h_g}$向量
+
+  \quad \quad \quad 2. 和$g$相加，做mlp输入 
+
+  \quad \quad \quad 由g向EV message pass时，每一节点/边有各自全连接层将$g$转为$\mathbb{R}^{h_v}$向量，和vertex/edge message pass相加做mlp输入
+
+  GNN 即为多层GNN layer叠加
+
+  **最终输出时使用节点/边向量经过全连接层实现输出特定结果**
   
 % ----------------------------------------------------------------------
 % |                              分析结果                               |
