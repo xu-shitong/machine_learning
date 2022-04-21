@@ -184,7 +184,13 @@
 \texttt{torch.save({"model": net, "loss": ...}, '文件名')} 保存一checkpoint\\
 \texttt{checkpoint = torch.load('文件名')} 读取一checkpoint\\
 \texttt{model.load\_state\_dict(checkpoint['model'].state\_dict())} 从checkpoint中读取参数\\
-\texttt{torch.cuda.synchronize()} 等待异步计算结束，打印结果同样等待异步计算\\
+\texttt{torch.cuda.synchronize()} 
+
+  等待所有GPU异步计算结束，打印结果同样等待异步计算
+  
+  若两计算操作处在不同device上，且没有相互依靠关系/没有等待异步结果分隔，则并行两device计算
+  
+  当一计算b需要另一计算a结果，则每当a得出结果部分，b即开始处理，无需等待a输出所有结果才开始b\\
 \texttt{random\_generator = default\_rng()}\\
 \texttt{shuffled\_index = random\_generator.permutation(列表大小)}
 
@@ -296,7 +302,28 @@
   \texttt{def forward(self, x):}
 
   \quad 自定义神经网络\\
-\texttt{net = models.NET\_NAME(pretrained=True)} 得到预训练的神经网络
+\texttt{net = models.NET\_NAME(pretrained=True)} 得到预训练的神经网络\\
+\textbf{在多个GPU上训练神经网络}
+
+  方法1：network partition：将网络按深度分配在多个GPU上
+
+  方法2：layer-wise partition：按通道分配在多GPU，AlexNet即此方法。
+  
+  \quad 需要synchronize前一层结果，比方法1传输更多数据。时间\ complexity更高
+
+  方法3：data partition：不同GPU训练不同batch数据，分别反向传播。
+
+  \quad 得到斜率后求平均，传入每一GPU。每一GPU内模型迭代使用同一平均斜率
+  
+  \quad 简单但无法训练更大模型
+
+  \quad \texttt{torch.cuda.device\_count()} 得到可用gpu数量i，\texttt{cuda:0}-\texttt{cuda:(i-1)}共i个gpu全部可用
+
+  \quad \texttt{net = nn.DataParallel(net, device\_ids=DEVICES)} DEVICES为一list的torch.device
+
+  \quad \texttt{net(X.to(DEVICE))} 计算时只需将数据放在同一类型(cpu/gpu) device上即可，\texttt{nn.DataParallel}自动将数据分段
+
+
 
 % ----------------------------------------------------------------------
 % |                             读取图像                                 |
