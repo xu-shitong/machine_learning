@@ -156,7 +156,11 @@
 
   在循环中加入行得到张量，初始化张量为\texttt{torch.tensor([]).reshape((.., 0, ..))}\\
 \texttt{Tensor.nonzero()} 得到一list的index向量$\{v_i\}$，$Tensor[v_i]$为非零值\\
-\texttt{Tensor.to(device)} 将张量分配进指定CPU/GPU\\
+\texttt{Tensor.to(device, NON-BLOCKING)} 
+
+  将张量分配进指定CPU/GPU
+  
+  NON-BLOCKING 为true时此步不synchronize，新device得到部分数据即开始下一步计算。默认为false\\
 \texttt{Tensor = Tensor.type(torch.float64)} \texttt{Np.astype('float')} 转换类型\\
 \texttt{F.one\_hot(Tensor, NUM\_CLASS)} 
 
@@ -323,7 +327,11 @@
 
   \quad \texttt{net(X.to(DEVICE))} 计算时只需将数据放在同一类型(cpu/gpu) device上即可，\texttt{nn.DataParallel}自动将数据分段
 
+  \quad 实现：ring synchronization 
 
+  \quad \quad gpu间连接为ring topology
+  
+  \quad \quad 合并斜率时每一gpu同时向下一gpu传输自身斜率。进行n-1次传输后所有gpu得到其余所有gpu参数
 
 % ----------------------------------------------------------------------
 % |                             读取图像                                 |
