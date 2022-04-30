@@ -113,8 +113,8 @@
 \texttt{torch.tolist()} 得到python 数组 \\
 \texttt{Torch.item()} 当张量中仅有一个元素，得到此元素 \\
 \texttt{torch.from\_numpy(NDArray)} 从\texttt{NDArray}创建Tensor\\
-\texttt{torch.mm(Tensor, Tensor)} tensor矩阵乘法\\
-\texttt{torch.mm(Tensor, Tensor)} 矩阵\ 向量乘法\\
+\texttt{torch.mm(Tensor, Tensor)} 矩阵\ 向量或矩阵\ 矩阵乘法\\
+\texttt{torch.bmm(Tensor, Tensor)} 张量最后两维进行矩阵乘法，其余维长度必须相等\\
 \texttt{torch.matmul(Tensor, Tensor)} 
 
   任意张量间乘法
@@ -149,6 +149,11 @@
 \texttt{Tensor.reshape()} 改变形状，\textbf{新形状元素数必须等于输入元素数}\\
 \texttt{Tensor.permute(SHAPE)} 等同mxnet的transpose，更改纬度顺序\\
 \texttt{Tensor.transpose(dim0, dim1)} 交换两个纬度\\
+\texttt{Tensor.masked\_fill(MASK\_Tensor, VALUE)}
+
+  根据MASK\_Tensor中True值的位置将Tensor中对应位置设为VALUE
+
+  MASK\_Tensor为Boolean tensor，VALUE为标量\\
 \texttt{torch.vstack([Tensor, Tensor, ...])}在第0维方向连接张量，(对矩阵即在竖直方向上连接)\\
 \texttt{torch.hstack([Tensor, Tensor, ...])}在第1维方向连接张量，(对矩阵即在水平方向上连接)
 
