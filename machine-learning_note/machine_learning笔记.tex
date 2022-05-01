@@ -55,7 +55,14 @@ boosting
   对一个模型多次初始化\ 学习，得到多个较弱训练结果。将参数按准确率加权求和做新模型参数\\
 轴自注意力机制：对图像行和列分别进行自注意力机制，一种将transformer应用在图像上的方法\\
 denoising self-supervised pre-training task 即BERT 中mask词后训练网络预测的训练方法\\
-language model即根据前句预测下一词输出的模型
+language model即根据前句预测下一词输出的模型\\
+消融实验：去除部分算法，观察是哪一更改对模型影响最大\\
+autoregressive：使用模型上一输出做下一次预测的输入。如GPT，RNN
+
+  正向反向遍历时序分开进行预测仍属于autoregressive，如双向RNN\\
+autoencoder：同时得到前后时序的输入，预测当前被mask的词。\\
+linear protocol：迁移学习时只学习最后一linear layer参数\\
+mlp：全连接层 + 激活函数
 
 % ----------------------------------------------------------------------
 % |                              数学计算                               |
