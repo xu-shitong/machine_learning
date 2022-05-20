@@ -230,6 +230,11 @@
 
   \quad \texttt{// 根据上一条笔记更新layer的参数}\\
 \texttt{net.apply(init\_func)} // 对每一层参数初始化权重\ 偏差\\
+\texttt{embedding = nn.Embedding(NUM\_EMBEDDINGS, EMBEDDING\_DIM)}
+
+  参数形状(NUM\_EMBEDDINGS, EMBEDDING\_DIM)
+  
+  输入为行向量index，$index \in [0, NUM\_EMBEDDINGS)$，非onehot向量。输出对应行向量。\\
 \texttt{rnn = nn.RNN(...)}
   
   INPUT\_SIZE：一样本特征数
