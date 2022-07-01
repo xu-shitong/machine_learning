@@ -425,34 +425,7 @@ mlp：全连接层 + 激活函数，模型可有多层全连接和激活函数�
 \section{ensemble learning \& 随机森林}
 \noindent \textbf{ensemble learning}：使用一组预测机制进行学习，预测机制可为不同算法
 
-  dropout为一种ensemble learning，由于丢弃神经元即改变网络结构\\
-\textbf{random forest随机森林}：
-
-  训练方法：随机选择$n$个训练子集$s_1, s_2, ..., s_n \in S$，训练$n$个决策树$t_1, ..., t_n$。
-  
-  前向计算：对$n$个树产生的$n$个分类结果，选取投票最多的一分类作为结果
-  
-  训练子集选取：bagging：子集可重复选取一样本，pasting：样本不重复
-  
-  \quad out-off-bag oob 样本：当使用bagging选取时，平均只有$1-e^{-1}$样本被选择，余下样本被称为oob样本
-
-  优化：
-
-  \quad random patches随机贴片：对特征和训练集同时取子集进行训练
-  
-  \quad random subspace随机子空间：对特征取子集，对整个总训练集进行训练
-
-  \quad \quad **使用bagging无法减少variance，需要对特征取子集提高效果**
-  
-  \quad extra-trees极度随机森林：'使用随机$t_k$而不使用最小化数据混杂度的$t_k$'
-  
-  \quad $k$feature importance特征重要性：对所有取$k$为判断条件的节点$N_i$，计算加权平均值$\sum_i(S_i$imprity降低百分比$)$
-  
-  \quad (hypothesis) boosting：合并多个预测机制据结果的方法
-  
-  \quad \quad AdaBoost：串联预测机制，对上一预测机制遗漏的样本加更高权重，进行训练
-
-  \quad \quad gradient boosting
+  dropout为一种ensemble learning，由于丢弃神经元即改变网络结构
 
 
 % ----------------------------------------------------------------------
@@ -1154,9 +1127,9 @@ mlp：全连接层 + 激活函数，模型可有多层全连接和激活函数�
   
   \quad \quad \quad 使用i词长度的窗口，选取$\hat{s}$的子字符串$\{ [\hat{s}_1, ..., \hat{s}_i], [\hat{s}_2, \hat{s}_{i+1}], ... \}$
 
-  \quad \quad \quad $precision(i) = $ 子字符串中同时为目标翻译substring的个数 / 子字符串个数
+  \quad \quad \quad $precision(i) = $ 子字符串集合中为目标翻译substring的个数 / 子字符串个数
 
-  \quad \quad $Brevity Penalty BP$：当输出远小于目标长度，惩罚更多
+  \quad \quad Brevity Penalty $BP$：当输出远小于目标长度，惩罚更多
 
   \quad \quad \quad $BP = \min(1, \frac{|\hat{s}|}{|s|})$
 
@@ -1166,7 +1139,9 @@ mlp：全连接层 + 激活函数，模型可有多层全连接和激活函数�
 
   \quad 对每一目标词向量，和每一预测词向量点乘，取最高值作为权重
 
-  \quad 求目标词权重平均值，当赋目标词权重时可计算加权平均值\\
+  \quad 求目标词权重平均值，当赋目标词权重时可计算加权平均值
+  
+  \quad 见phd random note\\
 \textbf{Recurrent Network Machine Translate RNMT}
 
   使用两RNN，分别为encoder，decoder
