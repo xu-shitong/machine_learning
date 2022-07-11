@@ -785,8 +785,32 @@ mlp：全连接层 + 激活函数，模型可有多层全连接和激活函数�
   
   应用：
 
-  \quad $p_{\theta}(\mathbf{x} | \mathbf{y})$中y代表期望产生的数据类别，生成网络输入为$y, z$
+  \quad $p_{\theta}(\mathbf{x} | \mathbf{y})$中y代表期望产生的数据类别，生成网络输入为$y, z$\\
+\textbf{AE相关工作}
 
+  \textbf{AE}：encoder + decoder模型，中间使用bottle neck 向量连接。目标为使得输入输出相同
+
+  \textbf{Denoise AE}：将输入部分特征交换位置，经过AE。目标为得到未乱序的特征
+
+  \quad 模型不容易过拟合。对冗余特征较多输入更有效，如图像
+
+  \textbf{VAE}：\textbf{学习为latent variable分部，而非固定特征，使得decoder能够不基于encoder输入直接做生成模型}
+
+  \textbf{VQVAE}：Vector Quantize VAE
+
+  \quad codebook：一集合向量做聚类中心
+
+  \quad encoder得到\textbf{一组}特征，每一特征从codebook中选择最相近的特征向量替换encoder结果。\textbf{替换后结果包含多个特征向量}
+
+  \quad 分类任务直接使用替换特征传入分类模型。
+
+  \quad 生成任务中需要额外prior模型做decoder
+
+  \textbf{DALL-E}：
+
+  \quad 文本经过BPE embedding。图像经过预训练VQVAE，输出特征向量看做词序。
+
+  \quad 文本词序和图片词序连接，做GPT输入。即第一位为文本词序，GPT使用auto regression预测随后图像token
 
 
 % ----------------------------------------------------------------------
