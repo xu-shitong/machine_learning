@@ -341,7 +341,30 @@
 
   \quad \quad gpu间连接为ring topology
   
-  \quad \quad 合并斜率时每一gpu同时向下一gpu传输自身斜率。进行n-1次传输后所有gpu得到其余所有gpu参数
+  \quad \quad 合并斜率时每一gpu同时向下一gpu传输自身斜率。进行n-1次传输后所有gpu得到其余所有gpu参数\\
+\textbf{RoI}
+
+  \texttt{torchvision.ops.roi\_pool(X, rois, output\_size=(2, 2), spatial\_scale=0.1)}
+
+  \quad X为特征图，形状(batch\_num, channel, h, w)
+
+  \quad rois:
+
+  \quad \quad 为一列表(4, )形状tensor，则每一tensor对一样本所有通道的矩阵RoI
+
+  \quad \quad \quad 令tensor为$(x_1, y_1, x_2, y_2)$
+
+  \quad \quad \quad $([x_1 s .. y_1 s]: [x_2 s .. y_2 s])$二维区间的矩阵值为此RoI考虑区域，区域被平分为$n \times m$子区间，分割子区间的边界向上取整
+
+  \quad \quad \quad \textbf{x对应矩阵维度1，y对应矩阵维度0}
+
+  \quad \quad 为一(n, 5)形状tensor，每一tensor第一元素定义对哪一样本所有通道RoI，随后元素使用同(4, )形状tensor
+
+  \quad output\_size：每一矩阵RoI后形状$(n, m)$
+
+  \quad spatial\_scale $s$：每一rois中元素乘此标量，得到分割输入矩阵的\textbf{index}
+
+  \textbf{RoI不改变通道数}
 
 % ----------------------------------------------------------------------
 % |                             读取图像                                 |
