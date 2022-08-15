@@ -19,9 +19,10 @@
 \section{import}
 \noindent \texttt{from torch import nn, optim}\\
 \texttt{import torch.nn.functional as F}\\
-\texttt{from torchvision import models, transforms, utils.make_grid}\\
+\texttt{from torchvision import models, transforms, utils.make\_grid}\\
 \texttt{from PIL import Image}\\
 \texttt{from numpy.random import default\_rng}\\
+\texttt{from transformers import RobertaTokenizer}
 \textbf{import 自定义函数}
 
   python\_file：调用import的python 文件
@@ -364,7 +365,22 @@
 
   \quad spatial\_scale $s$：每一rois中元素乘此标量，得到分割输入矩阵的\textbf{index}
 
-  \textbf{RoI不改变通道数}
+  \textbf{RoI不改变通道数}\\
+\textbf{tokenizer}
+
+  \texttt{tokenizer = RobertaTokenizer.from\_pretrained(文件名, local\_files\_only=True)} 得到本地RoBERT tokenizer
+
+  \texttt{tokenizer = RobertaTokenizer.from\_pretrained(文件名)} 从huggingface 下载tokenizer，文件名需和\texttt{https://huggingface.co/models}中一模型名称对应
+
+  \texttt{tokenizer.save\_pretrained(文件名)} 保存huggingface的tokenizer
+
+  \texttt{tokenizer(String, return\_tensors, padding, truncation, max\_length)} 返回dict (文本index列表, mask)
+
+  \quad return\_tensors="pt" 返回列表格式为tensor
+
+  \quad padding=True truncation=True 固定encode后index长度为max\_length
+
+  \texttt{tokenizer.decode(文本index列表)} 返回string
 
 % ----------------------------------------------------------------------
 % |                             读取图像                                 |
