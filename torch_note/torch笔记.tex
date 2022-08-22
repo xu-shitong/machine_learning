@@ -191,7 +191,7 @@
   dataiter输出的feature，label使用的CPU/GPU\ 和样本Tensor，标签Tensor使用的CPU/GPU分别对应\\
 \texttt{torch.save(Tensor, '文件名')} 文件中保存一张量\\
 \texttt{Tensor = torch.load('文件名')} 读取文件中张量\\
-\texttt{torch.save({"model": net, "loss": ...}, '文件名')} 保存一checkpoint\\
+\texttt{torch.save(\{"model": net, "loss": ...\}, '文件名')} 保存一checkpoint\\
 \texttt{checkpoint = torch.load('文件名')} 读取一checkpoint\\
 \texttt{model.load\_state\_dict(checkpoint['model'].state\_dict())} 从checkpoint中读取参数\\
 \texttt{torch.cuda.synchronize()} 
