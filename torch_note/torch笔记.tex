@@ -17,7 +17,8 @@
 % |                              import                                |
 % ----------------------------------------------------------------------
 \section{import}
-\noindent \texttt{conda list -e > mlenv.txt} 输出conda environment\\
+\noindent \texttt{conda create --name mlenv python==3.7.5}\\
+\texttt{conda list -e > mlenv.txt} 输出conda environment\\
 \texttt{from torch import nn, optim}\\
 \texttt{import torch.nn.functional as F}\\
 \texttt{from torchvision import models, transforms, utils.make\_grid}\\
@@ -446,7 +447,7 @@
 
   \quad \quad \texttt{fig, axarr = plt.sublots(a, b, figsize=(h, w))}
 
-  \quad \quad \texttt{fig.suptitile(TITLE)} 设置图片标题
+  \quad \quad \texttt{axarr[i, j].suptitile(TITLE)} 设置图片标题
 
   \quad \quad \texttt{axarr[i, j].imshow(Tensor)} 填充图片信息
 
