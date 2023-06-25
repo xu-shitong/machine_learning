@@ -334,17 +334,45 @@
   
   \quad 简单但无法训练更大模型
 
-  \quad \texttt{torch.cuda.device\_count()} 得到可用gpu数量i，\texttt{cuda:0}-\texttt{cuda:(i-1)}共i个gpu全部可用
+  \quad 实现：ring synchronization 
+
+  \quad \quad gpu间连接为ring topology
+  
+  \quad \quad 合并斜率时每一gpu同时向下一gpu传输自身斜率。进行n-1次传输后所有gpu得到其余所有gpu参数
+  
+  \quad \texttt{torch.cuda.device\_count()} 得到可用gpu数量i, \texttt{cuda:0}-\texttt{cuda:(i-1)}共i个gpu全部可用, 每一gpu有唯一rank值, rank 0为主process, 可用于print信息
 
   \quad \texttt{net = nn.DataParallel(net, device\_ids=DEVICES)} DEVICES为一list的torch.device
 
   \quad \texttt{net(X.to(DEVICE))} 计算时只需将数据放在同一类型(cpu/gpu) device上即可，\texttt{nn.DataParallel}自动将数据分段
 
-  \quad 实现：ring synchronization 
+  \quad \texttt{mp.spawn(main\_worker, args=(DEVICE\_CNT, world\_size ...), nprocs=DEVICE\_CNT, join=True)} 主函数换为此, 创建DEVICE\_CNT个进程, 每一进程的main为main\_worker, 参数为args内信息
 
-  \quad \quad gpu间连接为ring topology
+  \quad \texttt{def main\_worker(rank, world\_size, ...):}
+
+  \quad \quad \texttt{os.environ['MASTER\_ADDR'] = 'localhost'}
   
-  \quad \quad 合并斜率时每一gpu同时向下一gpu传输自身斜率。进行n-1次传输后所有gpu得到其余所有gpu参数\\
+  \quad \quad \texttt{os.environ['MASTER\_PORT'] = '12355'} 
+
+  \quad \quad \texttt{dist.init\_process\_group("gloo", rank=rank, world\_size=world\_size)} 初始化函数, gloo backend可换为nccl
+
+  \quad \quad \texttt{sampler = torch.utils.data.distributed.DistributedSampler(dataset)}
+
+  \quad \quad \texttt{loader = torch.utils.data.DataLoader(dataset, ..., shuffle=(sampler is None), pin\_memory=True, sampler=sampler)}
+
+  \quad \quad \texttt{sampler.set\_epoch(EPOCH)} 每一epoch开始调用此函数, 使得每一epoch的loader经过shuffle
+  
+  \quad \quad \texttt{model = model.to(rank)}
+
+  \quad \quad \texttt{model = nn.parallel.DistributedDataParallel(model, device\_ids=[rank])} 设置model, load时在此行后load
+
+  \quad \quad \texttt{model.module.fc} 得到model其中一层的参数
+
+  \quad \quad \texttt{torch.distributed.broadcast(VAR, src=0)} 将所有process的VAR变量值覆盖为主process的VAR值
+
+  \quad \quad \texttt{l = [...]}
+
+  \quad \quad \texttt{torch.distributed.all\_gather(l, VAR, async\_op=False)} 列表l收集所有process的VAR变量值\\
 \textbf{RoI}
 
   \texttt{torchvision.ops.roi\_pool(X, rois, output\_size=(2, 2), spatial\_scale=0.1)}
@@ -445,12 +473,20 @@
 
   \quad 或：
 
-  \quad \quad \texttt{fig, axarr = plt.sublots(a, b, figsize=(h, w))}
+  \quad \quad \texttt{fig, axarr = plt.subplots(a, b, figsize=(h, w))}
 
-  \quad \quad \texttt{axarr[i, j].suptitile(TITLE)} 设置图片标题
+  \quad \quad \texttt{axarr[i, j].plot(Tensor, label=LABEL, color=COLOUR)} 划线,线有标签LABEL
 
   \quad \quad \texttt{axarr[i, j].imshow(Tensor)} 填充图片信息
 
+  \quad \quad \texttt{axarr[i, j].set\_title(TITLE)} 设置图片标题
+
+  \quad \quad \texttt{axarr[i, j].legend()} 显示不同颜色线的标签
+
+  \quad \quad \texttt{axarr[i, j].set(xlabel=, ylabel=)} xy轴标签\\
+\texttt{显示线}
+
+  见utils.functions中\texttt{show\_plot}
 
 % ----------------------------------------------------------------------
 % |                             常见错误                                 |

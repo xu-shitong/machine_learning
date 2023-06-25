@@ -1145,7 +1145,7 @@ mlp：全连接层 + 激活函数，模型可有多层全连接和激活函数�
 
   \quad 对预测翻译$\hat{s} = [\hat{s}_1, \hat{s}_2, ...]$，计算和给定目标翻译$s$的相似度
 
-  \quad BLEU-n$ = BP * (\prod_i^n (i \cdot precision(i)))^{\frac{1}{n}}$
+  \quad BLEU-n$ = BP * (\prod_i^n precision(i))^{\frac{1}{n}}$
 
   \quad \quad $precision(i)$：
   
