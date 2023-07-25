@@ -19,6 +19,8 @@
 \section{import}
 \noindent \texttt{conda create --name mlenv python==3.7.5}\\
 \texttt{conda list -e > mlenv.txt} 输出conda environment\\
+\texttt{conda env list} list所有env\\
+\texttt{conda remove --name med-contrast-env --all} 移除一env\\
 \texttt{from torch import nn, optim}\\
 \texttt{import torch.nn.functional as F}\\
 \texttt{from torchvision import models, transforms, utils.make\_grid}\\
@@ -341,8 +343,6 @@
   \quad \quad 合并斜率时每一gpu同时向下一gpu传输自身斜率。进行n-1次传输后所有gpu得到其余所有gpu参数
   
   \quad \texttt{torch.cuda.device\_count()} 得到可用gpu数量i, \texttt{cuda:0}-\texttt{cuda:(i-1)}共i个gpu全部可用, 每一gpu有唯一rank值, rank 0为主process, 可用于print信息
-
-  \quad \texttt{net = nn.DataParallel(net, device\_ids=DEVICES)} DEVICES为一list的torch.device
 
   \quad \texttt{net(X.to(DEVICE))} 计算时只需将数据放在同一类型(cpu/gpu) device上即可，\texttt{nn.DataParallel}自动将数据分段
 
