@@ -372,7 +372,17 @@
 
   \quad \quad \texttt{l = [...]}
 
-  \quad \quad \texttt{torch.distributed.all\_gather(l, VAR, async\_op=False)} 列表l收集所有process的VAR变量值\\
+  \quad \quad \texttt{torch.distributed.all\_gather(l, VAR, async\_op=False)} 列表l收集所有process的VAR变量值
+  
+  \quad \quad \texttt{torch.distributed.barrier()} 暂停此process，直到所有gpu process执行到此行
+
+  \quad \quad \textbf{经验总结}
+  
+  \quad \quad \quad 1. 模型batch norm层应换为syncBatchNorm层，或者使用\texttt{DistributedDataParallel(..., broadcast\_buffers=False)}。
+  
+  \quad \quad \quad \quad 否则报错：variable needed for gradient computation has been modified by an inplace operation 
+  
+  \quad \quad \quad 2. \texttt{mem\_report}前调用\texttt{torch.distributed.barrier()}，否则可能出现一gpu显示内存使用量为0\\
 \textbf{RoI}
 
   \texttt{torchvision.ops.roi\_pool(X, rois, output\_size=(2, 2), spatial\_scale=0.1)}
