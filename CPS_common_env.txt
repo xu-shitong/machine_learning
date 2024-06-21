@@ -1,4 +1,6 @@
-# Installation: pip install -r CPS_common_env.txt
+# Installation: 
+# conda create --name NAME python==3.9.18
+# pip install -r CPS_common_env.txt
 cmake==3.28.3
 networkx==3.2.1
 numpy==1.26.3
