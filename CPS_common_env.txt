@@ -1,6 +1,4 @@
-# This file may be used to create an environment using:
-# $ conda create --name <env> --file <this file>
-# platform: linux-64
+# Installation: pip install -r CPS_common_env.txt
 cmake==3.28.3
 networkx==3.2.1
 numpy==1.26.3
