@@ -58,15 +58,11 @@ def main_func(args):
     # ======== optizer, scheduler =========
     if args.optimizer == "Adam":
         optimizer = torch.optim.Adam(
-            [
-                dict(name='grid', params=model.grid_parameters(), lr=args.grid_lr),
-                dict(name='backbone', params=model.backbone_parameters(), lr=args.backbone_lr),
-                dict(name='head', params=model.head_parameters(), lr=args.head_lr),
-            ], 
-            lr=args.backbone_lr,
+            model.parameters(), 
+            lr=args.lr,
             betas=(0.9, 0.999),
             eps=1e-08,
-            weight_decay=args.weight_decay,
+            weight_decay=0.0001,
             amsgrad=True)
     else:
         raise NotImplementedError(args.optimizer)
