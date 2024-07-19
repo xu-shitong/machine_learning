@@ -1,0 +1,13 @@
+gpu: "0"
+batch_size:
+epoch_num: 
+lr: 
+lr_decay_epoch: 
+lr_decay_gamma: 
+save_epoch: 
+
+model_name: 
+
+load_model:
+
+optimizer: 
