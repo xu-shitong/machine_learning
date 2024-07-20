@@ -23,10 +23,31 @@ def train_func(args, epoch, model, dataloader, optimizer, device, train):
     else:
         model.eval()
 
+    acc_losses = [0] * 7
+
+    ...
+
     titer = dataloader
     if train:
         titer = tqdm(dataloader, unit="iter")
-    for i, data in enumerate(titer):
+    for i, (audio_cond, pos_cond, audio_tgt, pos_tgt, rir_forward_gt, rir_inv_gt) in enumerate(titer):
+
+        losses = ...
+        l = ... # weighted loss for each loss term
+
+        if train:
+            titer.set_description(f"iter {i}")
+            titer.set_postfix(loss=l.item()
+                              )
+
+            optimizer.zero_grad()
+            l.backward()
+            optimizer.step()
+
+        acc_losses[1:] = [(acc_l + l).item() for acc_l, l in zip(acc_losses[1:], losses)]
+        acc_losses[0] += l.item()
+
+    return [l / len(dataloader) for l in acc_losses]
 
 def main_func(args):
 
