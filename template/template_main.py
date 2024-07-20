@@ -23,14 +23,14 @@ def train_func(args, epoch, model, dataloader, optimizer, device, train):
     else:
         model.eval()
 
-    acc_losses = [0] * 7
-
-    ... # forward pass
+    acc_losses = [0] * ...
 
     titer = dataloader
     if train:
         titer = tqdm(dataloader, unit="iter")
     for i, data in enumerate(titer):
+
+        ... # forward pass
 
         losses = ...
         l = ... # weighted loss for each loss term
