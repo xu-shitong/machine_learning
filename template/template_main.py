@@ -45,7 +45,7 @@ def train_func(args, epoch, model, dataloader, optimizer, device, train):
             l.backward()
             optimizer.step()
 
-        acc_losses[1:] = [(acc_l + l).item() for acc_l, l in zip(acc_losses[1:], losses)]
+        acc_losses[1:] = [acc_l + new_l.item() for acc_l, new_l in zip(acc_losses[1:], losses)]
         acc_losses[0] += l.item()
 
     return [l / len(dataloader) for l in acc_losses]
