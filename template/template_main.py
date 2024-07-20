@@ -25,7 +25,7 @@ def train_func(args, epoch, model, dataloader, optimizer, device, train):
 
     acc_losses = [0] * 7
 
-    ...
+    ... # forward pass
 
     titer = dataloader
     if train:
@@ -37,7 +37,8 @@ def train_func(args, epoch, model, dataloader, optimizer, device, train):
 
         if train:
             titer.set_description(f"iter {i}")
-            titer.set_postfix(loss=l.item()
+            titer.set_postfix(loss=l.item(),
+                              ...
                               )
 
             optimizer.zero_grad()
