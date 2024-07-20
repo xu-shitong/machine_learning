@@ -30,7 +30,7 @@ def train_func(args, epoch, model, dataloader, optimizer, device, train):
     titer = dataloader
     if train:
         titer = tqdm(dataloader, unit="iter")
-    for i, (audio_cond, pos_cond, audio_tgt, pos_tgt, rir_forward_gt, rir_inv_gt) in enumerate(titer):
+    for i, data in enumerate(titer):
 
         losses = ...
         l = ... # weighted loss for each loss term
