@@ -4,6 +4,7 @@ import os
 from utils import *
 from attrdict import AttrDict
 import traceback
+from tqdm import tqdm
 
 # Import packages
 import sys,humanize,psutil,GPUtil
@@ -16,8 +17,16 @@ def mem_report():
     for i, gpu in enumerate(GPUs):
         print('GPU {:d} ... Mem Free: {:.0f}MB / {:.0f}MB | Utilization {:3.0f}%'.format(i, gpu.memoryFree, gpu.memoryTotal, gpu.memoryUtil*100))
 
-def train_func():
-    ...
+def train_func(args, epoch, model, dataloader, optimizer, device, train):
+    if train:
+        model.train()
+    else:
+        model.eval()
+
+    titer = dataloader
+    if train:
+        titer = tqdm(dataloader, unit="iter")
+    for i, data in enumerate(titer):
 
 def main_func(args):
 
