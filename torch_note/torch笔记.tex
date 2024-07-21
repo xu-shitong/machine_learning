@@ -21,6 +21,8 @@
 \texttt{conda list -e > mlenv.txt} 输出conda environment\\
 \texttt{conda env list} list所有env\\
 \texttt{conda remove --name med-contrast-env --all} 移除一env\\
+\texttt{conda env create -f mlenv.yaml}\\
+\texttt{conda create --name <env> --file mlenv.txt} 按一environment创建一env\\
 \texttt{from torch import nn, optim}\\
 \texttt{import torch.nn.functional as F}\\
 \texttt{from torchvision import models, transforms, utils.make\_grid}\\
@@ -322,6 +324,29 @@
 
   \quad 自定义神经网络\\
 \texttt{net = models.NET\_NAME(pretrained=True)} 得到预训练的神经网络\\
+\texttt{torch.autograd.functional.jacobian(func, x)} 张量间的求导，得到$\frac{d func(x)}{d x}$
+
+  即对$func(x)$和$x$的元素间两两求导\\
+\texttt{torch.autograd.grad(y, x, grad\_outputs=torch.ones\_like(y))} 
+
+  用法1：y为scalar，得到x形状的gradient $\frac{d y}{d x}$。无需添加\texttt{grad\_outputs=torch.ones\_like(y)} argument
+
+  用法2：y为\textbf{单一column}矩阵，需要\texttt{grad\_outputs=torch.tensor()} argument。
+
+  \quad 即先计算scalar $L = \sum y * grad\_outputs$，后对每一输入x求$\frac{d L}{d x}$。
+  
+  \quad \quad 用法：当y取为一batch的特征，每一样本在y中仅一特征值时，将grad\_outputs设为ones tensor即计算每一x关于y中对应样本特征值的导数
+  
+  \quad grad\_outputs形状需同y，此张量不通过boardcast和以上gradient按元素相乘，不求和\\
+\texttt{torch.func.vmap(jacrev(func, argnums=(a1, ...)))(x)} 
+
+  令$func(x)$为$(BATCH\_SIZE, OUTPUT\_DIM)$形状tensor，$x$为$(BATCH\_SIZE, FEATURE\_DIM)$形状tensor
+
+  函数对每一样本计算jacobian gradient，形状为$(OUTPUT\_DIM, FEATURE\_DIM)$。随后将batch中所有gradient concat得到$(BATCH\_SIZE, OUTPUT\_DIM, FEATURE\_DIM)$形状的输出
+  
+  \quad 即 jacrev和jacobian功能相同，但jacobian无法在vmap中使用
+  
+  当func输入为多个tensor时，用\texttt{argnums=(a1, ...)}指定针对哪一index的张量求导，其余张量通过vmap进行分割但不求导\\
 \textbf{在多个GPU上训练神经网络}
 
   方法1：network partition：将网络按深度分配在多个GPU上
