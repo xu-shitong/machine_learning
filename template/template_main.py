@@ -116,7 +116,7 @@ def main_func(args):
 
         log.write(f"Epoch: {epoch}, train_losses: {', '.join(train_losses)}, " + 
                   f"val_losses: {', '.join(val_losses)}, lr:{lr_scheduler.get_last_lr()[0]}\n")
-        print(f"Finish {epoch} / {args.epoch_num}")
+        print(f"Finish {epoch} / {args.epoch_num}, id {process_id}")
 
         lr_scheduler.step()
 
