@@ -111,7 +111,7 @@ def main_func(args):
         train_losses = [str(num) for num in train_losses]
 
         with torch.no_grad():
-            val_losses = train_func(args, epoch, model, val_dataloader, device=device, train=False)
+            val_losses = train_func(args, epoch, model, val_dataloader, optimizer=None, device=device, train=False)
             val_losses = [str(num) for num in val_losses]
 
         log.write(f"Epoch: {epoch}, train_losses: {', '.join(train_losses)}, " + 
