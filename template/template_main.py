@@ -1,8 +1,12 @@
+import sys
+from attrdict import AttrDict
+from utils import *
+import os
+args_dict = get_config(sys.argv[1])
+args = AttrDict(args_dict)
+os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 import torch
 from torch.utils.data import DataLoader
-import os
-from utils import *
-from attrdict import AttrDict
 import traceback
 from tqdm import tqdm
 
@@ -54,7 +58,6 @@ def main_func(args):
 
     mem_report()
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     torch.cuda.manual_seed(42)
     if torch.cuda.is_available():
         dev = "cuda:0"
@@ -103,7 +106,7 @@ def main_func(args):
                                                    gamma=args.lr_decay_gamma)
 
     # ======== train =========
-    send_email(f"Started experiment {process_id}", "experiment args " + str(args))
+    # send_email(f"Started experiment {process_id}", "experiment args " + str(args))
 
     # train
     for epoch in range(args.epoch_num):
@@ -125,7 +128,7 @@ def main_func(args):
     torch.save({"state_dict": model.state_dict()}, f"{process_id}.pt")
     log.close()
 
-    send_email(f"Finished experiment {process_id}", "experiment args " + str(args))
+    # send_email(f"Finished experiment {process_id}", "experiment args " + str(args))
 
     mem_report()
     print("Finish experiment", process_id)
@@ -142,5 +145,5 @@ if __name__ == "__main__":
         main_func(args)
     except Exception:
         print("training failed", traceback.format_exc())
-        send_email(f"Experiment {process_id} failed", traceback.format_exc())
+        # send_email(f"Experiment {process_id} failed", traceback.format_exc())
 
